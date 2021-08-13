@@ -1,0 +1,61 @@
+{
+  "circuitsNumber" : 5,
+  "nodNumber"      : 20,
+  "availableNods" : {
+    "variable" : {
+      "bool"   : true,
+      "float"  : true,
+      "string" : true,
+      "time"   : true,
+      "date"   : true
+    },
+    "logic" : {
+      "not" : true,
+      "and" : true,
+      "or"  : true,
+      "hor" : true,
+      "if"  : true
+    },
+    "math" : {
+      "add"    : true,
+      "sub"    : true,
+      "mult"   : true,
+      "div"    : true,
+      "pow"    : true,
+      "root"   : true,
+      "sin"    : true,
+      "cos"    : true,
+      "tg"     : true,
+      "ctg"    : true,
+      "arcsin" : true,
+      "arccos" : true,
+      "arctg"  : true,
+      "arcctg" : true,
+      "proc"   : true
+    },
+    "loops" : {
+      "for"   : true,
+      "while" : false
+    },
+    "inputs" : {
+      "din"     : true,
+      "ain"     : true,
+      "rtc"     : true,
+      "can"     : true,
+      "mb"      : false,
+      "mem"     : true,
+      "alarm"   : true,
+      "warning" : true
+    },
+    "outputs" : {
+      "dout"    : true,
+      "aout"    : true,
+      "log"     : true,
+      "can"     : true,
+      "mb"      : false,
+      "alarm"   : true,
+      "warning" : true,
+      "display" : true
+    }
+  }
+}

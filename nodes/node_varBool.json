@@ -1,0 +1,7 @@
+{
+  "id"      : 0,
+  "inputs"  : ["bool"],
+  "outputs" : ["bool"],
+  "width"   : 10,
+  "height"  : 40,
+}
