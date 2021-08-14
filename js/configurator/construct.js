@@ -25,7 +25,7 @@
 */
 /*----------------------------------------------------------------------------*/
 function addPin ( data ) {
-  var text = "<div id='pin" + data.id + "' class='pin'></div>";
+  var text = "<div id='pin" + data.id + "' class='pin ";
   if ( data.type == "none" ) {
     text += "reseved";
   } else {
@@ -54,7 +54,7 @@ function makeHTMLscheme ( id ) {
   if ( id == 0 ) {
     text += " show active";
   }
-  text += "' id='scheme" + id + "' role='tabpanel' aria-labelledby='scheme" + id + "-tab'>" + "<a>" + id + "</a>" + "</div>";
+  text += "' id='scheme" + id + "' role='tabpanel' aria-labelledby='scheme" + id + "-tab'></div>";
   return text;
 }
 function makeHTMLtab ( id ) {

@@ -1,5 +1,7 @@
 /*----------------------------------------------------------------------------*/
-var nodeLib = require('./nodeLib.js');
+var nodeLib     = require('./nodeLib.js').nodeLib;
+var maker       = require('./construct.js');
+var dragElement = require('./drag.js').dragElement;
 /*----------------------------------------------------------------------------*/
 function NodeAdr () {
   var self  = this;
@@ -27,7 +29,7 @@ function Link ( from, to, id ) {
   this.init( from, to, id )
   return;
 }
-function Pin () {
+function Pin ( id, type, data ) {
   var self = this;
   /*----------------------------------------*/
   this.id         = 0;       /* ID number, unique in same node */
@@ -36,7 +38,7 @@ function Pin () {
   this.linked     = false;   /* Is Pin connected to outher pin */
   this.linkedWith = 0;       /* ID of the Link */
   /*----------------------------------------*/
-  this.init = function ( id, type, data ) {
+  function init( id, type, data ) {
     self.id         = id;
     self.type       = type;
     self.data       = data;
@@ -44,6 +46,7 @@ function Pin () {
     self.linkedWith = 0;
     return;
   }
+  /*----------------------------------------*/
   this.setConnected = function ( id ) {
     self.linked     = true;
     self.linkedWith = id;
@@ -54,19 +57,23 @@ function Pin () {
     return;
   }
   /*----------------------------------------*/
+  init( id, type, data );
+  /*----------------------------------------*/
   return;
 }
-function Node ( type, id ) {
-  var self   = this;
+function Node ( type, id, box ) {
+  var self = this;
+  var box  = box;
   /*----------------------------------------*/
-  this.id     = 0;  /*  */
-  this.type   = 0;
-  this.input  = [];
-  this.output = [];
-  this.x      = 0;
-  this.y      = 0;
-  this.width  = 0;
-  this.height = 0;
+  this.id      = id;  /*  */
+  this.type    = type;
+  this.inputs  = [];
+  this.outputs = [];
+  this.x       = 0;
+  this.y       = 0;
+  this.width   = 0;
+  this.height  = 0;
+  this.obj     = null;
   /*----------------------------------------*/
   function makeNode ( type ) {
     let data  = nodeLib.getNodeRecord( type );
@@ -83,11 +90,41 @@ function Node ( type, id ) {
     }
     return;
   }
-  /*----------------------------------------*/
-  this.init     = function ( type, id ) {
-    self.id   = id;
-    self.type = type;
+  function setSize () {
+    self.obj.style.width  = self.width  + "px";
+    self.obj.style.height = self.height + "px";
+    return;
+  }
+  function hide() {
+    self.obj.classList.add( "hide" );
+    return;
+  }
+  function show() {
+    self.obj.classList.remove( "hide" );
+    return;
+  }
+  function move() {
+    self.obj.style.top  = self.x + "px";
+    self.obj.style.left = self.y + "px";
+  }
+  function draw () {
+    let text       = maker.HTMLnode( id, type, self.inputs, self.outputs );
+    box.innerHTML += text;
+    self.obj       = document.getElementById( 'node' + self.id );
+  }
+  function init ( type, id, box ) {
     makeNode( self.type );
+    draw();
+    setSize();
+    //move();
+    dragElement( self.obj );
+    show();
+    return;
+  }
+  /*----------------------------------------*/
+  this.reInit   = function () {
+    self.obj = document.getElementById( 'node' + self.id );
+    dragElement( self.obj );
     return;
   }
   this.getLinks = function () {
@@ -108,17 +145,18 @@ function Node ( type, id ) {
     return;
   }
   /*----------------------------------------*/
-  this.init ( type, id );
+  init ( type, id, box );
   return;
 }
-function Scheme ( box ) {
+function Scheme ( id ) {
   var self   = this;
   var nodeID = 0;
   var linkID = 0;
+  var box    = null;
   /*----------------------------------------*/
+  this.id    = 0;
   this.nodes = [];
   this.links = [];
-  this.box   = null;
   /*----------------------------------------*/
   function delNode ( id ) {
     for ( var i=id+1; i<self.nodes.length; i++ ) {
@@ -128,13 +166,17 @@ function Scheme ( box ) {
     self.nodes.splice( id, 1 );
     nodeID--;
   }
-  /*----------------------------------------*/
-  this.init       = function ( box ) {
-    self.box = box;
+  function init ( id ) {
+    self.id = id;
+    box = document.getElementById( 'scheme' + id );
     return;
   }
+  /*----------------------------------------*/
   this.addNode    = function ( type ) {
-    self.nodes.push( new Node( type, nodeID++ ) );
+    self.nodes.push( new Node( type, nodeID++, box ) );
+    for ( var i=0; i<( self.nodes.length - 1 ); i++ ) {
+      self.nodes[i].reInit();
+    }
     return;
   }
   this.addLink    = function ( from, to ) {
@@ -164,6 +206,8 @@ function Scheme ( box ) {
     }
     return;
   }
+  /*----------------------------------------*/
+  init( id );
   /*----------------------------------------*/
   return;
 }

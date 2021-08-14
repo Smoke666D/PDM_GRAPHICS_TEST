@@ -10,11 +10,20 @@ function NodeLib () {
   this.records = [];
 
   this.init = function () {
+    this.records.push({
+      "id"      : 0,
+      "inputs"  : ["bool"],
+      "outputs" : ["bool"],
+      "width"   : 100,
+      "height"  : 50,
+    });
     return;
   }
   this.getNodeRecord = function ( id ) {
     return this.records[id];
   }
+
+  this.init();
   return;
 }
 

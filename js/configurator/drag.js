@@ -1,29 +1,23 @@
-//dragElement( document.getElementById( "node0" ) );
-/*----------------------------------------------------------------------------*/
-function addNode () {
-  
-  return;
-}
 /*----------------------------------------------------------------------------*/
 function dragElement( elmnt ) {
-  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  var pos1 = 0;
+  var pos2 = 0;
+  var pos3 = 0;
+  var pos4 = 0;
   if ( document.getElementById( elmnt.id ) ) {
     document.getElementById( elmnt.id ).onmousedown = dragMouseDown;
   } else {
     elmnt.onmousedown = dragMouseDown;
   }
-
   function dragMouseDown( e ) {
     e = e || window.event;
     e.preventDefault();
-    // get the mouse cursor position at startup:
-    pos3 = e.clientX;
+    pos3 = e.clientX;                        // get the mouse cursor position at startup:
     pos4 = e.clientY;
-    document.onmouseup = closeDragElement;
-    // call a function whenever the cursor moves:
-    document.onmousemove = elementDrag;
+    document.onmouseup   = closeDragElement;
+    document.onmousemove = elementDrag;      // call a function whenever the cursor moves:
+    return;
   }
-
   function elementDrag( e ) {
     e = e || window.event;
     e.preventDefault();
@@ -35,11 +29,16 @@ function dragElement( elmnt ) {
     // set the element's new position:
     elmnt.style.top  = ( elmnt.offsetTop  - pos2 ) + "px";
     elmnt.style.left = ( elmnt.offsetLeft - pos1 ) + "px";
+    return;
   }
-
   function closeDragElement() {
     // stop moving when mouse button is released:
     document.onmouseup   = null;
     document.onmousemove = null;
+    return;
   }
+  return;
 }
+/*----------------------------------------------------------------------------*/
+module.exports.dragElement = dragElement;
+/*----------------------------------------------------------------------------*/
