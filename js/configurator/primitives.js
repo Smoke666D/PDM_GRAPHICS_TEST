@@ -31,12 +31,13 @@ function Link ( from, to, id ) {
 function Pin ( id, type, data ) {
   var self = this;
   /*----------------------------------------*/
-  this.id         = 0;       /* ID number, unique in same node */
-  this.type       = "none";  /* Input or Output or None */
-  this.data       = "none";  /* Bool or Float or String */
-  this.linked     = false;   /* Is Pin connected to outher pin */
-  this.linkedWith = 0;       /* ID of the Link */
-  this.obj        = null;    /* Object in DOM */
+  this.id         = 0;          /* ID number, unique in same node */
+  this.type       = "none";     /* Input or Output or None */
+  this.data       = "none";     /* Bool or Float or String */
+  this.linked     = false;      /* Is Pin connected to outher pin */
+  this.linkedWith = 0;          /* ID of the Link */
+  this.state      = "reserved"; /**/
+  this.obj        = null;       /* Object in DOM */
   /*----------------------------------------*/
   function init ( id, type, data ) {
     self.id         = id;
@@ -52,18 +53,21 @@ function Pin ( id, type, data ) {
     self.linkedWith = id;
     self.obj.classList.add( "connected" );
     self.obj.classList.remove( "disconnected" );
+    this.state = "connected";
     return;
   }
   this.setDisconnected = function () {
     self.linked = false;
     self.obj.classList.add( "disconnected" );
     self.obj.classList.remove( "connected" );
+    this.state = "disconnected";
     return;
   }
   this.setReserved     = function () {
     self.obj.classList.remove( "disconnected" );
     self.obj.classList.remove( "connected" );
     self.obj.classList.add( "reserved" );
+    this.state = "reserved";
     return;
   }
   this.setAvailable    = function ( type, data ) {
@@ -73,8 +77,10 @@ function Pin ( id, type, data ) {
     self.obj.classList.remove( "reserved" );
     if ( ( self.type == type ) && ( self.data == data ) && ( self.linked == false ) ) {
       self.obj.classList.add( "available" );
+      this.state = "available";
     } else {
       self.obj.classList.add( "reserved" );
+      this.state = "reserved";
     }
     return;
   }
@@ -83,8 +89,10 @@ function Pin ( id, type, data ) {
     self.obj.classList.remove( "reserved" );
     if ( self.linked == false ) {
       self.obj.classList.add( "disconnected" );
+      this.state = "disconnected";
     } else {
       self.obj.classList.add( "connected" );
+      this.state = "connected";
     }
     return;
   }
@@ -284,6 +292,48 @@ function Node ( type, id, box, pinCallback ) {
     }
     return res;
   }
+  this.getPinState        = function ( n ) {
+    let find = false;
+    let res  = null;
+    for ( var i=0; i<self.inputs.length; i++ ) {
+      if ( self.inputs[i].id == n ) {
+        res  = self.inputs[i].state;
+        find = true;
+        break;
+      }
+    }
+    if ( find == false ) {
+      for ( var i=0; i<self.outputs.length; i++ ) {
+        if ( self.outputs[i].id == n ) {
+          res  = self.outputs[i].state;
+          find = true;
+          break;
+        }
+      }
+    }
+    return res;
+  }
+  this.getPinLink         = function ( n ) {
+    let find = false;
+    let res  = null;
+    for ( var i=0; i<self.inputs.length; i++ ) {
+      if ( ( self.inputs[i].id == n ) && ( self.inputs[i].linked == true ) ) {
+        res  = self.inputs[i].linkedWith;
+        find = true;
+        break;
+      }
+    }
+    if ( find == false ) {
+      for ( var i=0; i<self.outputs.length; i++ ) {
+        if ( ( self.outputs[i].id == n ) && ( self.outputs[i].linked == true ) ) {
+          res  = self.outputs[i].linkedWith;
+          find = true;
+          break;
+        }
+      }
+    }
+    return res;
+  }
   this.getLinks           = function () {
     let links = [];
     for ( var i=0; i<self.inputs.length; i++ ) {
@@ -306,12 +356,13 @@ function Node ( type, id, box, pinCallback ) {
   return;
 }
 function Scheme ( id ) {
-  var self    = this;
-  var nodeID  = 0;
-  var linkID  = 0;
-  var box     = null;
-  var state   = "idle";
-  var prevAdr = new NodeAdr();
+  var self     = this;
+  var nodeID   = 0;
+  var linkID   = 0;
+  var box      = null;
+  var state    = "idle";
+  var prevAdr  = new NodeAdr();
+  var prevLink = null;
   /*----------------------------------------*/
   this.id    = 0;
   this.nodes = [];
@@ -359,8 +410,10 @@ function Scheme ( id ) {
   function linkStart ( adr ) {
     let type = self.nodes[adr.node].getPinType( adr.pin );
     let data = self.nodes[adr.node].getPinData( adr.pin );
+    let link = self.nodes[adr.node].getPinLink( adr.pin );
     switch ( state ) {
       case "idle":
+        prevLink = link;
         setPinsAvailable( adr, type, data );
         prevAdr = adr;
         state = "connect";
@@ -370,11 +423,15 @@ function Scheme ( id ) {
           resetPinsAvailable();
           state = "idle";
         } else {
-          setPinsAvailable( adr, type, data );
-          prevAdr = adr;
-          state = "connect";
+          if ( self.nodes[adr.node].getPinState( adr.pin ) == "available" ) {
+            self.addLink( prevAdr, adr );
+            resetPinsAvailable();
+          } else {
+            setPinsAvailable( adr, type, data );
+            prevAdr = adr;
+            state = "connect";
+          }
         }
-
         break;
     }
     return;
@@ -389,6 +446,8 @@ function Scheme ( id ) {
   }
   this.addLink    = function ( from, to ) {
     self.links.push( new Link( from, to, linkID++ ) );
+    console.log( from );
+    console.log( to );
     return;
   }
   this.removeLink = function ( id ) {
