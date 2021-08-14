@@ -35,14 +35,14 @@ function addPin ( data ) {
   return text;
 }
 function makeHTMLnode ( id, type, inputs, outputs ) {
-  var text = "<div id='node" + id + "' class='node hide'><div class='port'>";
+  var text = "<div id='node" + id + "' class='node hide'><div class='port input'>";
   for ( var i=0; i<inputs.length; i++ ) {
     text += addPin( inputs[i] );
   }
   text += "</div>";
-  text += "<div class='body'>";
+  text += "<div id='body" + id + "' class='body'>";
   text += "<a>Node " + id + "</a>";
-  text += "</div><div class='port'>";
+  text += "</div><div class='port output'>";
   for ( i=0; i<outputs.length; i++ ) {
     text += addPin( outputs[i] );
   }

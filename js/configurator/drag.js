@@ -1,11 +1,11 @@
 /*----------------------------------------------------------------------------*/
-function dragElement( elmnt ) {
+function dragElement( elmnt, trig ) {
   var pos1 = 0;
   var pos2 = 0;
   var pos3 = 0;
   var pos4 = 0;
-  if ( document.getElementById( elmnt.id ) ) {
-    document.getElementById( elmnt.id ).onmousedown = dragMouseDown;
+  if ( document.getElementById( trig.id ) ) {
+    document.getElementById( trig.id ).onmousedown = dragMouseDown;
   } else {
     elmnt.onmousedown = dragMouseDown;
   }

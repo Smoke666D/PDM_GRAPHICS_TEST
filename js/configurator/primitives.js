@@ -3,10 +3,9 @@ var nodeLib     = require('./nodeLib.js').nodeLib;
 var maker       = require('./construct.js');
 var dragElement = require('./drag.js').dragElement;
 /*----------------------------------------------------------------------------*/
-function NodeAdr () {
-  var self  = this;
-  this.node = 0;
-  this.pin  = 0;
+function NodeAdr ( node = 0, pin = 0 ) {
+  this.node = node;
+  this.pin  = pin;
   return;
 }
 function Link ( from, to, id ) {
@@ -37,8 +36,9 @@ function Pin ( id, type, data ) {
   this.data       = "none";  /* Bool or Float or String */
   this.linked     = false;   /* Is Pin connected to outher pin */
   this.linkedWith = 0;       /* ID of the Link */
+  this.obj        = null;    /* Object in DOM */
   /*----------------------------------------*/
-  function init( id, type, data ) {
+  function init ( id, type, data ) {
     self.id         = id;
     self.type       = type;
     self.data       = data;
@@ -47,13 +47,21 @@ function Pin ( id, type, data ) {
     return;
   }
   /*----------------------------------------*/
-  this.setConnected = function ( id ) {
+  this.setConnected    = function ( id ) {
     self.linked     = true;
     self.linkedWith = id;
+    self.jbj.classList.add( connected );
+    self.obj.classList.remove( disconnected );
     return;
   }
   this.setDisconnected = function () {
     self.linked = false;
+    self.jbj.classList.add( disconnected );
+    self.obj.classList.remove( connected );
+    return;
+  }
+  this.setObj          = function ( obj ) {
+    self.obj = obj;
     return;
   }
   /*----------------------------------------*/
@@ -61,9 +69,10 @@ function Pin ( id, type, data ) {
   /*----------------------------------------*/
   return;
 }
-function Node ( type, id, box ) {
-  var self = this;
-  var box  = box;
+function Node ( type, id, box, pinCallback ) {
+  var self     = this;
+  var box      = box;
+  var callback = pinCallback;
   /*----------------------------------------*/
   this.id      = id;  /*  */
   this.type    = type;
@@ -76,8 +85,8 @@ function Node ( type, id, box ) {
   this.obj     = null;
   /*----------------------------------------*/
   function makeNode ( type ) {
-    let data  = nodeLib.getNodeRecord( type );
-    let pinID = 0;
+    let data     = nodeLib.getNodeRecord( type );
+    let pinID    = 0;
     self.width   = data.width;
     self.height  = data.height;
     self.inputs  = [];
@@ -112,20 +121,84 @@ function Node ( type, id, box ) {
     box.innerHTML += text;
     self.obj       = document.getElementById( 'node' + self.id );
   }
+  function dragInit () {
+    for ( var i=0; i<self.obj.children.length; i++ ) {
+      if ( self.obj.children[i].className == "body" ) {
+        dragElement( self.obj, self.obj.children[i] );
+      }
+    }
+    return
+  }
+  function pinsInit () {
+    let inPort  = null;
+    let outPort = null;
+    for ( var i=0; i<self.obj.children.length; i++ ) {
+      if ( self.obj.children[i].className.search( "input" ) > 0 ) {
+        inPort = self.obj.children[i];
+      }
+      if ( self.obj.children[i].className.search( "output" ) > 0 ) {
+        outPort = self.obj.children[i];
+      }
+    }
+    for ( var i=0; i<self.inputs.length; i++ ) {
+      self.inputs[i].setObj( inPort.children[i] );
+      inPort.children[i].addEventListener( 'click', ( function () {
+        var j = i;
+        return function () {
+          let adr = new NodeAdr( self.id, self.inputs[j].id );
+          callback( adr );
+        }
+      })());
+    }
+    for ( var i=0; i<self.outputs.length; i++ ) {
+      self.outputs[i].setObj( outPort.children[i] );
+      outPort.children[i].addEventListener( 'click', ( function () {
+        var j = i;
+        return function () {
+          let adr = new NodeAdr( self.id, self.outputs[j].id );
+          callback( adr );
+        }
+      })());
+    }
+    return;
+  }
   function init ( type, id, box ) {
     makeNode( self.type );
     draw();
     setSize();
     //move();
-    dragElement( self.obj );
+    dragInit();
+    pinsInit();
     show();
     return;
   }
   /*----------------------------------------*/
   this.reInit   = function () {
     self.obj = document.getElementById( 'node' + self.id );
-    dragElement( self.obj );
+    dragInit();
+    pinsInit();
     return;
+  }
+  this.findPin  = function ( n ) {
+    let find = false;
+    let res  = "none";
+    for ( var i=0; i<self.inputs.length; i++ ) {
+      if ( self.inputs[i].id == n ) {
+        res  = "input";
+        find = true;
+        break;
+      }
+    }
+    if ( find == false ) {
+      for ( var i=0; i<self.outputs.length; i++ ) {
+        if ( self.outputs[i].id == n ) {
+          res  = "output";
+          find = true;
+          break;
+        }
+      }
+    }
+    return res;
   }
   this.getLinks = function () {
     let links = [];
@@ -171,9 +244,21 @@ function Scheme ( id ) {
     box = document.getElementById( 'scheme' + id );
     return;
   }
+
+  function linkStart( adr ) {
+    let type = self.nodes[adr.node].findPin(adr.pin);
+    if ( type == "input" ) {
+
+    } else if ( type == "output" ) {
+
+    } else {
+
+    }
+    console.log( adr );
+  }
   /*----------------------------------------*/
   this.addNode    = function ( type ) {
-    self.nodes.push( new Node( type, nodeID++, box ) );
+    self.nodes.push( new Node( type, nodeID++, box, linkStart ) );
     for ( var i=0; i<( self.nodes.length - 1 ); i++ ) {
       self.nodes[i].reInit();
     }
