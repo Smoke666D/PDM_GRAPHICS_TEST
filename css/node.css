@@ -29,8 +29,11 @@
   .node .reserved {
     background-color: #bbb;
   }
-  .node .connected {
+  .node .available {
     background-color: #28a745;
+  }
+  .node .connected {
+    background-color: #20c997;
   }
   .node .disconnected {
     background-color: #0062cc;

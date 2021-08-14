@@ -50,14 +50,42 @@ function Pin ( id, type, data ) {
   this.setConnected    = function ( id ) {
     self.linked     = true;
     self.linkedWith = id;
-    self.jbj.classList.add( connected );
-    self.obj.classList.remove( disconnected );
+    self.obj.classList.add( "connected" );
+    self.obj.classList.remove( "disconnected" );
     return;
   }
   this.setDisconnected = function () {
     self.linked = false;
-    self.jbj.classList.add( disconnected );
-    self.obj.classList.remove( connected );
+    self.obj.classList.add( "disconnected" );
+    self.obj.classList.remove( "connected" );
+    return;
+  }
+  this.setReserved     = function () {
+    self.obj.classList.remove( "disconnected" );
+    self.obj.classList.remove( "connected" );
+    self.obj.classList.add( "reserved" );
+    return;
+  }
+  this.setAvailable    = function ( type, data ) {
+    self.obj.classList.remove( "disconnected" );
+    self.obj.classList.remove( "connected" );
+    self.obj.classList.remove( "available" );
+    self.obj.classList.remove( "reserved" );
+    if ( ( self.type == type ) && ( self.data == data ) && ( self.linked == false ) ) {
+      self.obj.classList.add( "available" );
+    } else {
+      self.obj.classList.add( "reserved" );
+    }
+    return;
+  }
+  this.resetAvailable  = function () {
+    self.obj.classList.remove( "available" );
+    self.obj.classList.remove( "reserved" );
+    if ( self.linked == false ) {
+      self.obj.classList.add( "disconnected" );
+    } else {
+      self.obj.classList.add( "connected" );
+    }
     return;
   }
   this.setObj          = function ( obj ) {
@@ -173,15 +201,50 @@ function Node ( type, id, box, pinCallback ) {
     return;
   }
   /*----------------------------------------*/
-  this.reInit   = function () {
+  this.reInit             = function () {
     self.obj = document.getElementById( 'node' + self.id );
     dragInit();
     pinsInit();
     return;
   }
-  this.findPin  = function ( n ) {
+  this.setPinsAvailable   = function ( type, data) {
+    for ( var i=0; i<self.inputs.length; i++ ) {
+      self.inputs[i].setAvailable( type, data );
+    }
+    for ( var i=0; i<self.outputs.length; i++ ) {
+      self.outputs[i].setAvailable( type, data );
+    }
+    return;
+  }
+  this.resetPinsAvailable = function () {
+    for ( var i=0; i<self.inputs.length; i++ ) {
+      self.inputs[i].resetAvailable();
+    }
+    for ( var i=0; i<self.outputs.length; i++ ) {
+      self.outputs[i].resetAvailable();
+    }
+    return;
+  }
+  this.setPinsInProgress  = function ( n ) {
+    for ( var i=0; i<self.inputs.length; i++ ) {
+      if ( self.inputs[i].id != n ) {
+        self.inputs[i].setReserved();
+      } else {
+        self.inputs[i].setDisconnected();
+      }
+    }
+    for ( var i=0; i<self.outputs.length; i++ ) {
+      if ( self.outputs[i].id != n ) {
+        self.outputs[i].setReserved();
+      } else {
+        self.outputs[i].setDisconnected();
+      }
+    }
+    return;
+  }
+  this.getPinType         = function ( n ) {
     let find = false;
-    let res  = "none";
+    let res  = null;
     for ( var i=0; i<self.inputs.length; i++ ) {
       if ( self.inputs[i].id == n ) {
         res  = "input";
@@ -200,7 +263,28 @@ function Node ( type, id, box, pinCallback ) {
     }
     return res;
   }
-  this.getLinks = function () {
+  this.getPinData         = function ( n ) {
+    let find = false;
+    let res  = null;
+    for ( var i=0; i<self.inputs.length; i++ ) {
+      if ( self.inputs[i].id == n ) {
+        res  = self.inputs[i].data;
+        find = true;
+        break;
+      }
+    }
+    if ( find == false ) {
+      for ( var i=0; i<self.outputs.length; i++ ) {
+        if ( self.outputs[i].id == n ) {
+          res  = self.outputs[i].data;
+          find = true;
+          break;
+        }
+      }
+    }
+    return res;
+  }
+  this.getLinks           = function () {
     let links = [];
     for ( var i=0; i<self.inputs.length; i++ ) {
       if ( self.inputs[i].linked == true ) {
@@ -214,7 +298,7 @@ function Node ( type, id, box, pinCallback ) {
     }
     return links;
   }
-  this.delete   = function () {
+  this.delete             = function () {
     return;
   }
   /*----------------------------------------*/
@@ -222,10 +306,12 @@ function Node ( type, id, box, pinCallback ) {
   return;
 }
 function Scheme ( id ) {
-  var self   = this;
-  var nodeID = 0;
-  var linkID = 0;
-  var box    = null;
+  var self    = this;
+  var nodeID  = 0;
+  var linkID  = 0;
+  var box     = null;
+  var state   = "idle";
+  var prevAdr = new NodeAdr();
   /*----------------------------------------*/
   this.id    = 0;
   this.nodes = [];
@@ -239,22 +325,59 @@ function Scheme ( id ) {
     self.nodes.splice( id, 1 );
     nodeID--;
   }
+  function setPinsAvailable ( adr, type, data ) {
+    if ( type == "input" ) {
+      for ( var i=0; i<self.nodes.length; i++ ) {
+        if ( i == adr.node ) {
+          self.nodes[i].setPinsInProgress( adr.pin );
+        } else {
+          self.nodes[i].setPinsAvailable( "output", data );
+        }
+      }
+    } else if ( type == "output" ) {
+      for ( var i=0; i<self.nodes.length; i++ ) {
+        if ( i == adr.node ) {
+          self.nodes[i].setPinsInProgress( adr.pin );
+        } else {
+          self.nodes[i].setPinsAvailable( "input", data );
+        }
+      }
+    } else {
+
+    }
+  }
+  function resetPinsAvailable () {
+    for ( var i=0; i<self.nodes.length; i++ ) {
+      self.nodes[i].resetPinsAvailable();
+    }
+  }
   function init ( id ) {
     self.id = id;
     box = document.getElementById( 'scheme' + id );
     return;
   }
+  function linkStart ( adr ) {
+    let type = self.nodes[adr.node].getPinType( adr.pin );
+    let data = self.nodes[adr.node].getPinData( adr.pin );
+    switch ( state ) {
+      case "idle":
+        setPinsAvailable( adr, type, data );
+        prevAdr = adr;
+        state = "connect";
+        break;
+      case "connect":
+        if ( ( adr.node == prevAdr.node ) && ( adr.pin == prevAdr.pin ) ) {
+          resetPinsAvailable();
+          state = "idle";
+        } else {
+          setPinsAvailable( adr, type, data );
+          prevAdr = adr;
+          state = "connect";
+        }
 
-  function linkStart( adr ) {
-    let type = self.nodes[adr.node].findPin(adr.pin);
-    if ( type == "input" ) {
-
-    } else if ( type == "output" ) {
-
-    } else {
-
+        break;
     }
-    console.log( adr );
+    return;
   }
   /*----------------------------------------*/
   this.addNode    = function ( type ) {
