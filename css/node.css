@@ -16,7 +16,8 @@
     width: 10px;
     display: flex;
     flex-direction: column;
-    justify-content: center;}
+    justify-content: center;
+  }
   .node .pin {
     height: 10px;
     width: 10px;
@@ -24,20 +25,15 @@
     margin-top: 3px;
     margin-bottom: 3px;
     border-radius: 0.1rem;
-    display: inline-block;
-  }
+    display: inline-block;}
   .node .reserved {
-    background-color: #bbb;
-  }
+    background-color: #bbb;}
   .node .available {
-    background-color: #28a745;
-  }
+    background-color: #28a745;}
   .node .connected {
-    background-color: #20c997;
-  }
+    background-color: #20c997;}
   .node .disconnected {
-    background-color: #0062cc;
-  }
+    background-color: #0062cc;}
   .node .body {
     display:flex;
     flex-direction: column;
@@ -53,4 +49,17 @@
   }
   .hide {
     left: -400px!important;
-  }
+}
+
+.link {
+  position: fixed;
+  z-index: 9;
+}
+.line {
+  position: absolute;
+  margin: 0px;
+  padding: 0px;
+  width: 1px;
+  height: 1px;
+  background-color: red;
+}

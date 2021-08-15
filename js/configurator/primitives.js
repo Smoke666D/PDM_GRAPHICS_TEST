@@ -8,24 +8,67 @@ function NodeAdr ( node = 0, pin = 0 ) {
   this.pin  = pin;
   return;
 }
-function Link ( from, to, id ) {
+function Link ( from, to, start, end, id, box ) {
   var self = this;
+  var box  = box;
   /*----------------------------------------*/
-  this.id   = id;
-  this.from = new NodeAdr();
-  this.to   = new NodeAdr();
+  this.id    = id;
+  this.from  = new NodeAdr();
+  this.to    = new NodeAdr();
+  this.start = start;
+  this.end   = end;
+  this.obj   = null;
   /*----------------------------------------*/
-  this.init = function ( from, to, id ) {
-    self.id   = id;
-    self.from = from;
-    self.to   = to;
+  function draw () {
+    self.obj              = document.createElement("DIV");
+    self.obj.id           = "link" + id;
+    self.obj.className    = "link";
+    self.obj.style.top    = Math.min( self.start.y, self.end.y )  + 'px';
+    self.obj.style.height = Math.abs( self.start.y - self.end.y ) + 'px';
+    self.obj.style.left   = Math.min( self.start.x, self.end.x ) + 'px'; // Ok
+    self.obj.style.width  = Math.abs( self.start.x - self.end.x ) + 'px';
+    box.appendChild( self.obj );
+
+    let line0          = document.createElement("DIV");
+    self.obj.appendChild( line0 );
+    line0.className    = "line";
+    line0.style.top    = '0px';
+    line0.style.left   = '0px';
+    line0.style.width  = parseInt( self.obj.style.width ) / 2 + "px";
+
+    let line1          = document.createElement("DIV");
+    self.obj.appendChild( line1 );
+    line1.className    = "line";
+    line1.style.top    = parseInt( self.obj.style.height ) - 1 + "px";
+    line1.style.left   = parseInt( self.obj.style.width ) / 2 + 'px'; // Ok
+    line1.style.width  = parseInt( self.obj.style.width ) / 2 + "px";
+
+    let line2          = document.createElement("DIV");
+    self.obj.appendChild( line2 );
+    line2.className    = "line";
+    line2.style.top    = "0px";
+    line2.style.left   = parseInt( self.obj.style.width ) / 2 + 'px'; // Ok
+    line2.style.height = self.obj.style.height;;
+
+
     return;
   }
+  function init ( from, to, start, end, id, box ) {
+    self.id    = id;
+    self.from  = from;
+    self.to    = to;
+    self.start = start;
+    self.end   = end;
+    box        = box;
+    draw();
+    return;
+  }
+  /*----------------------------------------*/
   this.delete = function () {
     return;
   }
   /*----------------------------------------*/
-  this.init( from, to, id )
+  init( from, to, start, end, id );
   return;
 }
 function Pin ( id, type, data ) {
@@ -33,7 +76,7 @@ function Pin ( id, type, data ) {
   /*----------------------------------------*/
   this.id         = 0;          /* ID number, unique in same node */
   this.type       = "none";     /* Input or Output or None */
-  this.data       = "none";     /* Bool or Float or String */
+  this.data       = "none";     /* Bool or self.start.xoat or String */
   this.linked     = false;      /* Is Pin connected to outher pin */
   this.linkedWith = 0;          /* ID of the Link */
   this.state      = "reserved"; /**/
@@ -250,6 +293,26 @@ function Node ( type, id, box, pinCallback ) {
     }
     return;
   }
+  this.setPinConnected    = function ( n, link ) {
+    let find = false;
+    for ( var i=0; i<self.inputs.length; i++ ) {
+      if ( self.inputs[i].id == n ) {
+        self.inputs[i].setConnected( link );
+        find = true;
+        break;
+      }
+    }
+    if ( find == false ) {
+      for ( var i=0; i<self.outputs.length; i++ ) {
+        if ( self.outputs[i].id == n ) {
+          self.outputs[i].setConnected( link );
+          find = true;
+          break;
+        }
+      }
+    }
+    return;
+  }
   this.getPinType         = function ( n ) {
     let find = false;
     let res  = null;
@@ -307,6 +370,32 @@ function Node ( type, id, box, pinCallback ) {
         if ( self.outputs[i].id == n ) {
           res  = self.outputs[i].state;
           find = true;
+          break;
+        }
+      }
+    }
+    return res;
+  }
+  this.getPinCoordinate   = function ( n ) {
+    let find = false;
+    let res  = { "x" : 0, "y" : 0 };
+    for ( var i=0; i<self.inputs.length; i++ ) {
+      if ( self.inputs[i].id == n ) {
+        let data = self.inputs[i].obj.getBoundingClientRect();
+        console.log( data );
+        res.x = data.left;
+        res.y = data.top + data.height / 2;
+        find  = true;
+        break;
+      }
+    }
+    if ( find == false ) {
+      for ( var i=0; i<self.outputs.length; i++ ) {
+        if ( self.outputs[i].id == n ) {
+          let data = self.outputs[i].obj.getBoundingClientRect();
+          res.x = data.right;
+          res.y = data.top + data.height / 2;
+          find  = true;
           break;
         }
       }
@@ -436,6 +525,13 @@ function Scheme ( id ) {
     }
     return;
   }
+  function setupLink ( from, to, id ) {
+    let start = self.nodes[from.node].getPinCoordinate( from.pin );
+    let end   = self.nodes[to.node].getPinCoordinate( to.pin );
+    self.links.push( new Link( from, to, start, end, id, box ) );
+    self.nodes[from.node].setPinConnected( from.pin, id );
+    self.nodes[to.node].setPinConnected( to.pin, id );
+  }
   /*----------------------------------------*/
   this.addNode    = function ( type ) {
     self.nodes.push( new Node( type, nodeID++, box, linkStart ) );
@@ -445,9 +541,12 @@ function Scheme ( id ) {
     return;
   }
   this.addLink    = function ( from, to ) {
-    self.links.push( new Link( from, to, linkID++ ) );
-    console.log( from );
-    console.log( to );
+    if ( prevLink == null ) {
+      let currentID = linkID++;
+      setupLink( from, to, currentID );
+    } else {
+      setupLink( from, to, prevLink );
+    }
     return;
   }
   this.removeLink = function ( id ) {
