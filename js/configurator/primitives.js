@@ -19,37 +19,74 @@ function Link ( from, to, start, end, id, box ) {
   this.end   = end;
   this.obj   = null;
   /*----------------------------------------*/
+  function redraw () {
+    if ( self.obj != null ) {
+      for ( var i=0; i<self.obj.children.length; i++ ) {
+        switch ( self.obj.children[i] ) {
+          case "line0":
+            break;
+          case "line1":
+            break;
+          case "line2":
+            break;
+        }
+      }
+    }
+    return;
+  }
   function draw () {
     self.obj              = document.createElement("DIV");
     self.obj.id           = "link" + id;
     self.obj.className    = "link";
-    self.obj.style.top    = Math.min( self.start.y, self.end.y )  + 'px';
     self.obj.style.height = Math.abs( self.start.y - self.end.y ) + 'px';
-    self.obj.style.left   = Math.min( self.start.x, self.end.x ) + 'px'; // Ok
+    self.obj.style.top    = Math.min( self.start.y, self.end.y )  + 'px';
+    self.obj.style.left   = Math.min( self.start.x, self.end.x )  + 'px';
     self.obj.style.width  = Math.abs( self.start.x - self.end.x ) + 'px';
     box.appendChild( self.obj );
 
-    let line0          = document.createElement("DIV");
+    let line0 = document.createElement("DIV");
+    line0.id  = "line0"
     self.obj.appendChild( line0 );
     line0.className    = "line";
-    line0.style.top    = '0px';
-    line0.style.left   = '0px';
+    if ( self.start.y < self.end.y ) {
+      line0.style.top = '0px';
+    } else {
+      line0.style.top = parseInt( self.obj.style.height ) - 1 + "px";
+    }
+    if ( self.start.x < self.end.x ) {
+      line0.style.left   = '0px';
+    } else {
+      line0.style.left   = parseInt( self.obj.style.width ) / 2  + 'px';
+    }
     line0.style.width  = parseInt( self.obj.style.width ) / 2 + "px";
 
-    let line1          = document.createElement("DIV");
+
+    let line1 = document.createElement("DIV");
+    line1.id  = "line1";
     self.obj.appendChild( line1 );
     line1.className    = "line";
-    line1.style.top    = parseInt( self.obj.style.height ) - 1 + "px";
-    line1.style.left   = parseInt( self.obj.style.width ) / 2 + 'px'; // Ok
-    line1.style.width  = parseInt( self.obj.style.width ) / 2 + "px";
+    if ( self.start.y < self.end.y ) {
+      line1.style.top    = parseInt( self.obj.style.height ) - 1 + "px";
+    } else {
+      line1.style.top = '0px';
+    }
+    if ( self.start.x < self.end.x ) {
+      line1.style.left   = parseInt( self.obj.style.width ) / 2  + 'px';
+    } else {
+      line1.style.left   = '0px';
+    }
+    line1.style.width  = parseInt( self.obj.style.width ) / 2  + "px";
 
-    let line2          = document.createElement("DIV");
+    /* Vertical */
+    let line2 = document.createElement("DIV");
+    line2.id  = "line2";
     self.obj.appendChild( line2 );
     line2.className    = "line";
     line2.style.top    = "0px";
-    line2.style.left   = parseInt( self.obj.style.width ) / 2 + 'px'; // Ok
+    line2.style.left   = parseInt( self.obj.style.width ) / 2 + 'px';
     line2.style.height = self.obj.style.height;;
 
+    redraw();
 
     return;
   }
@@ -382,7 +419,6 @@ function Node ( type, id, box, pinCallback ) {
     for ( var i=0; i<self.inputs.length; i++ ) {
       if ( self.inputs[i].id == n ) {
         let data = self.inputs[i].obj.getBoundingClientRect();
-        console.log( data );
         res.x = data.left;
         res.y = data.top + data.height / 2;
         find  = true;
