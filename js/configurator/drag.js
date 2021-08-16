@@ -29,12 +29,12 @@ function dragElement( elmnt, trig, callback ) {
     // set the element's new position:
     elmnt.style.top  = ( elmnt.offsetTop  - pos2 ) + "px";
     elmnt.style.left = ( elmnt.offsetLeft - pos1 ) + "px";
+    callback();
     return;
   }
   function closeDragElement() {
     document.onmouseup   = null;
     document.onmousemove = null;
-    callback();
     return;
   }
   return;
