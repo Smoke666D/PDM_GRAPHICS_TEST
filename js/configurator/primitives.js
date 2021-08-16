@@ -19,15 +19,69 @@ function Link ( from, to, start, end, id, box ) {
   this.end   = end;
   this.obj   = null;
   /*----------------------------------------*/
+  function createBox () {
+    self.obj              = document.createElement("DIV");
+    self.obj.id           = "link" + id;
+    self.obj.className    = "link";
+    /* From */
+    let line0       = document.createElement("DIV");
+    line0.id        = "line0"
+    line0.className = "line";
+    self.obj.appendChild( line0 );
+    /* To */
+    let line1       = document.createElement("DIV");
+    line1.id        = "line1";
+    line1.className = "line";
+    self.obj.appendChild( line1 );
+    /* Vertical */
+    let line2       = document.createElement("DIV");
+    line2.id        = "line2";
+    line2.className = "line";
+    self.obj.appendChild( line2 );
+    box.appendChild( self.obj );
+    return;
+  }
+  function recalcBox () {
+    self.obj.style.height = Math.abs( self.start.y - self.end.y ) + 'px';
+    self.obj.style.top    = Math.min( self.start.y, self.end.y )  + 'px';
+    self.obj.style.left   = Math.min( self.start.x, self.end.x )  + 'px';
+    self.obj.style.width  = Math.abs( self.start.x - self.end.x ) + 'px';
+    return;
+  }
   function redraw () {
     if ( self.obj != null ) {
       for ( var i=0; i<self.obj.children.length; i++ ) {
-        switch ( self.obj.children[i] ) {
+        switch ( self.obj.children[i].id ) {
           case "line0":
+            if ( self.start.y < self.end.y ) {
+              self.obj.children[i].style.top  = '0px';
+            } else {
+              self.obj.children[i].style.top  = parseInt( self.obj.style.height ) - 1 + "px";
+            }
+            if ( self.start.x < self.end.x ) {
+              self.obj.children[i].style.left = '0px';
+            } else {
+              self.obj.children[i].style.left = parseInt( self.obj.style.width ) / 2  + 'px';
+            }
+            self.obj.children[i].style.width  = parseInt( self.obj.style.width ) / 2 + "px";
             break;
           case "line1":
+            if ( self.start.y < self.end.y ) {
+              self.obj.children[i].style.top    = parseInt( self.obj.style.height ) - 1 + "px";
+            } else {
+              self.obj.children[i].style.top = '0px';
+            }
+            if ( self.start.x < self.end.x ) {
+              self.obj.children[i].style.left   = parseInt( self.obj.style.width ) / 2  + 'px';
+            } else {
+              self.obj.children[i].style.left   = '0px';
+            }
+            self.obj.children[i].style.width  = parseInt( self.obj.style.width ) / 2  + "px";
             break;
           case "line2":
+            self.obj.children[i].style.top    = "0px";
+            self.obj.children[i].style.left   = parseInt( self.obj.style.width ) / 2 + 'px';
+            self.obj.children[i].style.height = self.obj.style.height;;
             break;
         }
       }
@@ -35,59 +89,9 @@ function Link ( from, to, start, end, id, box ) {
     return;
   }
   function draw () {
-    self.obj              = document.createElement("DIV");
-    self.obj.id           = "link" + id;
-    self.obj.className    = "link";
-    self.obj.style.height = Math.abs( self.start.y - self.end.y ) + 'px';
-    self.obj.style.top    = Math.min( self.start.y, self.end.y )  + 'px';
-    self.obj.style.left   = Math.min( self.start.x, self.end.x )  + 'px';
-    self.obj.style.width  = Math.abs( self.start.x - self.end.x ) + 'px';
-    box.appendChild( self.obj );
-
-    let line0 = document.createElement("DIV");
-    line0.id  = "line0"
-    self.obj.appendChild( line0 );
-    line0.className    = "line";
-    if ( self.start.y < self.end.y ) {
-      line0.style.top = '0px';
-    } else {
-      line0.style.top = parseInt( self.obj.style.height ) - 1 + "px";
-    }
-    if ( self.start.x < self.end.x ) {
-      line0.style.left   = '0px';
-    } else {
-      line0.style.left   = parseInt( self.obj.style.width ) / 2  + 'px';
-    }
-    line0.style.width  = parseInt( self.obj.style.width ) / 2 + "px";
-
-
-    let line1 = document.createElement("DIV");
-    line1.id  = "line1";
-    self.obj.appendChild( line1 );
-    line1.className    = "line";
-    if ( self.start.y < self.end.y ) {
-      line1.style.top    = parseInt( self.obj.style.height ) - 1 + "px";
-    } else {
-      line1.style.top = '0px';
-    }
-    if ( self.start.x < self.end.x ) {
-      line1.style.left   = parseInt( self.obj.style.width ) / 2  + 'px';
-    } else {
-      line1.style.left   = '0px';
-    }
-    line1.style.width  = parseInt( self.obj.style.width ) / 2  + "px";
-
-    /* Vertical */
-    let line2 = document.createElement("DIV");
-    line2.id  = "line2";
-    self.obj.appendChild( line2 );
-    line2.className    = "line";
-    line2.style.top    = "0px";
-    line2.style.left   = parseInt( self.obj.style.width ) / 2 + 'px';
-    line2.style.height = self.obj.style.height;;
-
+    createBox();
+    recalcBox();
     redraw();
-
     return;
   }
   function init ( from, to, start, end, id, box ) {
@@ -101,6 +105,13 @@ function Link ( from, to, start, end, id, box ) {
     return;
   }
   /*----------------------------------------*/
+  this.move   = function ( start, end ) {
+    self.start = start;
+    self.end   = end;
+    recalcBox();
+    redraw();
+    return;
+  }
   this.delete = function () {
     return;
   }
@@ -185,10 +196,11 @@ function Pin ( id, type, data ) {
   /*----------------------------------------*/
   return;
 }
-function Node ( type, id, box, pinCallback ) {
-  var self     = this;
-  var box      = box;
-  var callback = pinCallback;
+function Node ( type, id, box, pinCallback, dropCallback ) {
+  var self         = this;
+  var box          = box;
+  var pinCallback  = pinCallback;
+  var dropCallback = dropCallback;
   /*----------------------------------------*/
   this.id      = id;  /*  */
   this.type    = type;
@@ -238,9 +250,13 @@ function Node ( type, id, box, pinCallback ) {
     self.obj       = document.getElementById( 'node' + self.id );
   }
   function dragInit () {
+    function callback () {
+      dropCallback( self.id );
+      return;
+    }
     for ( var i=0; i<self.obj.children.length; i++ ) {
       if ( self.obj.children[i].className == "body" ) {
-        dragElement( self.obj, self.obj.children[i] );
+        dragElement( self.obj, self.obj.children[i], callback );
       }
     }
     return
@@ -262,7 +278,7 @@ function Node ( type, id, box, pinCallback ) {
         var j = i;
         return function () {
           let adr = new NodeAdr( self.id, self.inputs[j].id );
-          callback( adr );
+          pinCallback( adr );
         }
       })());
     }
@@ -272,7 +288,7 @@ function Node ( type, id, box, pinCallback ) {
         var j = i;
         return function () {
           let adr = new NodeAdr( self.id, self.outputs[j].id );
-          callback( adr );
+          pinCallback( adr );
         }
       })());
     }
@@ -482,12 +498,12 @@ function Node ( type, id, box, pinCallback ) {
 }
 function Scheme ( id ) {
   var self     = this;
-  var nodeID   = 0;
-  var linkID   = 0;
-  var box      = null;
-  var state    = "idle";
-  var prevAdr  = new NodeAdr();
-  var prevLink = null;
+  var nodeID   = 0;             /* Counter for nodes          */
+  var linkID   = 0;             /* Counter for links          */
+  var box      = null;          /* Scheme element in DOM      */
+  var state    = "idle";        /* State of scheme            */
+  var prevAdr  = new NodeAdr(); /* Previus pin for connecting */
+  var prevLink = null;          /* Link number for changing   */
   /*----------------------------------------*/
   this.id    = 0;
   this.nodes = [];
@@ -532,6 +548,9 @@ function Scheme ( id ) {
     box = document.getElementById( 'scheme' + id );
     return;
   }
+  function getPinCoordinate ( adr ) {
+    return self.nodes[adr.node].getPinCoordinate( adr.pin );
+  }
   function linkStart ( adr ) {
     let type = self.nodes[adr.node].getPinType( adr.pin );
     let data = self.nodes[adr.node].getPinData( adr.pin );
@@ -562,15 +581,26 @@ function Scheme ( id ) {
     return;
   }
   function setupLink ( from, to, id ) {
-    let start = self.nodes[from.node].getPinCoordinate( from.pin );
-    let end   = self.nodes[to.node].getPinCoordinate( to.pin );
+    let start = getPinCoordinate( from );
+    let end   = getPinCoordinate( to   );
     self.links.push( new Link( from, to, start, end, id, box ) );
     self.nodes[from.node].setPinConnected( from.pin, id );
     self.nodes[to.node].setPinConnected( to.pin, id );
   }
+  function afterDrop ( adr ) {
+    var cons = self.nodes[adr].getLinks();
+    console.log( cons );
+    console.log( self.links );
+    for ( var i=0; i<cons.length; i++ ) {
+      let start = getPinCoordinate( self.links[cons[i]].from );
+      let end   = getPinCoordinate( self.links[cons[i]].to   );
+      self.links[cons[i]].move( start, end );
+    }
+    return;
+  }
   /*----------------------------------------*/
   this.addNode    = function ( type ) {
-    self.nodes.push( new Node( type, nodeID++, box, linkStart ) );
+    self.nodes.push( new Node( type, nodeID++, box, linkStart, afterDrop ) );
     for ( var i=0; i<( self.nodes.length - 1 ); i++ ) {
       self.nodes[i].reInit();
     }

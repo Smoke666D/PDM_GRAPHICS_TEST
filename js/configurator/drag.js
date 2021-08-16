@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-function dragElement( elmnt, trig ) {
+function dragElement( elmnt, trig, callback ) {
   var pos1 = 0;
   var pos2 = 0;
   var pos3 = 0;
@@ -32,9 +32,9 @@ function dragElement( elmnt, trig ) {
     return;
   }
   function closeDragElement() {
-    // stop moving when mouse button is released:
     document.onmouseup   = null;
     document.onmousemove = null;
+    callback();
     return;
   }
   return;
