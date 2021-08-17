@@ -70,14 +70,6 @@ function Link ( from, to, start, end, type, id ) {
     self.obj.style.width  = Math.abs( self.start.x - self.end.x ) + 'px';
     return;
   }
-  function draw () {
-    if ( self.obj == null ) {
-      self.obj = new LeaderLine( self.start, self.end, lineTypes[self.type] )
-    } else {
-      self.obj.position();
-    }
-    return;
-  }
   function init ( from, to, start, end, type, id ) {
     self.id    = id;
     self.from  = from;
@@ -85,12 +77,16 @@ function Link ( from, to, start, end, type, id ) {
     self.start = start;
     self.end   = end;
     self.type  = type;
-    draw();
+    self.draw();
     return;
   }
   /*----------------------------------------*/
-  this.move   = function () {
-    draw();
+  this.draw   = function () {
+    if ( self.obj == null ) {
+      self.obj = new LeaderLine( self.start, self.end, lineTypes[self.type] )
+    } else {
+      self.obj.position();
+    }
     return;
   }
   this.delete = function () {
@@ -279,7 +275,7 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
     makeNode( self.type );
     draw();
     setSize();
-    //move();
+    move();
     dragInit();
     pinsInit();
     show();
@@ -588,7 +584,7 @@ function Scheme ( id ) {
   function afterDrop ( adr ) {
     var cons = self.nodes[adr].getLinks();
     for ( var i=0; i<cons.length; i++ ) {
-      self.links[cons[i]].move();
+      self.links[cons[i]].draw();
     }
     return;
   }
