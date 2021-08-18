@@ -188,6 +188,7 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
   this.width   = 0;
   this.height  = 0;
   this.obj     = null;
+  this.shift   = 0;
   /*----------------------------------------*/
   function makeNode ( type ) {
     let data     = nodeLib.getNodeRecord( type );
@@ -218,7 +219,8 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
     return;
   }
   function move() {
-    self.obj.style.top  = ( self.obj.parentElement.offsetTop - self.obj.offsetTop ) + self.x + "px";
+    self.shift          = self.obj.parentElement.offsetTop - self.obj.offsetTop;
+    self.obj.style.top  = self.shift + self.x + "px";
     self.obj.style.left = self.y + "px";
   }
   function draw () {
@@ -233,7 +235,7 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
     }
     for ( var i=0; i<self.obj.children.length; i++ ) {
       if ( self.obj.children[i].className == "body" ) {
-        dragElement( self.obj, self.obj.children[i], callback );
+        dragElement( self.obj, self.obj.children[i], self.shift, callback );
       }
     }
     return

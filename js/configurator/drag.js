@@ -1,15 +1,14 @@
 /*----------------------------------------------------------------------------*/
-function dragElement ( elmnt, trig, callback ) {
+function dragElement ( elmnt, trig, shift, callback ) {
   var dX = 0;
   var dY = 0;
   var cX = 0;
   var cY = 0;
   var parent = elmnt.parentElement.parentElement.getBoundingClientRect();
-
   var leftBorder   = 0;
   var rightBorder  = parent.width - parseInt( elmnt.style.width );
-  var topBorder    = elmnt.parentElement.offsetTop - elmnt.offsetTop;
-  var bottomBorder = parent.height - parseInt( elmnt.style.height );
+  var topBorder    = shift;
+  var bottomBorder = parent.height - parseInt( elmnt.style.height ) + shift;
   if ( document.getElementById( trig.id ) ) {
     document.getElementById( trig.id ).onmousedown = dragMouseDown;
   } else {
