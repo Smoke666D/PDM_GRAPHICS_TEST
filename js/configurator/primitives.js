@@ -218,7 +218,7 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
     return;
   }
   function move() {
-    self.obj.style.top  = self.x + "px";
+    self.obj.style.top  = ( self.obj.parentElement.offsetTop - self.obj.offsetTop ) + self.x + "px";
     self.obj.style.left = self.y + "px";
   }
   function draw () {

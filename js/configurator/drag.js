@@ -5,8 +5,11 @@ function dragElement ( elmnt, trig, callback ) {
   var cX = 0;
   var cY = 0;
   var parent = elmnt.parentElement.parentElement.getBoundingClientRect();
-  var right  = parent.width - parseInt( elmnt.style.width );
-  var bottom = parent.height - parseInt( elmnt.style.height );
+
+  var leftBorder   = 0;
+  var rightBorder  = parent.width - parseInt( elmnt.style.width );
+  var topBorder    = elmnt.parentElement.offsetTop - elmnt.offsetTop;
+  var bottomBorder = parent.height - parseInt( elmnt.style.height );
   if ( document.getElementById( trig.id ) ) {
     document.getElementById( trig.id ).onmousedown = dragMouseDown;
   } else {
@@ -35,14 +38,15 @@ function dragElement ( elmnt, trig, callback ) {
     if ( newX < 0 ) {
       newX = 0;
     }
-    if ( newX > right ) {
-      newX = right;
+    if ( newX > rightBorder ) {
+      newX = rightBorder;
     }
-    if ( newY < 0 ) {
-      newY = 0;
+    if ( newY < topBorder ) {
+      console.log( topBorder );
+      newY = topBorder;
     }
-    if ( newY > bottom ) {
-      newY = bottom;
+    if ( newY > bottomBorder ) {
+      newY = bottomBorder;
     }
     elmnt.style.top  = newY + "px"
     elmnt.style.left = newX + "px";

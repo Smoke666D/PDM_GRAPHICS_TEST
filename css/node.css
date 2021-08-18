@@ -1,6 +1,10 @@
 .scheme {
-  background-color: green;
-  height: 300px;
+  border: 1px solid;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+  color: #e9ecef;
+
+  height: 1300px;
 }
 .node {
   position: relative;
@@ -8,6 +12,7 @@
   flex-direction: row;
   justify-content:space-between;
   z-index: 9;
+  color: #4d5055;
   border: 1px solid #d3d3d3;
   text-align: center;
   background-color: #fff;
