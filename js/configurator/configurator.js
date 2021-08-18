@@ -24,6 +24,7 @@ function Configurator ( size ) {
     }
     tabBox.innerHTML    = bufferTab;
     schemeBox.innerHTML = bufferSch;
+    zoomInit( schemeBox );
     for ( var i=0; i<size; i++ ) {
       self.schemes.push( new Scheme( i ) );
     }
@@ -40,7 +41,6 @@ function Configurator ( size ) {
     /*-------------------------------------------------*/
     return;
   }
-
   this.addNode = function () {
     self.schemes[activeSch].addNode( 0 );
     return;
