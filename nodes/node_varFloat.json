@@ -1,21 +1,19 @@
 {
-  "name"    : "node_varBool",
+  "name"   : "node_varFloat",
   "table"   : 0,
-  "help"    : "Булевая переменная"
-  "inputs"  : [
+  "help"   : "Числовая переменная с плавающей запятой"
+  "inputs" : [
     {
-      "type"      : "bool",
+      "type"      : "float",
       "help"      : "Запись переменной",
       "expansion" : false
     }
   ],
   "outputs" : [
     {
-      "type"      : "bool",
+      "type"      : "float",
       "help"      : "Чтение переменной",
       "expansion" : false
     }
-  ],
-  "width"   : 10,
-  "height"  : 40,
+  ]
 }

@@ -500,7 +500,6 @@ function Scheme ( id ) {
   var self     = this;
   var nodeID   = 0;             /* Counter for nodes          */
   var linkID   = 0;             /* Counter for links          */
-  var box      = null;          /* Scheme element in DOM      */
   var state    = "idle";        /* State of scheme            */
   var prevAdr  = new NodeAdr(); /* Previus pin for connecting */
   var prevLink = null;          /* Link number for changing   */
@@ -508,6 +507,7 @@ function Scheme ( id ) {
   this.id    = 0;
   this.nodes = [];
   this.links = [];
+  this.box   = null;          /* Scheme element in DOM      */
   /*----------------------------------------*/
   function delNode ( id ) {
     for ( var i=id+1; i<self.nodes.length; i++ ) {
@@ -544,8 +544,8 @@ function Scheme ( id ) {
     }
   }
   function init ( id ) {
-    self.id = id;
-    box = document.getElementById( 'scheme' + id );
+    self.id  = id;
+    self.box = document.getElementById( 'scheme' + id );
     return;
   }
   function getPinObject ( adr ) {
@@ -591,8 +591,14 @@ function Scheme ( id ) {
     return;
   }
   /*----------------------------------------*/
+  this.redraw     = function () {
+    for ( var i=0; i<self.links.length; i++ ) {
+      self.links[i].draw();
+    }
+    return;
+  }
   this.addNode    = function ( type ) {
-    self.nodes.push( new Node( type, nodeID++, box, linkStart, afterDrop ) );
+    self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrop ) );
     for ( var i=0; i<( self.nodes.length - 1 ); i++ ) {
       self.nodes[i].reInit();
     }

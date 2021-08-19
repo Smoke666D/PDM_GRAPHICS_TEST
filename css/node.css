@@ -3,7 +3,7 @@
   border-top-left-radius: 0.25rem;
   border-top-right-radius: 0.25rem;
   color: #e9ecef;
-
+  width: 100%;
   height: 300px;
 }
 .node {

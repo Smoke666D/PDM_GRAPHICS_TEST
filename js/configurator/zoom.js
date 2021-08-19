@@ -16,35 +16,38 @@ function setZoom ( zoom, el ) {
 /*----------------------------------------------------------------------------*/
 var   zoomElement = null;
 var   zoomCurrent = 1;
+var   callback    = null;
 const zoomStep    = 0.1;
 /*----------------------------------------------------------------------------*/
-function zoomInit ( el ) {
+function zoomProcessing () {
+  if ( zoomElement != null ) {
+    setZoom( zoomCurrent, zoomElement );
+    callback();
+  }
+}
+
+function zoomInit ( el, cb ) {
   zoomCurrent = 1;
   zoomElement = el;
-  setZoom( zoomCurrent, zoomElement );
+  callback    = cb;
+  zoomProcessing();
   return;
 }
 
 function zoomIn () {
   zoomCurrent += zoomStep;
-  if ( zoomElement != null ) {
-    setZoom( zoomCurrent, zoomElement );
-  }
+  zoomProcessing();
   return;
 }
 
 function zoomOut () {
   zoomCurrent -= zoomStep;
-  if ( zoomElement != null ) {
-    setZoom( zoomCurrent, zoomElement );
-  }
+  zoomProcessing();
   return;
 }
 
 function zoomReset () {
   zoomCurrent = 1;
-  if ( zoomElement != null ) {
-    setZoom( zoomCurrent, zoomElement );
-  }
+  zoomProcessing();
   return;
 }

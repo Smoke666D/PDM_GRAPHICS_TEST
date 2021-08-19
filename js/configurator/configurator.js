@@ -4,15 +4,21 @@ var maker  = require('./construct.js');
 /*----------------------------------------------------------------------------*/
 function Configurator ( size ) {
   var self = this;
-  var addButton = document.getElementById( 'addNode-button' );
+  var addButton = document.getElementById( 'addNode-button'      );
   var tabBox    = document.getElementById( 'configuratorTabs'    );
   var schemeBox = document.getElementById( 'configuratorSchemes' );
   var activeSch = 0;
 
-  this.schemes   = [];
+  this.schemes  = [];
 
   function setActiveScheme ( n ) {
     activeSch = n;
+    return;
+  }
+  function redraw () {
+    for ( var i=0; i<self.schemes.length; i++ ) {
+      self.schemes[i].redraw();
+    }
     return;
   }
   function init( size ) {
@@ -24,10 +30,11 @@ function Configurator ( size ) {
     }
     tabBox.innerHTML    = bufferTab;
     schemeBox.innerHTML = bufferSch;
-    zoomInit( schemeBox );
     for ( var i=0; i<size; i++ ) {
       self.schemes.push( new Scheme( i ) );
     }
+
+    zoomInit( schemeBox, redraw );
     /*-------------------------------------------------*/
     addButton.addEventListener( 'click', function () {
       self.addNode();

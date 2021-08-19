@@ -4,7 +4,7 @@ function dragElement ( elmnt, trig, shift, callback ) {
   var dY = 0;
   var cX = 0;
   var cY = 0;
-  var parent = elmnt.parentElement.parentElement.getBoundingClientRect();
+  var parent = elmnt.parentElement.parentElement.parentElement.getBoundingClientRect();
   var leftBorder   = 0;
   var rightBorder  = parent.width - parseInt( elmnt.style.width );
   var topBorder    = shift;

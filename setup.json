@@ -1,20 +1,33 @@
-{
-  "circuitsNumber" : 5,
-  "nodNumber"      : 20,
+  {
+  "nodNumber"      : 100,
   "availableNods" : {
+    "node_varBool" : true,
+
+
+
     "variable" : {
       "bool"   : true,
       "float"  : true,
+      "byte"   : true,
+      "short"  : true,
       "string" : true,
       "time"   : true,
       "date"   : true
     },
     "logic" : {
-      "not" : true,
-      "and" : true,
-      "or"  : true,
-      "hor" : true,
-      "if"  : true
+      "not"         : true,
+      "and"         : true,
+      "or"          : true,
+      "hor"         : true,
+      "if"          : true,
+      "stream"      : true,
+      "more"        : true,
+      "moreOrEqual" : true,
+      "equal"       : true
+    },
+    "timers" : {
+      "delay"   : true,
+      "trigger" : true,
     },
     "math" : {
       "add"    : true,
@@ -34,7 +47,7 @@
       "proc"   : true
     },
     "loops" : {
-      "for"   : true,
+      "for"   : false,
       "while" : false
     },
     "inputs" : {
@@ -43,9 +56,9 @@
       "rtc"     : true,
       "can"     : true,
       "mb"      : false,
-      "mem"     : true,
-      "alarm"   : true,
-      "warning" : true
+      "mem"     : false,
+      "alarm"   : false,
+      "warning" : false
     },
     "outputs" : {
       "dout"    : true,
@@ -53,8 +66,8 @@
       "log"     : true,
       "can"     : true,
       "mb"      : false,
-      "alarm"   : true,
-      "warning" : true,
+      "alarm"   : false,
+      "warning" : false,
       "display" : true
     }
   }
