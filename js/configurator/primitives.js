@@ -7,19 +7,16 @@ const lineTypes = {
   "bool"   : {
     color      : '#33f233',
     animation  : true,
-    //dropShadow : true,
     size       : 3
   },
   "float"  : {
     color      : '#b824bd',
     animation  : true,
-    //dropShadow : true,
     size       : 3
   },
   "string" : {
     color      : '#f2e933',
     animation  : true,
-    //dropShadow : true,
     size       : 3
   }
 }
@@ -41,35 +38,6 @@ function Link ( from, to, start, end, type, id ) {
   this.type  = type;
   this.obj   = null;
   /*----------------------------------------*/
-  function createBox () {
-    self.obj              = document.createElement("DIV");
-    self.obj.id           = "link" + id;
-    self.obj.className    = "link";
-    /* From */
-    let line0       = document.createElement("DIV");
-    line0.id        = "line0"
-    line0.className = "line";
-    self.obj.appendChild( line0 );
-    /* To */
-    let line1       = document.createElement("DIV");
-    line1.id        = "line1";
-    line1.className = "line";
-    self.obj.appendChild( line1 );
-    /* Vertical */
-    let line2       = document.createElement("DIV");
-    line2.id        = "line2";
-    line2.className = "line";
-    self.obj.appendChild( line2 );
-    box.appendChild( self.obj );
-    return;
-  }
-  function recalcBox () {
-    self.obj.style.height = Math.abs( self.start.y - self.end.y ) + 'px';
-    self.obj.style.top    = Math.min( self.start.y, self.end.y )  + 'px';
-    self.obj.style.left   = Math.min( self.start.x, self.end.x )  + 'px';
-    self.obj.style.width  = Math.abs( self.start.x - self.end.x ) + 'px';
-    return;
-  }
   function init ( from, to, start, end, type, id ) {
     self.id    = id;
     self.from  = from;
@@ -81,7 +49,7 @@ function Link ( from, to, start, end, type, id ) {
     return;
   }
   /*----------------------------------------*/
-  this.draw   = function () {
+  this.draw    = function () {
     if ( self.obj == null ) {
       self.obj = new LeaderLine( self.start, self.end, lineTypes[self.type] )
     } else {
@@ -89,7 +57,20 @@ function Link ( from, to, start, end, type, id ) {
     }
     return;
   }
-  this.delete = function () {
+  this.setFrom = function ( from, start ) {
+    if ( self.obj != null ) {
+      self.from  = from;
+      self.start = start;
+      self.obj.setOptions( {"start" : self.start } );
+      //self.obj.start = self.start;
+      //self.obj.position();
+    }
+    return;
+  }
+  this.delete  = function () {
+    if ( self.obj != null ) {
+      self.obj.remove();
+    }
     return;
   }
   /*----------------------------------------*/
@@ -103,7 +84,7 @@ function Pin ( id, type, data ) {
   this.type       = "none";     /* Input or Output or None */
   this.data       = "none";     /* Bool or self.start.xoat or String */
   this.linked     = false;      /* Is Pin connected to outher pin */
-  this.linkedWith = 0;          /* ID of the Link */
+  this.linkedWith = [];         /* ID of the Link */
   this.state      = "reserved"; /**/
   this.obj        = null;       /* Object in DOM */
   /*----------------------------------------*/
@@ -112,20 +93,21 @@ function Pin ( id, type, data ) {
     self.type       = type;
     self.data       = data;
     self.linked     = false;
-    self.linkedWith = 0;
+    self.linkedWith = [];
     return;
   }
   /*----------------------------------------*/
   this.setConnected    = function ( id ) {
     self.linked     = true;
-    self.linkedWith = id;
+    self.linkedWith.push( id );
     self.obj.classList.add( "connected" );
     self.obj.classList.remove( "disconnected" );
     this.state = "connected";
     return;
   }
   this.setDisconnected = function () {
-    self.linked = false;
+    self.linked     = false;
+    self.linkedWith = [];
     self.obj.classList.add( "disconnected" );
     self.obj.classList.remove( "connected" );
     this.state = "disconnected";
@@ -179,16 +161,16 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
   var pinCallback  = pinCallback;
   var dropCallback = dropCallback;
   /*----------------------------------------*/
-  this.id      = id;  /*  */
-  this.type    = type;
-  this.inputs  = [];
-  this.outputs = [];
-  this.x       = 0;
-  this.y       = 0;
-  this.width   = 0;
-  this.height  = 0;
-  this.obj     = null;
-  this.shift   = 0;
+  this.id      = id;   /*  */
+  this.type    = type; /*  */
+  this.inputs  = [];   /*  */
+  this.outputs = [];   /*  */
+  this.x       = 0;    /*  */
+  this.y       = 0;    /*  */
+  this.width   = 0;    /*  */
+  this.height  = 0;    /*  */
+  this.obj     = null; /*  */
+  this.shift   = 0;    /*  */
   /*----------------------------------------*/
   function makeNode ( type ) {
     let data     = nodeLib.getNodeRecord( type );
@@ -224,9 +206,51 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
     self.obj.style.left = self.y + "px";
   }
   function draw () {
-    let text       = maker.HTMLnode( id, type, self.inputs, self.outputs );
-    box.innerHTML += text;
-    self.obj       = document.getElementById( 'node' + self.id );
+    let pinCounter = 0;
+    /*--------------- NODE ---------------*/
+    self.obj            = document.createElement("DIV");
+    self.obj.id         = 'node' + self.id;
+    self.obj.className  = 'node';
+    /*------------ INPUT PORT ------------*/
+    let inputPort       = document.createElement("DIV");
+    inputPort.className = 'port input';
+    for ( var i=0; i<self.inputs.length; i++ ) {
+      let pin       = document.createElement("DIV");
+      pin.id        = 'pin' + pinCounter++;
+      pin.className = 'pin';
+      if ( self.inputs[i].type == "none" ) {
+        pin.className += " reseved";
+      } else {
+        pin.className += " disconnected";
+      }
+      inputPort.appendChild( pin );
+    }
+    /*--------------- BODY ---------------*/
+    let body           = document.createElement("DIV");
+    body.className     = 'body';
+    let bodyText       = document.createElement("A");
+    bodyText.innerHTML = 'Node' + self.id;
+    body.appendChild( bodyText );
+    /*----------- OUTPUT PORT ------------*/
+    let outputPort       = document.createElement("DIV");
+    outputPort.className = 'port output';
+    for ( var i=0; i<self.outputs.length; i++ ) {
+      let pin       = document.createElement("DIV");
+      pin.id        = 'pin' + pinCounter++;
+      pin.className = 'pin';
+      if ( self.outputs[i].type == "none" ) {
+        pin.className += " reseved";
+      } else {
+        pin.className += " disconnected";
+      }
+      outputPort.appendChild( pin );
+    }
+    /*------------- SUMMERY --------------*/
+    self.obj.appendChild( inputPort );
+    self.obj.appendChild( body );
+    self.obj.appendChild( outputPort );
+    box.appendChild( self.obj );
+    return;
   }
   function dragInit () {
     function callback () {
@@ -284,12 +308,6 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
     return;
   }
   /*----------------------------------------*/
-  this.reInit             = function () {
-    self.obj = document.getElementById( 'node' + self.id );
-    dragInit();
-    pinsInit();
-    return;
-  }
   this.setPinsAvailable   = function ( type, data) {
     for ( var i=0; i<self.inputs.length; i++ ) {
       self.inputs[i].setAvailable( type, data );
@@ -479,12 +497,14 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
     let links = [];
     for ( var i=0; i<self.inputs.length; i++ ) {
       if ( self.inputs[i].linked == true ) {
-        links.push( self.inputs[i].linkedWith );
+        for ( var j=0; j<self.inputs[i].linkedWith.length; j++ ) {
+          links.push( self.inputs[i].linkedWith[j] );
+        }
       }
     }
     for ( var i=0; i<self.outputs.length; i++ ) {
       if ( self.outputs[i].linked == true ) {
-        links.push( self.outputs[i].linkedWith );
+        links.push( self.outputs[i].linkedWith[0] );
       }
     }
     return links;
@@ -504,11 +524,16 @@ function Scheme ( id ) {
   var prevAdr  = new NodeAdr(); /* Previus pin for connecting */
   var prevLink = null;          /* Link number for changing   */
   /*----------------------------------------*/
-  this.id    = 0;
-  this.nodes = [];
-  this.links = [];
-  this.box   = null;          /* Scheme element in DOM      */
+  this.id    = 0;    /* ID number of scheme   */
+  this.nodes = [];   /* Nodes of scheme       */
+  this.links = [];   /* Links of scheme       */
+  this.box   = null; /* Scheme element in DOM */
   /*----------------------------------------*/
+  function init ( id ) {
+    self.id  = id;
+    self.box = document.getElementById( 'scheme' );
+    return;
+  }
   function delNode ( id ) {
     for ( var i=id+1; i<self.nodes.length; i++ ) {
       self.nodes[i].id--;
@@ -543,11 +568,6 @@ function Scheme ( id ) {
       self.nodes[i].resetPinsAvailable();
     }
   }
-  function init ( id ) {
-    self.id  = id;
-    self.box = document.getElementById( 'scheme' + id );
-    return;
-  }
   function getPinObject ( adr ) {
     return self.nodes[adr.node].getPinObject( adr.pin );
   }
@@ -560,23 +580,33 @@ function Scheme ( id ) {
     let link = self.nodes[adr.node].getPinLink( adr.pin );
     switch ( state ) {
       case "idle":
-        prevLink = link;
-        setPinsAvailable( adr, type, data );
-        prevAdr = adr;
-        state = "connect";
+        console.log();
+        if ( type == "output" ) {             /* If output - use previus link */
+          prevLink = null;
+        } else {
+          prevLink = link;
+        }
+        setPinsAvailable( adr, type, data );  /* Show available for connection pins */
+        prevAdr = adr;                        /* Save address of first pin          */
+        state   = "connect";                  /* Set new state                      */
         break;
       case "connect":
-        if ( ( adr.node == prevAdr.node ) && ( adr.pin == prevAdr.pin ) ) {
-          resetPinsAvailable();
+        if ( ( adr.node == prevAdr.node ) && ( adr.pin == prevAdr.pin ) ) { /* Click to same pin */
+          resetPinsAvailable();                                             /* Reset connection operation */
           state = "idle";
         } else {
           if ( self.nodes[adr.node].getPinState( adr.pin ) == "available" ) {
-            self.addLink( prevAdr, adr );
+            if ( type == "input" ) {
+              self.addLink( prevAdr, adr );
+            } else {
+              self.addLink( adr, prevAdr );
+            }
             resetPinsAvailable();
+            state = "idle";
           } else {
             setPinsAvailable( adr, type, data );
             prevAdr = adr;
-            state = "connect";
+            state   = "connect";
           }
         }
         break;
@@ -584,9 +614,8 @@ function Scheme ( id ) {
     return;
   }
   function afterDrop ( adr ) {
-    var cons = self.nodes[adr].getLinks();
-    for ( var i=0; i<cons.length; i++ ) {
-      self.links[cons[i]].draw();
+    for ( var i=0; i<self.links.length; i++ ) {
+      self.links[i].draw();
     }
     return;
   }
@@ -599,9 +628,6 @@ function Scheme ( id ) {
   }
   this.addNode    = function ( type ) {
     self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrop ) );
-    for ( var i=0; i<( self.nodes.length - 1 ); i++ ) {
-      self.nodes[i].reInit();
-    }
     return;
   }
   this.addLink    = function ( from, to ) {
@@ -612,7 +638,8 @@ function Scheme ( id ) {
       currentID = linkID++;
       self.links.push( new Link( from, to, start, end, getPinData( from ), id ) );
     } else {
-      currentID = prevLink;
+      currentID = prevLink[0];
+      self.links[currentID].setFrom( from, start );
     }
     self.nodes[from.node].setPinConnected( from.pin, id );
     self.nodes[to.node].setPinConnected( to.pin, id );

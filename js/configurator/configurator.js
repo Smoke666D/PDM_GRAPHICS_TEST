@@ -5,51 +5,26 @@ var maker  = require('./construct.js');
 function Configurator ( size ) {
   var self = this;
   var addButton = document.getElementById( 'addNode-button'      );
-  var tabBox    = document.getElementById( 'configuratorTabs'    );
-  var schemeBox = document.getElementById( 'configuratorSchemes' );
+  var schemeBox = document.getElementById( 'scheme' );
   var activeSch = 0;
 
-  this.schemes  = [];
+  this.scheme   = new Scheme( 0 );
 
-  function setActiveScheme ( n ) {
-    activeSch = n;
-    return;
-  }
   function redraw () {
-    for ( var i=0; i<self.schemes.length; i++ ) {
-      self.schemes[i].redraw();
-    }
+    self.scheme.redraw();
     return;
   }
   function init( size ) {
-    let bufferTab = "";
-    let bufferSch = "";
-    for ( var i=0; i<size; i++ ) {
-      bufferTab += maker.HTMLtab( i );
-      bufferSch += maker.HTMLscheme( i );
-    }
-    tabBox.innerHTML    = bufferTab;
-    schemeBox.innerHTML = bufferSch;
-    for ( var i=0; i<size; i++ ) {
-      self.schemes.push( new Scheme( i ) );
-    }
-
-    zoomInit( schemeBox, redraw );
+    //zoomInit( schemeBox, redraw );
     /*-------------------------------------------------*/
     addButton.addEventListener( 'click', function () {
       self.addNode();
     });
     /*-------------------------------------------------*/
-    for ( var i=0; i<size; i++ ) {
-      let tab = document.getElementById( "scheme" + i + "-tab" ).addEventListener('click', function () {
-        setActiveScheme( parseInt( this.id.charAt( 6 ) ) );
-      });
-    }
-    /*-------------------------------------------------*/
     return;
   }
   this.addNode = function () {
-    self.schemes[activeSch].addNode( 0 );
+    self.scheme.addNode( 0 );
     return;
   }
 
