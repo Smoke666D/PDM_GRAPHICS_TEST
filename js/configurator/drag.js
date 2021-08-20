@@ -45,7 +45,6 @@ function dragElement ( elmnt, trig, shift, onDrag, onDrop ) {
       newX = rightBorder;
     }
     if ( newY < topBorder ) {
-      console.log( topBorder );
       newY = topBorder;
     }
     if ( newY > bottomBorder ) {

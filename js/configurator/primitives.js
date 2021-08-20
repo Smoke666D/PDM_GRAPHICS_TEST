@@ -5,19 +5,25 @@ var dragElement = require('./drag.js').dragElement;
 /*----------------------------------------------------------------------------*/
 const lineTypes = {
   "bool"   : {
-    color      : '#33f233',
-    animation  : true,
-    size       : 3
+    color       : '#33f233',
+    animation   : true,
+    size        : 3,
+    startSocket : 'right',
+    endSocket   : 'left'
   },
   "float"  : {
-    color      : '#b824bd',
-    animation  : true,
-    size       : 3
+    color       : '#b824bd',
+    animation   : true,
+    size        : 3,
+    startSocket : 'right',
+    endSocket   : 'left'
   },
   "string" : {
-    color      : '#f2e933',
-    animation  : true,
-    size       : 3
+    color       : '#f2e933',
+    animation   : true,
+    size        : 3,
+    startSocket : 'right',
+    endSocket   : 'left'
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -36,11 +42,9 @@ function Link ( from, to, start, end, type, id ) {
   this.start = start;
   this.end   = end;
   this.type  = type;
-  this.obj   = null;
+  this.line  = null; /* LeaderLine object */
+  this.obj   = null; /* DOM element of the line */
   /*----------------------------------------*/
-  function overInit () {
-    console.log( self.obj );
-  }
   function init ( from, to, start, end, type, id ) {
     self.id    = id;
     self.from  = from;
@@ -53,24 +57,26 @@ function Link ( from, to, start, end, type, id ) {
   }
   /*----------------------------------------*/
   this.draw    = function () {
-    if ( self.obj == null ) {
-      self.obj = new LeaderLine( self.start, self.end, lineTypes[self.type] )
+    if ( self.line == null ) {
+      self.line   = new LeaderLine( self.start, self.end, lineTypes[self.type] );
+      self.obj    = document.querySelector('.leader-line:last-of-type');
+      self.obj.id = "link" + self.id;
     } else {
-      self.obj.position();
+      self.line.position();
     }
     return;
   }
   this.setFrom = function ( from, start ) {
-    if ( self.obj != null ) {
+    if ( self.line != null ) {
       self.from  = from;
       self.start = start;
-      self.obj.setOptions( {"start" : self.start } );
+      self.line.setOptions( {"start" : self.start } );
     }
     return;
   }
   this.delete  = function () {
-    if ( self.obj != null ) {
-      self.obj.remove();
+    if ( self.line != null ) {
+      self.line.remove();
     }
     return;
   }
@@ -156,11 +162,11 @@ function Pin ( id, type, data ) {
   /*----------------------------------------*/
   return;
 }
-function Node ( type, id, box, pinCallback, dropCallback ) {
+function Node ( type, id, box, pinCallback, dragCallback ) {
   var self         = this;
   var box          = box;
   var pinCallback  = pinCallback;
-  var dropCallback = dropCallback;
+  var dragCallback = dragCallback;
   /*----------------------------------------*/
   this.id      = id;    /* ID number of node               */
   this.type    = type;  /* Function type of node           */
@@ -256,12 +262,14 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
   }
   function dragInit () {
     function onDrag () {
-      dropCallback( self.id );
+      dragCallback( self.id );
       return;
     }
     function onDrop () {
       self.focus = false;
       self.obj.classList.remove( "focus" );
+      self.x = parseInt( self.obj.style.top  );
+      self.y = parseInt( self.obj.style.left );
       return;
     }
     for ( var i=0; i<self.obj.children.length; i++ ) {
@@ -611,6 +619,7 @@ function Scheme ( id ) {
   }
   /* Callbacks */
   function linkStart ( adr ) {
+    self.resetFocus();
     let type = self.nodes[adr.node].getPinType( adr.pin );
     let data = self.nodes[adr.node].getPinData( adr.pin );
     let link = self.nodes[adr.node].getPinLink( adr.pin );
@@ -649,18 +658,18 @@ function Scheme ( id ) {
     }
     return;
   }
-  function afterDrop ( adr ) {
+  function afterDrag ( adr ) {
     for ( var i=0; i<self.links.length; i++ ) {
       self.links[i].draw();
     }
     return;
   }
-  function afterFocus ( objectType, adr, focus ) {
+  function afterFocus ( adr, focus ) {
     if ( focus == true ) {
-      self.inFocus.push( { "type" : objectType, "adr" : adr } );
+      self.inFocus.push( adr );
     } else {
       for ( var i=0; i<self.inFocus.length; i++ ) {
-        if ( ( self.inFocus[i].type == objectType ) && ( self.inFocus[i].adr == adr ) ) {
+        if ( self.inFocus[i] == adr ) {
           self.inFocus.splice( i, 1 );
         }
       }
@@ -668,17 +677,17 @@ function Scheme ( id ) {
     return;
   }
   /*----------------------------------------*/
-  this.redraw     = function () {
+  this.redraw        = function () {
     for ( var i=0; i<self.links.length; i++ ) {
       self.links[i].draw();
     }
     return;
   }
-  this.addNode    = function ( type ) {
-    self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrop ) );
+  this.addNode       = function ( type ) {
+    self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrag ) );
     return;
   }
-  this.addLink    = function ( from, to ) {
+  this.addLink       = function ( from, to ) {
     let currentID = 0;
     let start     = getPinObject( from );
     let end       = getPinObject( to   );
@@ -693,7 +702,7 @@ function Scheme ( id ) {
     self.nodes[to.node].setPinConnected( to.pin, id );
     return;
   }
-  this.removeLink = function ( id ) {
+  this.removeLink    = function ( id ) {
     let to   = self.links[id].to;
     let from = self.links[id].from;
     self.nodes[to.node].inputs[to.pin].setDisconnected();
@@ -706,7 +715,7 @@ function Scheme ( id ) {
     linkID--;
     return;
   }
-  this.removeNode = function ( id ) {
+  this.removeNode    = function ( id ) {
     if ( id <= self.nodes.length ) {
       let links = self.nodes[id].getLinks();
       for ( var i=0; i<links.length; i++ ) {
@@ -716,7 +725,17 @@ function Scheme ( id ) {
     }
     return;
   }
-  this.resetFocus = function () {
+  this.isMouseOnNode = function ( x, y ) {
+    var res = false;
+    for ( var i=0; i<self.nodes.length; i++ ) {
+      if ( self.nodes[i].obj.matches(':hover') == true ) {
+        res = true;
+        break;
+      }
+    }
+    return res;
+  }
+  this.resetFocus    = function () {
     self.inFocus = [];
     for ( var i=0; i<self.nodes.length; i++ ) {
       self.nodes[i].resetFocus();

@@ -17,8 +17,16 @@ function Configurator ( size ) {
   function init( size ) {
     //zoomInit( schemeBox, redraw );
     /*-------------------------------------------------*/
+    schemeBox.addEventListener( 'click', function () {
+      if ( self.scheme.isMouseOnNode() == false ) {
+        self.scheme.resetFocus();
+      }
+      return;
+    });
+    /*-------------------------------------------------*/
     addButton.addEventListener( 'click', function () {
       self.addNode();
+      return;
     });
     /*-------------------------------------------------*/
     return;
