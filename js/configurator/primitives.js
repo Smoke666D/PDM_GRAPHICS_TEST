@@ -132,7 +132,7 @@ function Pin ( id, type, data ) {
     self.obj.classList.remove( "connected" );
     self.obj.classList.remove( "available" );
     self.obj.classList.remove( "reserved" );
-    if ( ( self.type == type ) && ( self.data == data ) && ( self.linked == false ) ) {
+    if ( ( self.data == data ) && ( self.type == type ) && ( ( type == "output" ) || ( self.linked == false ) ) ) {
       self.obj.classList.add( "available" );
       this.state = "available";
     } else {
@@ -162,11 +162,78 @@ function Pin ( id, type, data ) {
   /*----------------------------------------*/
   return;
 }
-function Node ( type, id, box, pinCallback, dragCallback ) {
-  var self         = this;
-  var box          = box;
-  var pinCallback  = pinCallback;
-  var dragCallback = dragCallback;
+function Menu ( box, object, items = [] ) {
+  var self = this;
+  /*----------------------------------------*/
+  this.obj = null;
+  /*----------------------------------------*/
+  function init ( box, object, items ) {
+    self.draw( box, object, items );
+  }
+  function addLi ( ul, data ) {
+    let li         = document.createElement( "LI" );
+    li.className   = "item";
+    let icon       = document.createElement( "DIV" );
+    icon.className = "fas";
+    icon.innerHTML = data.icon;
+    let a          = document.createElement( "A" );
+    let span       = document.createElement( "SPAN" );
+    span.innerHTML = data.name;
+    a.appendChild( icon );
+    a.appendChild( span );
+    li.appendChild( a );
+    li.addEventListener( 'click', function () {
+      data.callback();
+    });
+    ul.appendChild( li );
+  }
+  /*----------------------------------------*/
+  this.remove = function () {
+    self.obj.remove();
+    return;
+  }
+  this.draw   = function ( box, object, items ) {
+    if ( self.obj == null ) {
+      self.obj            = document.createElement( "DIV" );
+      self.obj.id         = "menu-node" + self.id;
+      self.obj.className  = "node-menu";
+      self.obj.style.top  = object.offsetTop  + parseInt( object.style.height ) - 10 + "px";
+      self.obj.style.left = object.offsetLeft + parseInt( object.style.width )  - 10 + "px";
+      /*----------- UL ----------*/
+      let ul       = document.createElement( "UL" );
+      ul.className = "list-unstyled";
+      let dataLi = {
+        "name"     : "закрыть",
+        "callback" : function () { self.remove(); },
+        "icon"     : "<svg viewBox='0 0 352 512'><path fill='currentColor' d='M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z'></path></svg>"
+      }
+      addLi( ul, dataLi );
+      for ( var i=0; i<items.length; i++ ) {
+        addLi( ul, items[i] );
+      }
+      self.obj.appendChild( ul );
+      box.appendChild( self.obj );
+    }
+    return;
+  }
+  /*----------------------------------------*/
+  init( box, object, items );
+  return;
+}
+function Node ( type, id, box, pinCallback, dragCallback, removeCallback ) {
+  var self           = this;
+  var box            = box;
+  var pinCallback    = pinCallback;
+  var dragCallback   = dragCallback;
+  var removeCallback = removeCallback;
+  var menu           = null;         /* Context menu */
+  var menuItems      = [
+    {
+      "name"     : "удалить",
+      "callback" : function () { menu.remove(); removeCallback( self.id ); },
+      "icon"     : "<svg viewBox='0 0 448 512'><path fill='currentColor' d='M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z'></path></svg>"
+    }
+  ];
   /*----------------------------------------*/
   this.id      = id;    /* ID number of node               */
   this.type    = type;  /* Function type of node           */
@@ -210,8 +277,9 @@ function Node ( type, id, box, pinCallback, dragCallback ) {
   }
   function move() {
     self.shift          = self.obj.parentElement.offsetTop - self.obj.offsetTop;
-    self.obj.style.top  = self.shift + self.x + "px";
+    self.obj.style.top  = ( self.shift + self.x ) + "px";
     self.obj.style.left = self.y + "px";
+    return;
   }
   function draw () {
     let pinCounter = 0;
@@ -328,6 +396,16 @@ function Node ( type, id, box, pinCallback, dragCallback ) {
     }
     return;
   }
+  function contextInit () {
+    for ( var i=0; i<self.obj.children.length; i++ ) {
+      if ( self.obj.children[i].className == "body" ) {
+        self.obj.children[i].addEventListener( 'contextmenu', function () {
+          menu = new Menu( box, self.obj, menuItems );
+        });
+      }
+    }
+    return;
+  }
   function init ( type, id, box ) {
     makeNode( self.type );
     draw();
@@ -337,9 +415,22 @@ function Node ( type, id, box, pinCallback, dragCallback ) {
     pinsInit();
     show();
     clickInit();
+    contextInit();
     return;
   }
   /*----------------------------------------*/
+  this.reInit             = function () {
+    dragInit();
+  }
+  this.move               = function ( x, y ) {
+    console.log( self.obj.style.top + "/" + self.obj.style.left );
+    self.obj.style.top  = x + "px";
+    self.obj.style.left = y + "px";
+    self.x              = x;
+    self.y              = y;
+    console.log( self.obj.style.top + "/" + self.obj.style.left );
+    return;
+  }
   this.setPinsAvailable   = function ( type, data) {
     for ( var i=0; i<self.inputs.length; i++ ) {
       self.inputs[i].setAvailable( type, data );
@@ -551,7 +642,8 @@ function Node ( type, id, box, pinCallback, dragCallback ) {
     self.obj.classList.remove( "focus" );
     return;
   }
-  this.delete             = function () {
+  this.remove             = function () {
+    this.obj.remove();
     return;
   }
   /*----------------------------------------*/
@@ -577,12 +669,17 @@ function Scheme ( id ) {
     self.box = document.getElementById( 'scheme' );
     return;
   }
-  function delNode ( id ) {
+  function removeNode ( id ) {
+    let shift = self.nodes[id].shift + self.nodes[id + 1].shift;
     for ( var i=id+1; i<self.nodes.length; i++ ) {
       self.nodes[i].id--;
+      self.nodes[i].shift -= shift;
+      self.nodes[i].move( ( self.nodes[i].x - shift ), self.nodes[i].y );
+      self.nodes[i].reInit();
     }
-    self.nodes[id].delete();
+    self.nodes[id].remove();
     self.nodes.splice( id, 1 );
+    console.log( self.nodes[id].obj.style.top + "/" + self.nodes[id].obj.style.left );
     nodeID--;
   }
   function setPinsAvailable ( adr, type, data ) {
@@ -616,6 +713,16 @@ function Scheme ( id ) {
   }
   function getPinData ( adr ) {
     return self.nodes[adr.node].getPinData( adr.pin );
+  }
+  function removeLinksOfNode ( adr ) {
+    for ( var i=0; i<self.links.length; i++ ) {
+      if ( ( self.links[i].from.node == adr ) || ( self.links[i].to.node == adr ) ) {
+        self.removeLink( self.links[i].id );
+        removeLinksOfNode( adr );
+        break;
+      }
+    }
+    return;
   }
   /* Callbacks */
   function linkStart ( adr ) {
@@ -676,6 +783,10 @@ function Scheme ( id ) {
     }
     return;
   }
+  function beforNodeRemove ( adr ) {
+    self.removeNode( adr );
+    return;
+  }
   /*----------------------------------------*/
   this.redraw        = function () {
     for ( var i=0; i<self.links.length; i++ ) {
@@ -684,7 +795,7 @@ function Scheme ( id ) {
     return;
   }
   this.addNode       = function ( type ) {
-    self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrag ) );
+    self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrag, beforNodeRemove ) );
     return;
   }
   this.addLink       = function ( from, to ) {
@@ -693,7 +804,7 @@ function Scheme ( id ) {
     let end       = getPinObject( to   );
     if ( prevLink == null ) {
       currentID = linkID++;
-      self.links.push( new Link( from, to, start, end, getPinData( from ), id ) );
+      self.links.push( new Link( from, to, start, end, getPinData( from ), currentID ) );
     } else {
       currentID = prevLink[0];
       self.links[currentID].setFrom( from, start );
@@ -715,13 +826,10 @@ function Scheme ( id ) {
     linkID--;
     return;
   }
-  this.removeNode    = function ( id ) {
+  this.removeNode    = function ( adr ) {
     if ( id <= self.nodes.length ) {
-      let links = self.nodes[id].getLinks();
-      for ( var i=0; i<links.length; i++ ) {
-        self.removeLink( links[i] );
-      }
-      delNode( id );
+      removeLinksOfNode( adr );
+      removeNode( id );
     }
     return;
   }
@@ -739,9 +847,6 @@ function Scheme ( id ) {
     self.inFocus = [];
     for ( var i=0; i<self.nodes.length; i++ ) {
       self.nodes[i].resetFocus();
-    }
-    for ( var i=0; i<self.links.length; i++ ) {
-      self.links[i].resetFocus();
     }
     return;
   }

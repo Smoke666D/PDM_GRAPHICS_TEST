@@ -10,7 +10,7 @@
   position: relative;
   display: flex;
   flex-direction: row;
-  justify-content:space-between;
+  justify-content: space-between;
   z-index: 9;
   color: #4d5055;
   border: 1px solid #d3d3d3;
@@ -67,3 +67,42 @@
   .hide {
     left: -400px!important;
 }
+.node-menu {
+  display: block;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 10;
+  height: auto;
+  width: auto;
+  border: 1px solid #d3d3d3;
+  text-align: center;
+  background-color: #fff;
+  background-clip: border-box;
+  border-radius: 0.25rem;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);}
+  .node-menu ul li {
+    text-align: left;}
+  .node-menu .fas {
+    font-size: 16px; }
+  .node-menu ul li a span,
+  .node-menu ul li a .fas {
+    vertical-align: middle;
+    display: inline-block; }
+  .node-menu ul li a span {
+    margin-left: 1em; }
+  .node-menu ul li a .fas svg {
+    width: 1em;
+    height: 1em; }
+  .node-menu .item {
+    cursor: default;
+    min-width: 100px;
+    color: #4d5055; }
+    .node-menu .item:hover {
+      transition: background-color 0.5s ease;
+      background: #d2d3d4;
+    }
