@@ -1,9 +1,11 @@
 /*----------------------------------------------------------------------------*/
-function dragElement ( elmnt, trig, shift, callback ) {
+function dragElement ( elmnt, trig, shift, onDrag, onDrop ) {
   var dX = 0;
   var dY = 0;
   var cX = 0;
   var cY = 0;
+  var startX = 0;
+  var startY = 0;
   var parent = elmnt.parentElement.parentElement.getBoundingClientRect();
   var leftBorder   = 0;
   var rightBorder  = parent.width - parseInt( elmnt.style.width );
@@ -19,6 +21,8 @@ function dragElement ( elmnt, trig, shift, callback ) {
     e.preventDefault();
     cX = e.clientX;                        // get the mouse cursor position at startup:
     cY = e.clientY;
+    startX = cX;
+    startY = cY;
     document.onmouseup   = closeDragElement;
     document.onmousemove = elementDrag;      // call a function whenever the cursor moves:
     return;
@@ -41,7 +45,6 @@ function dragElement ( elmnt, trig, shift, callback ) {
       newX = rightBorder;
     }
     if ( newY < topBorder ) {
-      console.log( topBorder );
       newY = topBorder;
     }
     if ( newY > bottomBorder ) {
@@ -49,12 +52,15 @@ function dragElement ( elmnt, trig, shift, callback ) {
     }
     elmnt.style.top  = newY + "px"
     elmnt.style.left = newX + "px";
-    callback();
+    onDrag();
     return;
   }
   function closeDragElement() {
     document.onmouseup   = null;
     document.onmousemove = null;
+    if ( ( cX != startX) || ( cY != startY ) ) {
+      onDrop();
+    }
     return;
   }
   return;

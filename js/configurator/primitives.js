@@ -5,19 +5,25 @@ var dragElement = require('./drag.js').dragElement;
 /*----------------------------------------------------------------------------*/
 const lineTypes = {
   "bool"   : {
-    color      : '#33f233',
-    animation  : true,
-    size       : 3
+    color       : '#33f233',
+    animation   : true,
+    size        : 3,
+    startSocket : 'right',
+    endSocket   : 'left'
   },
   "float"  : {
-    color      : '#b824bd',
-    animation  : true,
-    size       : 3
+    color       : '#b824bd',
+    animation   : true,
+    size        : 3,
+    startSocket : 'right',
+    endSocket   : 'left'
   },
   "string" : {
-    color      : '#f2e933',
-    animation  : true,
-    size       : 3
+    color       : '#f2e933',
+    animation   : true,
+    size        : 3,
+    startSocket : 'right',
+    endSocket   : 'left'
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -36,7 +42,8 @@ function Link ( from, to, start, end, type, id ) {
   this.start = start;
   this.end   = end;
   this.type  = type;
-  this.obj   = null;
+  this.line  = null; /* LeaderLine object */
+  this.obj   = null; /* DOM element of the line */
   /*----------------------------------------*/
   function init ( from, to, start, end, type, id ) {
     self.id    = id;
@@ -50,26 +57,26 @@ function Link ( from, to, start, end, type, id ) {
   }
   /*----------------------------------------*/
   this.draw    = function () {
-    if ( self.obj == null ) {
-      self.obj = new LeaderLine( self.start, self.end, lineTypes[self.type] )
+    if ( self.line == null ) {
+      self.line   = new LeaderLine( self.start, self.end, lineTypes[self.type] );
+      self.obj    = document.querySelector('.leader-line:last-of-type');
+      self.obj.id = "link" + self.id;
     } else {
-      self.obj.position();
+      self.line.position();
     }
     return;
   }
   this.setFrom = function ( from, start ) {
-    if ( self.obj != null ) {
+    if ( self.line != null ) {
       self.from  = from;
       self.start = start;
-      self.obj.setOptions( {"start" : self.start } );
-      //self.obj.start = self.start;
-      //self.obj.position();
+      self.line.setOptions( {"start" : self.start } );
     }
     return;
   }
   this.delete  = function () {
-    if ( self.obj != null ) {
-      self.obj.remove();
+    if ( self.line != null ) {
+      self.line.remove();
     }
     return;
   }
@@ -125,7 +132,7 @@ function Pin ( id, type, data ) {
     self.obj.classList.remove( "connected" );
     self.obj.classList.remove( "available" );
     self.obj.classList.remove( "reserved" );
-    if ( ( self.type == type ) && ( self.data == data ) && ( self.linked == false ) ) {
+    if ( ( self.data == data ) && ( self.type == type ) && ( ( type == "output" ) || ( self.linked == false ) ) ) {
       self.obj.classList.add( "available" );
       this.state = "available";
     } else {
@@ -155,22 +162,90 @@ function Pin ( id, type, data ) {
   /*----------------------------------------*/
   return;
 }
-function Node ( type, id, box, pinCallback, dropCallback ) {
-  var self         = this;
-  var box          = box;
-  var pinCallback  = pinCallback;
-  var dropCallback = dropCallback;
+function Menu ( box, object, items = [] ) {
+  var self = this;
   /*----------------------------------------*/
-  this.id      = id;   /*  */
-  this.type    = type; /*  */
-  this.inputs  = [];   /*  */
-  this.outputs = [];   /*  */
-  this.x       = 0;    /*  */
-  this.y       = 0;    /*  */
-  this.width   = 0;    /*  */
-  this.height  = 0;    /*  */
-  this.obj     = null; /*  */
-  this.shift   = 0;    /*  */
+  this.obj = null;
+  /*----------------------------------------*/
+  function init ( box, object, items ) {
+    self.draw( box, object, items );
+  }
+  function addLi ( ul, data ) {
+    let li         = document.createElement( "LI" );
+    li.className   = "item";
+    let icon       = document.createElement( "DIV" );
+    icon.className = "fas";
+    icon.innerHTML = data.icon;
+    let a          = document.createElement( "A" );
+    let span       = document.createElement( "SPAN" );
+    span.innerHTML = data.name;
+    a.appendChild( icon );
+    a.appendChild( span );
+    li.appendChild( a );
+    li.addEventListener( 'click', function () {
+      data.callback();
+    });
+    ul.appendChild( li );
+  }
+  /*----------------------------------------*/
+  this.remove = function () {
+    self.obj.remove();
+    return;
+  }
+  this.draw   = function ( box, object, items ) {
+    if ( self.obj == null ) {
+      self.obj            = document.createElement( "DIV" );
+      self.obj.id         = "menu-node" + self.id;
+      self.obj.className  = "node-menu";
+      self.obj.style.top  = object.offsetTop  + parseInt( object.style.height ) - 10 + "px";
+      self.obj.style.left = object.offsetLeft + parseInt( object.style.width )  - 10 + "px";
+      /*----------- UL ----------*/
+      let ul       = document.createElement( "UL" );
+      ul.className = "list-unstyled";
+      let dataLi = {
+        "name"     : "закрыть",
+        "callback" : function () { self.remove(); },
+        "icon"     : "<svg viewBox='0 0 352 512'><path fill='currentColor' d='M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z'></path></svg>"
+      }
+      addLi( ul, dataLi );
+      for ( var i=0; i<items.length; i++ ) {
+        addLi( ul, items[i] );
+      }
+      self.obj.appendChild( ul );
+      box.appendChild( self.obj );
+    }
+    return;
+  }
+  /*----------------------------------------*/
+  init( box, object, items );
+  return;
+}
+function Node ( type, id, box, pinCallback, dragCallback, removeCallback ) {
+  var self           = this;
+  var box            = box;
+  var pinCallback    = pinCallback;
+  var dragCallback   = dragCallback;
+  var removeCallback = removeCallback;
+  var menu           = null;         /* Context menu */
+  var menuItems      = [
+    {
+      "name"     : "удалить",
+      "callback" : function () { menu.remove(); removeCallback( self.id ); },
+      "icon"     : "<svg viewBox='0 0 448 512'><path fill='currentColor' d='M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z'></path></svg>"
+    }
+  ];
+  /*----------------------------------------*/
+  this.id      = id;    /* ID number of node               */
+  this.type    = type;  /* Function type of node           */
+  this.inputs  = [];    /* Array of inputs pins            */
+  this.outputs = [];    /* Array of outputs pins           */
+  this.focus   = false; /* Is node in focus                */
+  this.x       = 0;     /* Left coordinate of node box     */
+  this.y       = 0;     /* Top coordinate of node box      */
+  this.width   = 0;     /* Width of node box               */
+  this.height  = 0;     /* Height of node box              */
+  this.obj     = null;  /* DOM object of node              */
+  this.shift   = 0;     /* Top shift in parent of node box */
   /*----------------------------------------*/
   function makeNode ( type ) {
     let data     = nodeLib.getNodeRecord( type );
@@ -202,8 +277,9 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
   }
   function move() {
     self.shift          = self.obj.parentElement.offsetTop - self.obj.offsetTop;
-    self.obj.style.top  = self.shift + self.x + "px";
+    self.obj.style.top  = ( self.shift + self.x ) + "px";
     self.obj.style.left = self.y + "px";
+    return;
   }
   function draw () {
     let pinCounter = 0;
@@ -253,13 +329,20 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
     return;
   }
   function dragInit () {
-    function callback () {
-      dropCallback( self.id );
+    function onDrag () {
+      dragCallback( self.id );
+      return;
+    }
+    function onDrop () {
+      self.focus = false;
+      self.obj.classList.remove( "focus" );
+      self.x = parseInt( self.obj.style.top  );
+      self.y = parseInt( self.obj.style.left );
       return;
     }
     for ( var i=0; i<self.obj.children.length; i++ ) {
       if ( self.obj.children[i].className == "body" ) {
-        dragElement( self.obj, self.obj.children[i], self.shift, callback );
+        dragElement( self.obj, self.obj.children[i], self.shift, onDrag, onDrop );
       }
     }
     return
@@ -297,6 +380,32 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
     }
     return;
   }
+  function clickInit () {
+    for ( var i=0; i<self.obj.children.length; i++ ) {
+      if ( self.obj.children[i].className == "body" ) {
+        self.obj.children[i].addEventListener( 'click', function () {
+          self.focus = !self.focus;
+          if ( self.focus == true ) {
+            self.obj.classList.add( "focus" );
+          } else {
+            self.obj.classList.remove( "focus" );
+          }
+          return;
+        });
+      }
+    }
+    return;
+  }
+  function contextInit () {
+    for ( var i=0; i<self.obj.children.length; i++ ) {
+      if ( self.obj.children[i].className == "body" ) {
+        self.obj.children[i].addEventListener( 'contextmenu', function () {
+          menu = new Menu( box, self.obj, menuItems );
+        });
+      }
+    }
+    return;
+  }
   function init ( type, id, box ) {
     makeNode( self.type );
     draw();
@@ -305,9 +414,23 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
     dragInit();
     pinsInit();
     show();
+    clickInit();
+    contextInit();
     return;
   }
   /*----------------------------------------*/
+  this.reInit             = function () {
+    dragInit();
+  }
+  this.move               = function ( x, y ) {
+    console.log( self.obj.style.top + "/" + self.obj.style.left );
+    self.obj.style.top  = x + "px";
+    self.obj.style.left = y + "px";
+    self.x              = x;
+    self.y              = y;
+    console.log( self.obj.style.top + "/" + self.obj.style.left );
+    return;
+  }
   this.setPinsAvailable   = function ( type, data) {
     for ( var i=0; i<self.inputs.length; i++ ) {
       self.inputs[i].setAvailable( type, data );
@@ -509,7 +632,18 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
     }
     return links;
   }
-  this.delete             = function () {
+  this.setFocus           = function () {
+    self.focus = true;
+    self.obj.classList.add( "focus" );
+    return;
+  }
+  this.resetFocus         = function () {
+    self.focus = false;
+    self.obj.classList.remove( "focus" );
+    return;
+  }
+  this.remove             = function () {
+    this.obj.remove();
     return;
   }
   /*----------------------------------------*/
@@ -524,22 +658,28 @@ function Scheme ( id ) {
   var prevAdr  = new NodeAdr(); /* Previus pin for connecting */
   var prevLink = null;          /* Link number for changing   */
   /*----------------------------------------*/
-  this.id    = 0;    /* ID number of scheme   */
-  this.nodes = [];   /* Nodes of scheme       */
-  this.links = [];   /* Links of scheme       */
-  this.box   = null; /* Scheme element in DOM */
+  this.id      = 0;    /* ID number of scheme     */
+  this.nodes   = [];   /* Nodes of scheme         */
+  this.links   = [];   /* Links of scheme         */
+  this.box     = null; /* Scheme element in DOM   */
+  this.inFocus = [];   /* Array of focus elements */
   /*----------------------------------------*/
   function init ( id ) {
     self.id  = id;
     self.box = document.getElementById( 'scheme' );
     return;
   }
-  function delNode ( id ) {
+  function removeNode ( id ) {
+    let shift = self.nodes[id].shift + self.nodes[id + 1].shift;
     for ( var i=id+1; i<self.nodes.length; i++ ) {
       self.nodes[i].id--;
+      self.nodes[i].shift -= shift;
+      self.nodes[i].move( ( self.nodes[i].x - shift ), self.nodes[i].y );
+      self.nodes[i].reInit();
     }
-    self.nodes[id].delete();
+    self.nodes[id].remove();
     self.nodes.splice( id, 1 );
+    console.log( self.nodes[id].obj.style.top + "/" + self.nodes[id].obj.style.left );
     nodeID--;
   }
   function setPinsAvailable ( adr, type, data ) {
@@ -574,7 +714,19 @@ function Scheme ( id ) {
   function getPinData ( adr ) {
     return self.nodes[adr.node].getPinData( adr.pin );
   }
+  function removeLinksOfNode ( adr ) {
+    for ( var i=0; i<self.links.length; i++ ) {
+      if ( ( self.links[i].from.node == adr ) || ( self.links[i].to.node == adr ) ) {
+        self.removeLink( self.links[i].id );
+        removeLinksOfNode( adr );
+        break;
+      }
+    }
+    return;
+  }
+  /* Callbacks */
   function linkStart ( adr ) {
+    self.resetFocus();
     let type = self.nodes[adr.node].getPinType( adr.pin );
     let data = self.nodes[adr.node].getPinData( adr.pin );
     let link = self.nodes[adr.node].getPinLink( adr.pin );
@@ -613,30 +765,46 @@ function Scheme ( id ) {
     }
     return;
   }
-  function afterDrop ( adr ) {
+  function afterDrag ( adr ) {
     for ( var i=0; i<self.links.length; i++ ) {
       self.links[i].draw();
     }
+    return;
+  }
+  function afterFocus ( adr, focus ) {
+    if ( focus == true ) {
+      self.inFocus.push( adr );
+    } else {
+      for ( var i=0; i<self.inFocus.length; i++ ) {
+        if ( self.inFocus[i] == adr ) {
+          self.inFocus.splice( i, 1 );
+        }
+      }
+    }
+    return;
+  }
+  function beforNodeRemove ( adr ) {
+    self.removeNode( adr );
     return;
   }
   /*----------------------------------------*/
-  this.redraw     = function () {
+  this.redraw        = function () {
     for ( var i=0; i<self.links.length; i++ ) {
       self.links[i].draw();
     }
     return;
   }
-  this.addNode    = function ( type ) {
-    self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrop ) );
+  this.addNode       = function ( type ) {
+    self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrag, beforNodeRemove ) );
     return;
   }
-  this.addLink    = function ( from, to ) {
+  this.addLink       = function ( from, to ) {
     let currentID = 0;
     let start     = getPinObject( from );
     let end       = getPinObject( to   );
     if ( prevLink == null ) {
       currentID = linkID++;
-      self.links.push( new Link( from, to, start, end, getPinData( from ), id ) );
+      self.links.push( new Link( from, to, start, end, getPinData( from ), currentID ) );
     } else {
       currentID = prevLink[0];
       self.links[currentID].setFrom( from, start );
@@ -645,7 +813,7 @@ function Scheme ( id ) {
     self.nodes[to.node].setPinConnected( to.pin, id );
     return;
   }
-  this.removeLink = function ( id ) {
+  this.removeLink    = function ( id ) {
     let to   = self.links[id].to;
     let from = self.links[id].from;
     self.nodes[to.node].inputs[to.pin].setDisconnected();
@@ -658,13 +826,27 @@ function Scheme ( id ) {
     linkID--;
     return;
   }
-  this.removeNode = function ( id ) {
+  this.removeNode    = function ( adr ) {
     if ( id <= self.nodes.length ) {
-      let links = self.nodes[id].getLinks();
-      for ( var i=0; i<links.length; i++ ) {
-        self.removeLink( links[i] );
+      removeLinksOfNode( adr );
+      removeNode( id );
+    }
+    return;
+  }
+  this.isMouseOnNode = function ( x, y ) {
+    var res = false;
+    for ( var i=0; i<self.nodes.length; i++ ) {
+      if ( self.nodes[i].obj.matches(':hover') == true ) {
+        res = true;
+        break;
       }
-      delNode( id );
+    }
+    return res;
+  }
+  this.resetFocus    = function () {
+    self.inFocus = [];
+    for ( var i=0; i<self.nodes.length; i++ ) {
+      self.nodes[i].resetFocus();
     }
     return;
   }
