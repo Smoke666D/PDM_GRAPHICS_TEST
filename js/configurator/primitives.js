@@ -38,6 +38,9 @@ function Link ( from, to, start, end, type, id ) {
   this.type  = type;
   this.obj   = null;
   /*----------------------------------------*/
+  function overInit () {
+    console.log( self.obj );
+  }
   function init ( from, to, start, end, type, id ) {
     self.id    = id;
     self.from  = from;
@@ -62,8 +65,6 @@ function Link ( from, to, start, end, type, id ) {
       self.from  = from;
       self.start = start;
       self.obj.setOptions( {"start" : self.start } );
-      //self.obj.start = self.start;
-      //self.obj.position();
     }
     return;
   }
@@ -161,16 +162,17 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
   var pinCallback  = pinCallback;
   var dropCallback = dropCallback;
   /*----------------------------------------*/
-  this.id      = id;   /*  */
-  this.type    = type; /*  */
-  this.inputs  = [];   /*  */
-  this.outputs = [];   /*  */
-  this.x       = 0;    /*  */
-  this.y       = 0;    /*  */
-  this.width   = 0;    /*  */
-  this.height  = 0;    /*  */
-  this.obj     = null; /*  */
-  this.shift   = 0;    /*  */
+  this.id      = id;    /* ID number of node               */
+  this.type    = type;  /* Function type of node           */
+  this.inputs  = [];    /* Array of inputs pins            */
+  this.outputs = [];    /* Array of outputs pins           */
+  this.focus   = false; /* Is node in focus                */
+  this.x       = 0;     /* Left coordinate of node box     */
+  this.y       = 0;     /* Top coordinate of node box      */
+  this.width   = 0;     /* Width of node box               */
+  this.height  = 0;     /* Height of node box              */
+  this.obj     = null;  /* DOM object of node              */
+  this.shift   = 0;     /* Top shift in parent of node box */
   /*----------------------------------------*/
   function makeNode ( type ) {
     let data     = nodeLib.getNodeRecord( type );
@@ -253,13 +255,18 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
     return;
   }
   function dragInit () {
-    function callback () {
+    function onDrag () {
       dropCallback( self.id );
+      return;
+    }
+    function onDrop () {
+      self.focus = false;
+      self.obj.classList.remove( "focus" );
       return;
     }
     for ( var i=0; i<self.obj.children.length; i++ ) {
       if ( self.obj.children[i].className == "body" ) {
-        dragElement( self.obj, self.obj.children[i], self.shift, callback );
+        dragElement( self.obj, self.obj.children[i], self.shift, onDrag, onDrop );
       }
     }
     return
@@ -297,6 +304,22 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
     }
     return;
   }
+  function clickInit () {
+    for ( var i=0; i<self.obj.children.length; i++ ) {
+      if ( self.obj.children[i].className == "body" ) {
+        self.obj.children[i].addEventListener( 'click', function () {
+          self.focus = !self.focus;
+          if ( self.focus == true ) {
+            self.obj.classList.add( "focus" );
+          } else {
+            self.obj.classList.remove( "focus" );
+          }
+          return;
+        });
+      }
+    }
+    return;
+  }
   function init ( type, id, box ) {
     makeNode( self.type );
     draw();
@@ -305,6 +328,7 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
     dragInit();
     pinsInit();
     show();
+    clickInit();
     return;
   }
   /*----------------------------------------*/
@@ -509,6 +533,16 @@ function Node ( type, id, box, pinCallback, dropCallback ) {
     }
     return links;
   }
+  this.setFocus           = function () {
+    self.focus = true;
+    self.obj.classList.add( "focus" );
+    return;
+  }
+  this.resetFocus         = function () {
+    self.focus = false;
+    self.obj.classList.remove( "focus" );
+    return;
+  }
   this.delete             = function () {
     return;
   }
@@ -524,10 +558,11 @@ function Scheme ( id ) {
   var prevAdr  = new NodeAdr(); /* Previus pin for connecting */
   var prevLink = null;          /* Link number for changing   */
   /*----------------------------------------*/
-  this.id    = 0;    /* ID number of scheme   */
-  this.nodes = [];   /* Nodes of scheme       */
-  this.links = [];   /* Links of scheme       */
-  this.box   = null; /* Scheme element in DOM */
+  this.id      = 0;    /* ID number of scheme     */
+  this.nodes   = [];   /* Nodes of scheme         */
+  this.links   = [];   /* Links of scheme         */
+  this.box     = null; /* Scheme element in DOM   */
+  this.inFocus = [];   /* Array of focus elements */
   /*----------------------------------------*/
   function init ( id ) {
     self.id  = id;
@@ -574,6 +609,7 @@ function Scheme ( id ) {
   function getPinData ( adr ) {
     return self.nodes[adr.node].getPinData( adr.pin );
   }
+  /* Callbacks */
   function linkStart ( adr ) {
     let type = self.nodes[adr.node].getPinType( adr.pin );
     let data = self.nodes[adr.node].getPinData( adr.pin );
@@ -616,6 +652,18 @@ function Scheme ( id ) {
   function afterDrop ( adr ) {
     for ( var i=0; i<self.links.length; i++ ) {
       self.links[i].draw();
+    }
+    return;
+  }
+  function afterFocus ( objectType, adr, focus ) {
+    if ( focus == true ) {
+      self.inFocus.push( { "type" : objectType, "adr" : adr } );
+    } else {
+      for ( var i=0; i<self.inFocus.length; i++ ) {
+        if ( ( self.inFocus[i].type == objectType ) && ( self.inFocus[i].adr == adr ) ) {
+          self.inFocus.splice( i, 1 );
+        }
+      }
     }
     return;
   }
@@ -665,6 +713,16 @@ function Scheme ( id ) {
         self.removeLink( links[i] );
       }
       delNode( id );
+    }
+    return;
+  }
+  this.resetFocus = function () {
+    self.inFocus = [];
+    for ( var i=0; i<self.nodes.length; i++ ) {
+      self.nodes[i].resetFocus();
+    }
+    for ( var i=0; i<self.links.length; i++ ) {
+      self.links[i].resetFocus();
     }
     return;
   }

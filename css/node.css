@@ -17,9 +17,18 @@
   text-align: center;
   background-color: #fff;
   background-clip: border-box;
-  border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0.25rem;
+  -webkit-box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);}
+  .node:hover {
+    transition: background-color 0.5s ease;
+    border: 1px solid #f8b739;}
+  .node.focus {
+    transition: background-color 0.5s ease;
+    border: 1px solid #f8b739;
+    -webkit-box-shadow: 0 4px 8px 0 #f8b739;
+    box-shadow: 0 4px 8px 0 #f8b739;
+  }
   .node .port {
     height: 100%;
     width: 10px;
