@@ -1,43 +1,35 @@
 /*----------------------------------------------------------------------------*/
-//var nodeLib = require('./nodeLib.js');
-//var Node   = require('./primitives.js').Node;
-//var Link   = require('./primitives.js').Link;
-//var Pin    = require('./primitives.js').Pin;
 var Scheme = require('./primitives.js').Scheme;
 var maker  = require('./construct.js');
 /*----------------------------------------------------------------------------*/
 function Configurator ( size ) {
   var self = this;
-  //var addButton = document.getElementById( 'addNode-button' );
+  var addButton = document.getElementById( 'addNode-button'      );
+  var schemeBox = document.getElementById( 'scheme' );
+  var activeSch = 0;
 
-  this.schemes   = [];
-  this.tabBox    = null;
-  this.schemeBox = null;
+  this.scheme   = new Scheme( 0 );
 
-  this.init    = function ( size ) {
-    let bufferTab = "";
-    let bufferSch = "";
-    self.tabBox    = document.getElementById( 'configuratorTabs'    );
-    self.schemeBox = document.getElementById( 'configuratorSchemes' );
-    for ( var i=0; i<size; i++ ) {
-      self.schemes.push( new Scheme() );
-      bufferTab += maker.HTMLtab( i );
-      bufferSch += maker.HTMLscheme( i );
-    }
-    self.tabBox.innerHTML    += bufferTab;
-    self.schemeBox.innerHTML += bufferSch;
-    /*addButton.addEventListener( 'click', function () {
+  function redraw () {
+    self.scheme.redraw();
+    return;
+  }
+  function init( size ) {
+    //zoomInit( schemeBox, redraw );
+    /*-------------------------------------------------*/
+    addButton.addEventListener( 'click', function () {
       self.addNode();
-    });*/
+    });
+    /*-------------------------------------------------*/
+    return;
   }
   this.addNode = function () {
-    console.log("her");
+    self.scheme.addNode( 0 );
+    return;
   }
 
-  this.init( size );
+  init( size );
   return;
-}
-
 }
 /*----------------------------------------------------------------------------*/
 module.exports.Configurator = Configurator;

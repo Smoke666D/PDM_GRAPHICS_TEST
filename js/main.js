@@ -87,7 +87,7 @@ document.addEventListener( "DOMContentLoaded", function( event ) {
 			placement: 'auto',
 			animation: true,
 		})
-	})
+	});
 	navbarToogling();
   loadContent( 'devicePage' );
 	return;
