@@ -74,7 +74,7 @@ function Link ( from, to, start, end, type, id ) {
     }
     return;
   }
-  this.delete  = function () {
+  this.remove  = function () {
     if ( self.line != null ) {
       self.line.remove();
     }
@@ -90,6 +90,9 @@ function Pin ( id, type, data ) {
   this.id         = 0;          /* ID number, unique in same node */
   this.type       = "none";     /* Input or Output or None */
   this.data       = "none";     /* Bool or self.start.xoat or String */
+  this.help       = ""
+  this.expand     = false;
+  this.table      = false;
   this.linked     = false;      /* Is Pin connected to outher pin */
   this.linkedWith = [];         /* ID of the Link */
   this.state      = "reserved"; /**/
@@ -98,7 +101,9 @@ function Pin ( id, type, data ) {
   function init ( id, type, data ) {
     self.id         = id;
     self.type       = type;
-    self.data       = data;
+    self.data       = data.type;
+    self.help       = data.help;
+    self.expand     = data.expand;
     self.linked     = false;
     self.linkedWith = [];
     return;
@@ -236,6 +241,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback ) {
   ];
   /*----------------------------------------*/
   this.id      = id;    /* ID number of node               */
+  this.name    = "";
   this.type    = type;  /* Function type of node           */
   this.inputs  = [];    /* Array of inputs pins            */
   this.outputs = [];    /* Array of outputs pins           */
@@ -252,6 +258,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback ) {
     let pinID    = 0;
     self.width   = data.width;
     self.height  = data.height;
+    self.name    = data.name;
     self.inputs  = [];
     self.outputs = [];
     for ( var i=0; i<data.inputs.length; i++ ) {
@@ -294,12 +301,18 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback ) {
       let pin       = document.createElement("DIV");
       pin.id        = 'pin' + pinCounter++;
       pin.className = 'pin';
+      pin.title     = self.inputs[i].help;
+      pin.setAttribute( 'data-toggle', 'tooltip' );
       if ( self.inputs[i].type == "none" ) {
         pin.className += " reseved";
       } else {
         pin.className += " disconnected";
       }
       inputPort.appendChild( pin );
+      $( pin ).tooltip( {
+        'placement' : 'left',
+        'trigger'   : 'hover',
+      });
     }
     /*--------------- BODY ---------------*/
     let body           = document.createElement("DIV");
@@ -314,12 +327,17 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback ) {
       let pin       = document.createElement("DIV");
       pin.id        = 'pin' + pinCounter++;
       pin.className = 'pin';
+      pin.title     = self.outputs[i].help;
       if ( self.outputs[i].type == "none" ) {
         pin.className += " reseved";
       } else {
         pin.className += " disconnected";
       }
       outputPort.appendChild( pin );
+      $( pin ).tooltip( {
+        'placement' : 'right',
+        'trigger'   : 'hover',
+      });
     }
     /*------------- SUMMERY --------------*/
     self.obj.appendChild( inputPort );
@@ -821,7 +839,7 @@ function Scheme ( id ) {
     for ( var i=id+1; i<self.links.length; i++ ) {
       self.links[i].id--;
     }
-    self.links[id].delete();
+    self.links[id].remove();
     self.links.splice( id, 1 );
     linkID--;
     return;

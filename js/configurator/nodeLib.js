@@ -11,9 +11,23 @@ function NodeLib () {
 
   this.init = function () {
     this.records.push({
-      "id"      : 0,
-      "inputs"  : ["bool"],
-      "outputs" : ["bool"],
+      "name"    : "node_varBool",
+      "table"   : 0,
+      "help"    : "Булевая переменная",
+      "inputs"  : [
+        {
+          "type"   : "bool",
+          "help"   : "Запись переменной",
+          "expand" : false
+        }
+      ],
+      "outputs" : [
+        {
+          "type"   : "bool",
+          "help"   : "Чтение переменной",
+          "expand" : false
+        }
+      ],
       "width"   : 100,
       "height"  : 50,
     });
