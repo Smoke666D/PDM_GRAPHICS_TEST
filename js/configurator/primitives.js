@@ -771,7 +771,9 @@ function Scheme ( id ) {
     }
     self.box.style["transform"]       = s;
     self.box.style["transformOrigin"] = oString;
-    //>>>>>>>>>>>>>>>
+    for ( var i=0; i<self.links.length; i++ ) {
+      self.links[i].draw();
+    }
     return;
   }
   /* Callbacks */
