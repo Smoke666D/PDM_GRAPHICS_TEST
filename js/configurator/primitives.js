@@ -26,6 +26,9 @@ const lineTypes = {
     endSocket   : 'left'
   }
 }
+const scaleStep = 0.1;
+const scaleMax  = 3;
+const scaleMin  = 0.5;
 /*----------------------------------------------------------------------------*/
 function NodeAdr ( node = 0, pin = 0 ) {
   this.node = node;
@@ -170,7 +173,8 @@ function Pin ( id, type, data ) {
 function Menu ( box, object, items = [] ) {
   var self = this;
   /*----------------------------------------*/
-  this.obj = null;
+  this.obj   = null;
+  this.exist = true;
   /*----------------------------------------*/
   function init ( box, object, items ) {
     self.draw( box, object, items );
@@ -195,6 +199,7 @@ function Menu ( box, object, items = [] ) {
   /*----------------------------------------*/
   this.remove = function () {
     self.obj.remove();
+    self.exist = false;
     return;
   }
   this.draw   = function ( box, object, items ) {
@@ -225,14 +230,15 @@ function Menu ( box, object, items = [] ) {
   init( box, object, items );
   return;
 }
-function Node ( type, id, box, pinCallback, dragCallback, removeCallback ) {
-  var self           = this;
-  var box            = box;
-  var pinCallback    = pinCallback;
-  var dragCallback   = dragCallback;
-  var removeCallback = removeCallback;
-  var menu           = null;         /* Context menu */
-  var menuItems      = [
+function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contextMenuCallback ) {
+  var self                = this;
+  var box                 = box;
+  var pinCallback         = pinCallback;
+  var dragCallback        = dragCallback;
+  var removeCallback      = removeCallback;
+  var contextMenuCallback = contextMenuCallback;
+  var menu                = null;         /* Context menu */
+  var menuItems           = [
     {
       "name"     : "удалить",
       "callback" : function () { menu.remove(); removeCallback( self.id ); },
@@ -241,7 +247,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback ) {
   ];
   /*----------------------------------------*/
   this.id      = id;    /* ID number of node               */
-  this.name    = "";
+  this.name    = "";    /* Name of the node                */
   this.type    = type;  /* Function type of node           */
   this.inputs  = [];    /* Array of inputs pins            */
   this.outputs = [];    /* Array of outputs pins           */
@@ -418,6 +424,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback ) {
     for ( var i=0; i<self.obj.children.length; i++ ) {
       if ( self.obj.children[i].className == "body" ) {
         self.obj.children[i].addEventListener( 'contextmenu', function () {
+          contextMenuCallback( self.id );
           menu = new Menu( box, self.obj, menuItems );
         });
       }
@@ -660,6 +667,14 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback ) {
     self.obj.classList.remove( "focus" );
     return;
   }
+  this.closeMenu          = function () {
+    if ( menu != null ) {
+      if ( menu.exist == true ) {
+        menu.remove();
+      }
+    }
+    return;
+  }
   this.remove             = function () {
     this.obj.remove();
     return;
@@ -675,6 +690,7 @@ function Scheme ( id ) {
   var state    = "idle";        /* State of scheme            */
   var prevAdr  = new NodeAdr(); /* Previus pin for connecting */
   var prevLink = null;          /* Link number for changing   */
+  var scale    = 1;             /* Scale of zooming           */
   /*----------------------------------------*/
   this.id      = 0;    /* ID number of scheme     */
   this.nodes   = [];   /* Nodes of scheme         */
@@ -688,7 +704,10 @@ function Scheme ( id ) {
     return;
   }
   function removeNode ( id ) {
-    let shift = self.nodes[id].shift + self.nodes[id + 1].shift;
+    let shift = 0;
+    if ( ( self.nodes.length - 1 ) > id ) {
+      shift = self.nodes[id].shift + self.nodes[id + 1].shift;
+    }
     for ( var i=id+1; i<self.nodes.length; i++ ) {
       self.nodes[i].id--;
       self.nodes[i].shift -= shift;
@@ -697,7 +716,6 @@ function Scheme ( id ) {
     }
     self.nodes[id].remove();
     self.nodes.splice( id, 1 );
-    console.log( self.nodes[id].obj.style.top + "/" + self.nodes[id].obj.style.left );
     nodeID--;
   }
   function setPinsAvailable ( adr, type, data ) {
@@ -740,6 +758,20 @@ function Scheme ( id ) {
         break;
       }
     }
+    return;
+  }
+  function zoom () {
+    transformOrigin = [0, 0];
+    var p       = ["webkit", "moz", "ms", "o"];
+    var s       = "scale(" + scale + ")";
+    var oString = ( transformOrigin[0] * 100) + "% " + ( transformOrigin[1] * 100 ) + "%";
+    for ( var i=0; i<p.length; i++ ) {
+      self.box.style[p[i] + "Transform"]       = s;
+      self.box.style[p[i] + "TransformOrigin"] = oString;
+    }
+    self.box.style["transform"]       = s;
+    self.box.style["transformOrigin"] = oString;
+    //>>>>>>>>>>>>>>>
     return;
   }
   /* Callbacks */
@@ -805,6 +837,12 @@ function Scheme ( id ) {
     self.removeNode( adr );
     return;
   }
+  function beforContextMenu ( adr ) {
+    for ( var i=0; i<self.nodes.length; i++ ) {
+      self.nodes[i].closeMenu();
+    }
+    return;
+  }
   /*----------------------------------------*/
   this.redraw        = function () {
     for ( var i=0; i<self.links.length; i++ ) {
@@ -813,7 +851,7 @@ function Scheme ( id ) {
     return;
   }
   this.addNode       = function ( type ) {
-    self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrag, beforNodeRemove ) );
+    self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrag, beforNodeRemove, beforContextMenu ) );
     return;
   }
   this.addLink       = function ( from, to ) {
@@ -845,9 +883,9 @@ function Scheme ( id ) {
     return;
   }
   this.removeNode    = function ( adr ) {
-    if ( id <= self.nodes.length ) {
+    if ( adr <= self.nodes.length ) {
       removeLinksOfNode( adr );
-      removeNode( id );
+      removeNode( adr );
     }
     return;
   }
@@ -866,6 +904,25 @@ function Scheme ( id ) {
     for ( var i=0; i<self.nodes.length; i++ ) {
       self.nodes[i].resetFocus();
     }
+    return;
+  }
+  this.zoomIn        = function () {
+    if ( scale < scaleMax ) {
+      scale += scaleStep;
+    }
+    zoom();
+    return;
+  }
+  this.zoomReset     = function () {
+    scale = 1;
+    zoom();
+    return;
+  }
+  this.zoomOut       = function () {
+    if ( scale > scaleMin ) {
+      scale -= scaleStep;
+    }
+    zoom();
     return;
   }
   /*----------------------------------------*/
