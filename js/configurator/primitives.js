@@ -1,6 +1,5 @@
 /*----------------------------------------------------------------------------*/
 var nodeLib     = require('./nodeLib.js').nodeLib;
-var maker       = require('./construct.js');
 var dragElement = require('./drag.js').dragElement;
 /*----------------------------------------------------------------------------*/
 const lineTypes = {

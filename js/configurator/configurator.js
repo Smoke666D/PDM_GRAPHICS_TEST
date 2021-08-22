@@ -1,6 +1,5 @@
 /*----------------------------------------------------------------------------*/
 var Scheme = require('./primitives.js').Scheme;
-var maker  = require('./construct.js');
 /*----------------------------------------------------------------------------*/
 function Configurator ( size ) {
   var self = this;
@@ -11,9 +10,9 @@ function Configurator ( size ) {
   var schemeBox       = document.getElementById( 'scheme'           );
   var schemeFrame     = document.getElementById( 'scheme-frame'     );
   var activeSch       = 0;
-
+  /*----------------------------------------*/
   this.scheme   = new Scheme( 0 );
-
+  /*----------------------------------------*/
   function redraw () {
     self.scheme.redraw();
     return;
@@ -42,16 +41,6 @@ function Configurator ( size ) {
     zoomOutButton.addEventListener( 'click', function () {
       self.scheme.zoomOut();
     });
-    /*
-    schemeFrame.addEventListener( 'wheel', function ( zoom ) {
-      if ( zoom.deltaY > 0 ) {
-        self.scheme.zoomIn();
-      }
-      if ( zoom.deltaY < 0 ) {
-        self.scheme.zoomOut();
-      }
-    });
-    */
     /*-------------------------------------------------*/
     return;
   }
