@@ -1,21 +1,25 @@
 {
   "name"    : "node_varBool",
+  "type"    : "variable",
   "table"   : 0,
-  "help"    : "Булевая переменная"
+  "heading" : "Булевая переменная",
+  "short"   : "bool",
+  "help"    : "",
   "inputs"  : [
     {
-      "type"      : "bool",
-      "help"      : "Запись переменной",
-      "expansion" : false
+      "type"   : "bool",
+      "help"   : "Запись переменной",
+      "expand" : false
     }
   ],
   "outputs" : [
     {
-      "type"      : "bool",
-      "help"      : "Чтение переменной",
-      "expansion" : false
+      "type"   : "bool",
+      "help"   : "Чтение переменной",
+      "expand" : false
     }
   ],
-  "width"   : 100,
-  "height"  : 50,
+  "width"          : 100,
+  "height"         : 50,
+  "expansionShift" : 0
 }

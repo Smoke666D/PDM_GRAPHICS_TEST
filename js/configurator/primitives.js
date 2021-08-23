@@ -2,7 +2,7 @@
 var nodeLib     = require('./nodeLib.js').nodeLib;
 var dragElement = require('./drag.js').dragElement;
 /*----------------------------------------------------------------------------*/
-const lineTypes = {
+const lineTypes       = {
   "bool"   : {
     color       : '#33f233',
     animation   : true,
@@ -25,9 +25,10 @@ const lineTypes = {
     endSocket   : 'left'
   }
 }
-const scaleStep = 0.1;
-const scaleMax  = 3;
-const scaleMin  = 0.5;
+const scaleStep       = 0.1;
+const scaleMax        = 3;
+const scaleMin        = 0.5;
+const expandGroupSize = 2;
 /*----------------------------------------------------------------------------*/
 function NodeAdr ( node = 0, pin = 0 ) {
   this.node = node;
@@ -89,16 +90,17 @@ function Link ( from, to, start, end, type, id ) {
 function Pin ( id, type, data ) {
   var self = this;
   /*----------------------------------------*/
-  this.id         = 0;          /* ID number, unique in same node */
-  this.type       = "none";     /* Input or Output or None */
+  this.id         = 0;          /* ID number, unique in same node    */
+  this.type       = "none";     /* Input or Output or None           */
   this.data       = "none";     /* Bool or self.start.xoat or String */
-  this.help       = ""
-  this.expand     = false;
-  this.table      = false;
-  this.linked     = false;      /* Is Pin connected to outher pin */
-  this.linkedWith = [];         /* ID of the Link */
+  this.help       = "none";     /* Help tooltip for the pin          */
+  this.expand     = false;      /* Pin in expand group               */
+  this.table      = false;      /* Data of the pin from table        */
+  this.linked     = false;      /* Is Pin connected to outher pin    */
+  this.linkedWith = [];         /* ID of the Link                    */
   this.state      = "reserved"; /**/
-  this.obj        = null;       /* Object in DOM */
+  this.hide       = false;
+  this.obj        = null;       /* Object in DOM                     */
   /*----------------------------------------*/
   function init ( id, type, data ) {
     self.id         = id;
@@ -158,6 +160,16 @@ function Pin ( id, type, data ) {
       self.obj.classList.add( "connected" );
       this.state = "connected";
     }
+    return;
+  }
+  this.hide            = function () {
+    self.obj.classList.add( 'hide' );
+    self.hide = true;
+    return;
+  }
+  this.show            = function () {
+    self.obj.classList.remove( 'hide' );
+    self.hide = false;
     return;
   }
   this.setObj          = function ( obj ) {
@@ -244,6 +256,8 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
       "icon"     : "<svg viewBox='0 0 448 512'><path fill='currentColor' d='M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z'></path></svg>"
     }
   ];
+
+  var short               = "";
   /*----------------------------------------*/
   this.id      = id;    /* ID number of node               */
   this.name    = "";    /* Name of the node                */
@@ -264,6 +278,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     self.width   = data.width;
     self.height  = data.height;
     self.name    = data.name;
+    short        = data.short;
     self.inputs  = [];
     self.outputs = [];
     for ( var i=0; i<data.inputs.length; i++ ) {
@@ -294,12 +309,14 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     return;
   }
   function draw () {
-    let pinCounter = 0;
+    let pinCounter    = 0;
+    let expandCounter = 0;
     /*--------------- NODE ---------------*/
     self.obj            = document.createElement("DIV");
     self.obj.id         = 'node' + self.id;
     self.obj.className  = 'node';
     /*------------ INPUT PORT ------------*/
+    //expandGroupSize
     let inputPort       = document.createElement("DIV");
     inputPort.className = 'port input';
     for ( var i=0; i<self.inputs.length; i++ ) {
@@ -318,12 +335,19 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
         'placement' : 'left',
         'trigger'   : 'hover',
       });
+      if ( self.inputs[i].expand == true ) {
+        if ( expandCounter >= expandGroupSize ) {
+          self.inputs[i].hide  = true;
+          pin.className       += " hide";
+        }
+        expandCounter++;
+      }
     }
     /*--------------- BODY ---------------*/
     let body           = document.createElement("DIV");
     body.className     = 'body';
     let bodyText       = document.createElement("A");
-    bodyText.innerHTML = 'Node' + self.id;
+    bodyText.innerHTML = short;
     body.appendChild( bodyText );
     /*----------- OUTPUT PORT ------------*/
     let outputPort       = document.createElement("DIV");

@@ -1,19 +1,25 @@
 {
-  "name"   : "node_varFloat",
+  "name"    : "node_varFloat",
+  "type"    : "variable",
   "table"   : 0,
-  "help"   : "Числовая переменная с плавающей запятой"
-  "inputs" : [
+  "heading" : "Числовая переменная",
+  "short"   : "float",
+  "help"    : "",
+  "inputs"  : [
     {
-      "type"      : "float",
-      "help"      : "Запись переменной",
-      "expansion" : false
+      "type"   : "float",
+      "help"   : "Запись переменной",
+      "expand" : false
     }
   ],
   "outputs" : [
     {
-      "type"      : "float",
-      "help"      : "Чтение переменной",
-      "expansion" : false
+      "type"   : "float",
+      "help"   : "Чтение переменной",
+      "expand" : false
     }
-  ]
+  ],
+  "width"          : 100,
+  "height"         : 50,
+  "expansionShift" : 0
 }

@@ -1,22 +1,53 @@
 {
   "name"    : "node_and",
+  "type"    : "logic",
   "table"   : 0,
-  "help"    : "Логическое И"
+  "heading" : "Логическое И",
+  "short"   : "and",
+  "help"    : "",
   "inputs"  : [
     {
-      "type"      : "bool",
-      "help"      : "Условие",
-      "expansion" : true
+      "type"   : "bool",
+      "help"   : "Условие 1",
+      "expand" : true
+    },{
+      "type"   : "bool",
+      "help"   : "Условие 2",
+      "expand" : true
+    },{
+      "type"   : "bool",
+      "help"   : "Условие 3",
+      "expand" : true
+    },{
+      "type"   : "bool",
+      "help"   : "Условие 4",
+      "expand" : true
+    },{
+      "type"   : "bool",
+      "help"   : "Условие 5",
+      "expand" : true
+    },{
+      "type"   : "bool",
+      "help"   : "Условие 6",
+      "expand" : true
+    },{
+      "type"   : "bool",
+      "help"   : "Условие 7",
+      "expand" : true
+    },{
+      "type"   : "bool",
+      "help"   : "Условие 8",
+      "expand" : true
     }
   ],
   "outputs" : [
     {
-      "type"      : "bool",
-      "help"      : "Результат операции",
-      "expansion" : false
+      "type"   : "bool",
+      "help"   : "Результат операции",
+      "expand" : false
     }
   ],
-  "width"          : 10,
-  "height"         : 40,
+  "width"          : 100,
+  "height"         : 50,
   "expansionShift" : 5
 }
