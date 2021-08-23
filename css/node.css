@@ -86,7 +86,7 @@
       display: inline-block;}
       .node .port .pin.hide {
         position: absolute;
-        left: -400px;}
+        opacity: 0}
       .node .port .pin.reserved {
         background-color: #bbb;}
       .node .port .pin.available {

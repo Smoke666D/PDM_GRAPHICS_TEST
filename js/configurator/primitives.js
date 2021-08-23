@@ -28,7 +28,7 @@ const lineTypes       = {
 const scaleStep       = 0.1;
 const scaleMax        = 3;
 const scaleMin        = 0.5;
-const expandGroupSize = 2;
+const expandGroupSize = 8;
 /*----------------------------------------------------------------------------*/
 function NodeAdr ( node = 0, pin = 0 ) {
   this.node = node;
@@ -241,6 +241,12 @@ function Menu ( box, object, items = [] ) {
   init( box, object, items );
   return;
 }
+function Expand () {
+  var self = this;
+  this.counter = 0;
+  this.viewed  = 2;
+  return;
+}
 function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contextMenuCallback ) {
   var self                = this;
   var box                 = box;
@@ -271,6 +277,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
   this.height  = 0;     /* Height of node box              */
   this.obj     = null;  /* DOM object of node              */
   this.shift   = 0;     /* Top shift in parent of node box */
+  this.expand  = new Expand();
   /*----------------------------------------*/
   function makeNode ( type ) {
     let data     = nodeLib.getNodeRecord( type );
@@ -597,31 +604,6 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     }
     return res;
   }
-  this.getPinCoordinate   = function ( n ) {
-    let find = false;
-    let res  = { "x" : 0, "y" : 0 };
-    for ( var i=0; i<self.inputs.length; i++ ) {
-      if ( self.inputs[i].id == n ) {
-        let data = self.inputs[i].obj.getBoundingClientRect();
-        res.x = data.left;
-        res.y = data.top + data.height / 2;
-        find  = true;
-        break;
-      }
-    }
-    if ( find == false ) {
-      for ( var i=0; i<self.outputs.length; i++ ) {
-        if ( self.outputs[i].id == n ) {
-          let data = self.outputs[i].obj.getBoundingClientRect();
-          res.x = data.right;
-          res.y = data.top + data.height / 2;
-          find  = true;
-          break;
-        }
-      }
-    }
-    return res;
-  }
   this.getPinObject       = function ( n ) {
     let find = false;
     let res  = null;
@@ -636,6 +618,27 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
       for ( var i=0; i<self.outputs.length; i++ ) {
         if ( self.outputs[i].id == n ) {
           res  = self.outputs[i].obj;
+          find = true;
+          break;
+        }
+      }
+    }
+    return res;
+  }
+  this.getPinExpand       = function ( n ) {
+    let find = false;
+    let res  = null;
+    for ( var i=0; i<self.inputs.length; i++ ) {
+      if ( self.inputs[i].id == n ) {
+        res  = self.inputs[i].expand;
+        find = true;
+        break;
+      }
+    }
+    if ( find == false ) {
+      for ( var i=0; i<self.outputs.length; i++ ) {
+        if ( self.outputs[i].id == n ) {
+          res  = self.outputs[i].expand;
           find = true;
           break;
         }
@@ -696,6 +699,17 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
         menu.remove();
       }
     }
+    return;
+  }
+  this.pinExpand          = function () {
+    self.inputs[self.expand.viewed].show();
+    self.expand.viewed++;
+
+    console.log("expand");
+    return;
+  }
+  this.pinRollup          = function () {
+    console.log("rollup");
     return;
   }
   this.remove             = function () {
@@ -769,6 +783,9 @@ function Scheme ( id ) {
   }
   function getPinObject ( adr ) {
     return self.nodes[adr.node].getPinObject( adr.pin );
+  }
+  function getPinExpand ( adr ) {
+    return self.nodes[adr.node].getPinExpand( adr.pin );
   }
   function getPinData ( adr ) {
     return self.nodes[adr.node].getPinData( adr.pin );
@@ -883,6 +900,15 @@ function Scheme ( id ) {
     let currentID = 0;
     let start     = getPinObject( from );
     let end       = getPinObject( to   );
+    /*
+    if ( getPinExpand( to ) == true ) {
+      self.nodes[to.node].expand.counter++;
+      if ( self.nodes[to.node].expand.viewed == self.nodes[to.node].expand.counter ) {
+        self.nodes[to.node].pinExpand();
+        //self.redraw();
+      }
+    }
+    */
     if ( prevLink == null ) {
       currentID = linkID++;
       self.links.push( new Link( from, to, start, end, getPinData( from ), currentID ) );
@@ -892,6 +918,7 @@ function Scheme ( id ) {
     }
     self.nodes[from.node].setPinConnected( from.pin, id );
     self.nodes[to.node].setPinConnected( to.pin, id );
+
     return;
   }
   this.removeLink    = function ( id ) {
@@ -905,6 +932,14 @@ function Scheme ( id ) {
     self.links[id].remove();
     self.links.splice( id, 1 );
     linkID--;
+    /*
+    if ( getPinExpand( to ) == true ) {
+      self.nodes[to.node].expand.counter--;
+      if ( self.nodes[to.node].expand.viewed == self.nodes[to.node].expand.counter ) {
+        self.nodes[to.node].pinExpand();
+      }
+    }
+    */
     return;
   }
   this.removeNode    = function ( adr ) {
