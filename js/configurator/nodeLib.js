@@ -53,9 +53,13 @@ function NodeLib () {
     return;
   }
   function getRecordFromFile ( file ) {
-    let data   = JSON.parse( fs.readFileSync( file, "utf8" ) );
     let record = new NodeRecord();
-    record = data;
+    try {
+      let data   = JSON.parse( fs.readFileSync( file, "utf8" ) );
+      record = data;
+    } catch (e) {
+      console.log(  "error on parsing file: " + file );
+    }
     return record;
   }
   function processFiles ( files, callback ) {

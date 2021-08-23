@@ -1,0 +1,30 @@
+{
+  "name"    : "node_logicMoreEqual",
+  "type"    : "logic",
+  "table"   : 0,
+  "heading" : "Нестрогое неравенство",
+  "short"   : "≥",
+  "help"    : "",
+  "default" : null,
+  "inputs"  : [
+    {
+      "type"   : "any",
+      "help"   : "Большее",
+      "expand" : false
+    },{
+      "type"   : "any",
+      "help"   : "Меньшее",
+      "expand" : false
+    }
+  ],
+  "outputs" : [
+    {
+      "type"   : "bool",
+      "help"   : "Результат сравнения",
+      "expand" : false
+    }
+  ],
+  "width"          : 100,
+  "height"         : 50,
+  "expansionShift" : 0
+}

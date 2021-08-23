@@ -1,21 +1,21 @@
 {
-  "name"    : "node_varFloat",
+  "name"    : "node_varShort",
   "type"    : "variable",
   "table"   : 0,
-  "heading" : "Числовая переменная",
-  "short"   : "float",
+  "heading" : "Слово переменная",
+  "short"   : "short",
   "help"    : "",
   "default" : 0,
   "inputs"  : [
     {
-      "type"   : "float",
+      "type"   : "short",
       "help"   : "Запись переменной",
       "expand" : false
     }
   ],
   "outputs" : [
     {
-      "type"   : "float",
+      "type"   : "short",
       "help"   : "Чтение переменной",
       "expand" : false
     }

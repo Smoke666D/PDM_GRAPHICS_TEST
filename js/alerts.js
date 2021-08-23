@@ -81,7 +81,7 @@ function Alert ( type, ico, text, ack, progress ) {
     if ( this.progress > 0 ) {
       this.alertText += '<div class="progress"><div id="alert-progress'
       this.alertText += this.index;
-      this.alertText += '"class="progress-bar progress-bar-striped bg-info progress-bar-animated" role="progressbar" style="width: 0%;"></div></div>';
+      this.alertText += '"class="progress-bar bg-info" role="progressbar" style="width: 0%;"></div></div>';
     }
     this.alertText += '</div>';
     if ( this.progress == 0 ) {

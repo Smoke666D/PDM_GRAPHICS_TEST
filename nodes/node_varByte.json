@@ -1,21 +1,21 @@
 {
-  "name"    : "node_varFloat",
+  "name"    : "node_varByte",
   "type"    : "variable",
   "table"   : 0,
-  "heading" : "Числовая переменная",
-  "short"   : "float",
+  "heading" : "Байт переменная",
+  "short"   : "byte",
   "help"    : "",
   "default" : 0,
   "inputs"  : [
     {
-      "type"   : "float",
+      "type"   : "byte",
       "help"   : "Запись переменной",
       "expand" : false
     }
   ],
   "outputs" : [
     {
-      "type"   : "float",
+      "type"   : "byte",
       "help"   : "Чтение переменной",
       "expand" : false
     }

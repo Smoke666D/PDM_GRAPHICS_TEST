@@ -1,10 +1,11 @@
 {
-  "name"    : "node_and",
+  "name"    : "node_logicAnd",
   "type"    : "logic",
   "table"   : 0,
   "heading" : "Логическое И",
   "short"   : "and",
   "help"    : "",
+  "default" : null,
   "inputs"  : [
     {
       "type"   : "bool",
