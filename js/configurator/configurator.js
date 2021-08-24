@@ -30,6 +30,53 @@ function Configurator ( size ) {
     }, 1 );
     return;
   }
+  function drawLibMenu () {
+    await( nodeLib.getStatus, function () {
+      let length  = nodeLib.getSectionNumber();
+      let counter = 0;
+      for ( var i=0; i<length; i++ ) {
+        let section   = nodeLib.getSection( i );
+        let li        = document.createElement( "LI" );
+        let a         = document.createElement( "A" );
+        a.innerHTML   = section.name;
+        li.appendChild( a );
+        a.setAttribute( 'for',           ( section.key + "-section" )       );
+        a.setAttribute( 'href',          ( "#" + section.key + "-section" ) );
+        a.setAttribute( 'data-toggle',   "collapse"                         );
+        a.setAttribute( 'aria-expanded', "false"                            );
+        a.setAttribute( 'class',         "dropdown-toggle"                  );
+        let ul       = document.createElement( "UL" );
+        ul.id        = section.key + "-section";
+        ul.className = "collapse list-unstyled";
+        li.appendChild( ul );
+        nodeLibrary.appendChild( li );
+        section.records.forEach( function( record, i ) {
+          let li         = document.createElement( "LI" );
+          li.id          = "nodeItem" + counter;
+          li.className   = "item";
+          let span       = document.createElement( "SPAN" );
+          span.innerHTML = record.heading;
+          span.title     = record.help;
+          span.setAttribute( 'data-toggle', 'tooltip' );
+          li.appendChild( span );
+          ul.appendChild( li );
+          li.addEventListener( 'click', ( function () {
+            let j = counter;
+            return function () {
+              $( "#nodeLib" ).collapse( 'hide' );
+              self.addNode( j );
+            };
+          })());
+          counter++;
+          $( a ).tooltip( {
+            'placement' : 'right',
+            'trigger'   : 'hover',
+          });
+        });
+      }
+    });
+    return;
+  }
   function init( size ) {
     /*-------------------------------------------------*/
     schemeFrame.addEventListener( 'click', function () {
@@ -53,36 +100,7 @@ function Configurator ( size ) {
       self.scheme.zoomOut();
     });
     /*-------------------------------------------------*/
-    await( nodeLib.getStatus, function () {
-      let length  = nodeLib.getSectionNumber();
-      let counter = 0;
-      for ( var i=0; i<length; i++ ) {
-        let section = nodeLib.getSection( i );
-        section.records.forEach( function( record, i ) {
-          let li       = document.createElement( "LI" );
-          li.id        = "nodeItem" + counter;
-          li.className = "item";
-          let a        = document.createElement( "A" );
-          a.innerHTML  = record.heading;
-          a.title      = record.help;
-          a.setAttribute( 'data-toggle', 'tooltip' );
-          li.appendChild( a );
-          nodeLibrary.appendChild( li );
-          li.addEventListener( 'click', ( function () {
-            let j = counter;
-            return function () {
-              $( "#nodeLib" ).collapse( 'hide' );
-              self.addNode( j );
-            };
-          })());
-          counter++;
-          $( a ).tooltip( {
-            'placement' : 'right',
-            'trigger'   : 'hover',
-          });
-        });
-      }
-    });
+    drawLibMenu();
     /*-------------------------------------------------*/
     return;
   }

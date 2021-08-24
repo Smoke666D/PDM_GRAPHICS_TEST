@@ -33,14 +33,19 @@
   text-align: center;
   background-color: #fff;
   background-clip: border-box;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   border-radius: 0.25rem;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); }
   #nodeLib .list {
     min-height: 450px; }
+  #nodeLib li {
+    border-bottom: 1px solid #dbdcdd;
+  }
   #nodeLib .item {
     display: block;
-    border-bottom: 1px solid #dbdcdd;
     cursor: default;
     color: #4d5055; }
     #nodeLib .item:hover {

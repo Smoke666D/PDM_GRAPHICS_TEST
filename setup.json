@@ -51,8 +51,8 @@
     "node_outputLOG"      : true,
     "node_outputCAN"      : true,
     "node_outputMB"       : true,
-    "node_outputEvent"    : 0,
-    "node_outputDisplay"  : 0,
+    "node_outputEvent"    : true,
+    "node_outputDisplay"  : true,
 
     "node_loopsFor"       : 0,
     "node_loopsWhile"     : 0
