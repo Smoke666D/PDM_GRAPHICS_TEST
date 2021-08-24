@@ -1,0 +1,30 @@
+{
+  "name"    : "node_logicEqual",
+  "type"    : "logic",
+  "table"   : 0,
+  "heading" : "Равенство",
+  "short"   : "==",
+  "help"    : "",
+  "default" : null,
+  "inputs"  : [
+    {
+      "type"   : "any",
+      "help"   : "Вход 1",
+      "expand" : false
+    },{
+      "type"   : "any",
+      "help"   : "Вход 2",
+      "expand" : false
+    }
+  ],
+  "outputs" : [
+    {
+      "type"   : "bool",
+      "help"   : "Результат сравнения",
+      "expand" : false
+    }
+  ],
+  "width"          : 100,
+  "height"         : 50,
+  "expansionShift" : 0
+}

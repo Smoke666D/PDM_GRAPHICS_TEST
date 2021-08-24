@@ -1,22 +1,22 @@
 {
-  "name"    : "node_varBool",
-  "type"    : "variable",
+  "name"    : "node_logicNot",
+  "type"    : "logic",
   "table"   : 0,
-  "heading" : "Булевая переменная",
-  "short"   : "bool",
+  "heading" : "Логическое НЕ",
+  "short"   : "not",
   "help"    : "",
-  "default" : false,
+  "default" : null,
   "inputs"  : [
     {
       "type"   : "bool",
-      "help"   : "Запись переменной",
+      "help"   : "вход",
       "expand" : false
     }
   ],
   "outputs" : [
     {
       "type"   : "bool",
-      "help"   : "Чтение переменной",
+      "help"   : "выход",
       "expand" : false
     }
   ],

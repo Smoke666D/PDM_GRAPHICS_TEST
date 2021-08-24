@@ -1,22 +1,22 @@
 {
-  "name"    : "node_varBool",
-  "type"    : "variable",
+  "name"    : "node_timersDelay",
+  "type"    : "timers",
   "table"   : 0,
-  "heading" : "Булевая переменная",
-  "short"   : "bool",
+  "heading" : "Задержка",
+  "short"   : "delay",
   "help"    : "",
-  "default" : false,
+  "default" : 0,
   "inputs"  : [
     {
       "type"   : "bool",
-      "help"   : "Запись переменной",
+      "help"   : "Запуcк",
       "expand" : false
     }
   ],
   "outputs" : [
     {
       "type"   : "bool",
-      "help"   : "Чтение переменной",
+      "help"   : "Окончание задержки",
       "expand" : false
     }
   ],

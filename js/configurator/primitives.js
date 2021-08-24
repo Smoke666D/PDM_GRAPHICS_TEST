@@ -1,9 +1,8 @@
 /*----------------------------------------------------------------------------*/
 var nodeLib     = require('./nodeLib.js').nodeLib;
-var maker       = require('./construct.js');
 var dragElement = require('./drag.js').dragElement;
 /*----------------------------------------------------------------------------*/
-const lineTypes = {
+const lineTypes       = {
   "bool"   : {
     color       : '#33f233',
     animation   : true,
@@ -26,6 +25,10 @@ const lineTypes = {
     endSocket   : 'left'
   }
 }
+const scaleStep       = 0.1;
+const scaleMax        = 3;
+const scaleMin        = 0.5;
+const expandGroupSize = 8;
 /*----------------------------------------------------------------------------*/
 function NodeAdr ( node = 0, pin = 0 ) {
   this.node = node;
@@ -74,7 +77,7 @@ function Link ( from, to, start, end, type, id ) {
     }
     return;
   }
-  this.delete  = function () {
+  this.remove  = function () {
     if ( self.line != null ) {
       self.line.remove();
     }
@@ -87,18 +90,24 @@ function Link ( from, to, start, end, type, id ) {
 function Pin ( id, type, data ) {
   var self = this;
   /*----------------------------------------*/
-  this.id         = 0;          /* ID number, unique in same node */
-  this.type       = "none";     /* Input or Output or None */
+  this.id         = 0;          /* ID number, unique in same node    */
+  this.type       = "none";     /* Input or Output or None           */
   this.data       = "none";     /* Bool or self.start.xoat or String */
-  this.linked     = false;      /* Is Pin connected to outher pin */
-  this.linkedWith = [];         /* ID of the Link */
+  this.help       = "none";     /* Help tooltip for the pin          */
+  this.expand     = false;      /* Pin in expand group               */
+  this.table      = false;      /* Data of the pin from table        */
+  this.linked     = false;      /* Is Pin connected to outher pin    */
+  this.linkedWith = [];         /* ID of the Link                    */
   this.state      = "reserved"; /**/
-  this.obj        = null;       /* Object in DOM */
+  this.hide       = false;
+  this.obj        = null;       /* Object in DOM                     */
   /*----------------------------------------*/
   function init ( id, type, data ) {
     self.id         = id;
     self.type       = type;
-    self.data       = data;
+    self.data       = data.type;
+    self.help       = data.help;
+    self.expand     = data.expand;
     self.linked     = false;
     self.linkedWith = [];
     return;
@@ -153,6 +162,16 @@ function Pin ( id, type, data ) {
     }
     return;
   }
+  this.hide            = function () {
+    self.obj.classList.add( 'hide' );
+    self.hide = true;
+    return;
+  }
+  this.show            = function () {
+    self.obj.classList.remove( 'hide' );
+    self.hide = false;
+    return;
+  }
   this.setObj          = function ( obj ) {
     self.obj = obj;
     return;
@@ -165,7 +184,8 @@ function Pin ( id, type, data ) {
 function Menu ( box, object, items = [] ) {
   var self = this;
   /*----------------------------------------*/
-  this.obj = null;
+  this.obj   = null;
+  this.exist = true;
   /*----------------------------------------*/
   function init ( box, object, items ) {
     self.draw( box, object, items );
@@ -190,6 +210,7 @@ function Menu ( box, object, items = [] ) {
   /*----------------------------------------*/
   this.remove = function () {
     self.obj.remove();
+    self.exist = false;
     return;
   }
   this.draw   = function ( box, object, items ) {
@@ -220,22 +241,32 @@ function Menu ( box, object, items = [] ) {
   init( box, object, items );
   return;
 }
-function Node ( type, id, box, pinCallback, dragCallback, removeCallback ) {
-  var self           = this;
-  var box            = box;
-  var pinCallback    = pinCallback;
-  var dragCallback   = dragCallback;
-  var removeCallback = removeCallback;
-  var menu           = null;         /* Context menu */
-  var menuItems      = [
+function Expand () {
+  var self = this;
+  this.counter = 0;
+  this.viewed  = 2;
+  return;
+}
+function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contextMenuCallback ) {
+  var self                = this;
+  var box                 = box;
+  var pinCallback         = pinCallback;
+  var dragCallback        = dragCallback;
+  var removeCallback      = removeCallback;
+  var contextMenuCallback = contextMenuCallback;
+  var menu                = null;         /* Context menu */
+  var menuItems           = [
     {
       "name"     : "удалить",
       "callback" : function () { menu.remove(); removeCallback( self.id ); },
       "icon"     : "<svg viewBox='0 0 448 512'><path fill='currentColor' d='M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z'></path></svg>"
     }
   ];
+
+  var short               = "";
   /*----------------------------------------*/
   this.id      = id;    /* ID number of node               */
+  this.name    = "";    /* Name of the node                */
   this.type    = type;  /* Function type of node           */
   this.inputs  = [];    /* Array of inputs pins            */
   this.outputs = [];    /* Array of outputs pins           */
@@ -246,12 +277,15 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback ) {
   this.height  = 0;     /* Height of node box              */
   this.obj     = null;  /* DOM object of node              */
   this.shift   = 0;     /* Top shift in parent of node box */
+  this.expand  = new Expand();
   /*----------------------------------------*/
   function makeNode ( type ) {
     let data     = nodeLib.getNodeRecord( type );
     let pinID    = 0;
     self.width   = data.width;
     self.height  = data.height;
+    self.name    = data.name;
+    short        = data.short;
     self.inputs  = [];
     self.outputs = [];
     for ( var i=0; i<data.inputs.length; i++ ) {
@@ -282,30 +316,45 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback ) {
     return;
   }
   function draw () {
-    let pinCounter = 0;
+    let pinCounter    = 0;
+    let expandCounter = 0;
     /*--------------- NODE ---------------*/
     self.obj            = document.createElement("DIV");
     self.obj.id         = 'node' + self.id;
     self.obj.className  = 'node';
     /*------------ INPUT PORT ------------*/
+    //expandGroupSize
     let inputPort       = document.createElement("DIV");
     inputPort.className = 'port input';
     for ( var i=0; i<self.inputs.length; i++ ) {
       let pin       = document.createElement("DIV");
       pin.id        = 'pin' + pinCounter++;
       pin.className = 'pin';
+      pin.title     = self.inputs[i].help;
+      pin.setAttribute( 'data-toggle', 'tooltip' );
       if ( self.inputs[i].type == "none" ) {
         pin.className += " reseved";
       } else {
         pin.className += " disconnected";
       }
       inputPort.appendChild( pin );
+      $( pin ).tooltip( {
+        'placement' : 'left',
+        'trigger'   : 'hover',
+      });
+      if ( self.inputs[i].expand == true ) {
+        if ( expandCounter >= expandGroupSize ) {
+          self.inputs[i].hide  = true;
+          pin.className       += " hide";
+        }
+        expandCounter++;
+      }
     }
     /*--------------- BODY ---------------*/
     let body           = document.createElement("DIV");
     body.className     = 'body';
     let bodyText       = document.createElement("A");
-    bodyText.innerHTML = 'Node' + self.id;
+    bodyText.innerHTML = short;
     body.appendChild( bodyText );
     /*----------- OUTPUT PORT ------------*/
     let outputPort       = document.createElement("DIV");
@@ -314,12 +363,17 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback ) {
       let pin       = document.createElement("DIV");
       pin.id        = 'pin' + pinCounter++;
       pin.className = 'pin';
+      pin.title     = self.outputs[i].help;
       if ( self.outputs[i].type == "none" ) {
         pin.className += " reseved";
       } else {
         pin.className += " disconnected";
       }
       outputPort.appendChild( pin );
+      $( pin ).tooltip( {
+        'placement' : 'right',
+        'trigger'   : 'hover',
+      });
     }
     /*------------- SUMMERY --------------*/
     self.obj.appendChild( inputPort );
@@ -400,6 +454,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback ) {
     for ( var i=0; i<self.obj.children.length; i++ ) {
       if ( self.obj.children[i].className == "body" ) {
         self.obj.children[i].addEventListener( 'contextmenu', function () {
+          contextMenuCallback( self.id );
           menu = new Menu( box, self.obj, menuItems );
         });
       }
@@ -549,31 +604,6 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback ) {
     }
     return res;
   }
-  this.getPinCoordinate   = function ( n ) {
-    let find = false;
-    let res  = { "x" : 0, "y" : 0 };
-    for ( var i=0; i<self.inputs.length; i++ ) {
-      if ( self.inputs[i].id == n ) {
-        let data = self.inputs[i].obj.getBoundingClientRect();
-        res.x = data.left;
-        res.y = data.top + data.height / 2;
-        find  = true;
-        break;
-      }
-    }
-    if ( find == false ) {
-      for ( var i=0; i<self.outputs.length; i++ ) {
-        if ( self.outputs[i].id == n ) {
-          let data = self.outputs[i].obj.getBoundingClientRect();
-          res.x = data.right;
-          res.y = data.top + data.height / 2;
-          find  = true;
-          break;
-        }
-      }
-    }
-    return res;
-  }
   this.getPinObject       = function ( n ) {
     let find = false;
     let res  = null;
@@ -588,6 +618,27 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback ) {
       for ( var i=0; i<self.outputs.length; i++ ) {
         if ( self.outputs[i].id == n ) {
           res  = self.outputs[i].obj;
+          find = true;
+          break;
+        }
+      }
+    }
+    return res;
+  }
+  this.getPinExpand       = function ( n ) {
+    let find = false;
+    let res  = null;
+    for ( var i=0; i<self.inputs.length; i++ ) {
+      if ( self.inputs[i].id == n ) {
+        res  = self.inputs[i].expand;
+        find = true;
+        break;
+      }
+    }
+    if ( find == false ) {
+      for ( var i=0; i<self.outputs.length; i++ ) {
+        if ( self.outputs[i].id == n ) {
+          res  = self.outputs[i].expand;
           find = true;
           break;
         }
@@ -642,6 +693,25 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback ) {
     self.obj.classList.remove( "focus" );
     return;
   }
+  this.closeMenu          = function () {
+    if ( menu != null ) {
+      if ( menu.exist == true ) {
+        menu.remove();
+      }
+    }
+    return;
+  }
+  this.pinExpand          = function () {
+    self.inputs[self.expand.viewed].show();
+    self.expand.viewed++;
+
+    console.log("expand");
+    return;
+  }
+  this.pinRollup          = function () {
+    console.log("rollup");
+    return;
+  }
   this.remove             = function () {
     this.obj.remove();
     return;
@@ -657,6 +727,7 @@ function Scheme ( id ) {
   var state    = "idle";        /* State of scheme            */
   var prevAdr  = new NodeAdr(); /* Previus pin for connecting */
   var prevLink = null;          /* Link number for changing   */
+  var scale    = 1;             /* Scale of zooming           */
   /*----------------------------------------*/
   this.id      = 0;    /* ID number of scheme     */
   this.nodes   = [];   /* Nodes of scheme         */
@@ -670,7 +741,10 @@ function Scheme ( id ) {
     return;
   }
   function removeNode ( id ) {
-    let shift = self.nodes[id].shift + self.nodes[id + 1].shift;
+    let shift = 0;
+    if ( ( self.nodes.length - 1 ) > id ) {
+      shift = self.nodes[id].shift + self.nodes[id + 1].shift;
+    }
     for ( var i=id+1; i<self.nodes.length; i++ ) {
       self.nodes[i].id--;
       self.nodes[i].shift -= shift;
@@ -679,7 +753,6 @@ function Scheme ( id ) {
     }
     self.nodes[id].remove();
     self.nodes.splice( id, 1 );
-    console.log( self.nodes[id].obj.style.top + "/" + self.nodes[id].obj.style.left );
     nodeID--;
   }
   function setPinsAvailable ( adr, type, data ) {
@@ -711,6 +784,9 @@ function Scheme ( id ) {
   function getPinObject ( adr ) {
     return self.nodes[adr.node].getPinObject( adr.pin );
   }
+  function getPinExpand ( adr ) {
+    return self.nodes[adr.node].getPinExpand( adr.pin );
+  }
   function getPinData ( adr ) {
     return self.nodes[adr.node].getPinData( adr.pin );
   }
@@ -721,6 +797,22 @@ function Scheme ( id ) {
         removeLinksOfNode( adr );
         break;
       }
+    }
+    return;
+  }
+  function zoom () {
+    transformOrigin = [0, 0];
+    var p       = ["webkit", "moz", "ms", "o"];
+    var s       = "scale(" + scale + ")";
+    var oString = ( transformOrigin[0] * 100) + "% " + ( transformOrigin[1] * 100 ) + "%";
+    for ( var i=0; i<p.length; i++ ) {
+      self.box.style[p[i] + "Transform"]       = s;
+      self.box.style[p[i] + "TransformOrigin"] = oString;
+    }
+    self.box.style["transform"]       = s;
+    self.box.style["transformOrigin"] = oString;
+    for ( var i=0; i<self.links.length; i++ ) {
+      self.links[i].draw();
     }
     return;
   }
@@ -787,6 +879,12 @@ function Scheme ( id ) {
     self.removeNode( adr );
     return;
   }
+  function beforContextMenu ( adr ) {
+    for ( var i=0; i<self.nodes.length; i++ ) {
+      self.nodes[i].closeMenu();
+    }
+    return;
+  }
   /*----------------------------------------*/
   this.redraw        = function () {
     for ( var i=0; i<self.links.length; i++ ) {
@@ -795,13 +893,22 @@ function Scheme ( id ) {
     return;
   }
   this.addNode       = function ( type ) {
-    self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrag, beforNodeRemove ) );
+    self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrag, beforNodeRemove, beforContextMenu ) );
     return;
   }
   this.addLink       = function ( from, to ) {
     let currentID = 0;
     let start     = getPinObject( from );
     let end       = getPinObject( to   );
+    /*
+    if ( getPinExpand( to ) == true ) {
+      self.nodes[to.node].expand.counter++;
+      if ( self.nodes[to.node].expand.viewed == self.nodes[to.node].expand.counter ) {
+        self.nodes[to.node].pinExpand();
+        //self.redraw();
+      }
+    }
+    */
     if ( prevLink == null ) {
       currentID = linkID++;
       self.links.push( new Link( from, to, start, end, getPinData( from ), currentID ) );
@@ -811,6 +918,7 @@ function Scheme ( id ) {
     }
     self.nodes[from.node].setPinConnected( from.pin, id );
     self.nodes[to.node].setPinConnected( to.pin, id );
+
     return;
   }
   this.removeLink    = function ( id ) {
@@ -821,15 +929,23 @@ function Scheme ( id ) {
     for ( var i=id+1; i<self.links.length; i++ ) {
       self.links[i].id--;
     }
-    self.links[id].delete();
+    self.links[id].remove();
     self.links.splice( id, 1 );
     linkID--;
+    /*
+    if ( getPinExpand( to ) == true ) {
+      self.nodes[to.node].expand.counter--;
+      if ( self.nodes[to.node].expand.viewed == self.nodes[to.node].expand.counter ) {
+        self.nodes[to.node].pinExpand();
+      }
+    }
+    */
     return;
   }
   this.removeNode    = function ( adr ) {
-    if ( id <= self.nodes.length ) {
+    if ( adr <= self.nodes.length ) {
       removeLinksOfNode( adr );
-      removeNode( id );
+      removeNode( adr );
     }
     return;
   }
@@ -848,6 +964,25 @@ function Scheme ( id ) {
     for ( var i=0; i<self.nodes.length; i++ ) {
       self.nodes[i].resetFocus();
     }
+    return;
+  }
+  this.zoomIn        = function () {
+    if ( scale < scaleMax ) {
+      scale += scaleStep;
+    }
+    zoom();
+    return;
+  }
+  this.zoomReset     = function () {
+    scale = 1;
+    zoom();
+    return;
+  }
+  this.zoomOut       = function () {
+    if ( scale > scaleMin ) {
+      scale -= scaleStep;
+    }
+    zoom();
     return;
   }
   /*----------------------------------------*/

@@ -4,9 +4,9 @@ function dragElement ( elmnt, trig, shift, onDrag, onDrop ) {
   var dY = 0;
   var cX = 0;
   var cY = 0;
-  var startX = 0;
-  var startY = 0;
-  var parent = elmnt.parentElement.parentElement.getBoundingClientRect();
+  var startX       = 0;
+  var startY       = 0;
+  var parent       = elmnt.parentElement.parentElement.getBoundingClientRect();
   var leftBorder   = 0;
   var rightBorder  = parent.width - parseInt( elmnt.style.width );
   var topBorder    = shift;
@@ -17,6 +17,10 @@ function dragElement ( elmnt, trig, shift, onDrag, onDrop ) {
     elmnt.onmousedown = dragMouseDown;
   }
   function dragMouseDown ( e ) {
+    parent       = elmnt.parentElement.parentElement.getBoundingClientRect();
+    rightBorder  = parent.width - parseInt( elmnt.style.width );
+    topBorder    = shift;
+    bottomBorder = parent.height - parseInt( elmnt.style.height ) + shift;
     e = e || window.event;
     e.preventDefault();
     cX = e.clientX;                        // get the mouse cursor position at startup:
@@ -58,7 +62,9 @@ function dragElement ( elmnt, trig, shift, onDrag, onDrop ) {
   function closeDragElement() {
     document.onmouseup   = null;
     document.onmousemove = null;
-    if ( ( cX != startX) || ( cY != startY ) ) {
+    if ( ( cX != startX ) || ( cY != startY ) ) {
+      startX = cX;
+      startY = cY;
       onDrop();
     }
     return;

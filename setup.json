@@ -1,74 +1,60 @@
   {
-  "nodNumber"      : 100,
+  "nodNumber"     : 100,
   "availableNods" : {
-    "node_varBool" : true,
+    "node_varBool"        : true,
+    "node_varByte"        : true,
+    "node_varShort"       : true,
+    "node_varFloat"       : true,
+    "node_varString"      : true,
+    "node_varDate"        : true,
 
+    "node_logicNot"       : true,
+    "node_logicAnd"       : true,
+    "node_logicOr"        : true,
+    "node_logicXor"       : true,
+    "node_logicStream"    : true,
+    "node_logicMore"      : true,
+    "node_logicMoreEqual" : true,
+    "node_logicEqual"     : true,
 
+    "node_timersDelay"    : true,
+    "node_timersTrigger"  : true,
 
-    "variable" : {
-      "bool"   : true,
-      "float"  : true,
-      "byte"   : true,
-      "short"  : true,
-      "string" : true,
-      "time"   : true,
-      "date"   : true
-    },
-    "logic" : {
-      "not"         : true,
-      "and"         : true,
-      "or"          : true,
-      "hor"         : true,
-      "if"          : true,
-      "stream"      : true,
-      "more"        : true,
-      "moreOrEqual" : true,
-      "equal"       : true
-    },
-    "timers" : {
-      "delay"   : true,
-      "trigger" : true,
-    },
-    "math" : {
-      "add"    : true,
-      "sub"    : true,
-      "mult"   : true,
-      "div"    : true,
-      "pow"    : true,
-      "root"   : true,
-      "sin"    : true,
-      "cos"    : true,
-      "tg"     : true,
-      "ctg"    : true,
-      "arcsin" : true,
-      "arccos" : true,
-      "arctg"  : true,
-      "arcctg" : true,
-      "proc"   : true
-    },
-    "loops" : {
-      "for"   : false,
-      "while" : false
-    },
-    "inputs" : {
-      "din"     : true,
-      "ain"     : true,
-      "rtc"     : true,
-      "can"     : true,
-      "mb"      : false,
-      "mem"     : false,
-      "alarm"   : false,
-      "warning" : false
-    },
-    "outputs" : {
-      "dout"    : true,
-      "aout"    : true,
-      "log"     : true,
-      "can"     : true,
-      "mb"      : false,
-      "alarm"   : false,
-      "warning" : false,
-      "display" : true
-    }
+    "node_mathAdd"        : true,
+    "node_mathSub"        : true,
+    "node_mathMult"       : true,
+    "node_mathDiv"        : true,
+    "node_mathPow"        : 0,
+    "node_mathRoot"       : 0,
+    "node_mathSin"        : 0,
+    "node_mathCos"        : 0,
+    "node_mathTg"         : 0,
+    "node_mathCtg"        : 0,
+    "node_mathArcsin"     : 0,
+    "node_mathArccos"     : 0,
+    "node_mathArctg"      : 0,
+    "node_mathArcctg"     : 0,
+    "node_mathProc"       : 0,
+
+    "node_inputDIN"       : true,
+    "node_inputSW"        : true,
+    "node_inputAIN"       : true,
+    "node_inputRTC"       : true,
+    "node_inputCAN"       : true,
+    "node_inputMB"        : true,
+    "node_inputMEM"       : true,
+    "node_inputEvent"     : true,
+
+    "node_outputDOUT"     : true,
+    "node_outputAOUT"     : true,
+    "node_outputLED"      : true,
+    "node_outputLOG"      : true,
+    "node_outputCAN"      : true,
+    "node_outputMB"       : true,
+    "node_outputEvent"    : true,
+    "node_outputDisplay"  : true,
+
+    "node_loopsFor"       : 0,
+    "node_loopsWhile"     : 0
   }
 }
