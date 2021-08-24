@@ -11,6 +11,7 @@ function Configurator ( size ) {
   var schemeBox       = document.getElementById( 'scheme'           );
   var schemeFrame     = document.getElementById( 'scheme-frame'     );
   var nodeLibrary     = document.getElementById( 'nodeLib-list'     );
+  var content         = document.getElementById( 'content'          );
   var activeSch       = 0;
   /*----------------------------------------*/
   this.scheme   = new Scheme( 0 );
@@ -88,8 +89,11 @@ function Configurator ( size ) {
       return;
     });
     /*-------------------------------------------------*/
-    addButton.addEventListener( 'click', function () {
-      return;
+    schemeFrame.addEventListener( 'scroll', function() {
+      self.scheme.redraw();
+    });
+    content.addEventListener( 'scroll', function () {
+      self.scheme.redraw();
     });
     /*-------------------------------------------------*/
     zoomInButton.addEventListener( 'click', function () {
