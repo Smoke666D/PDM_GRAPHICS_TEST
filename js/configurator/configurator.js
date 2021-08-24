@@ -35,11 +35,11 @@ function Configurator ( size ) {
       let length  = nodeLib.getSectionNumber();
       let counter = 0;
       for ( var i=0; i<length; i++ ) {
-        let section   = nodeLib.getSection( i );
-        let li        = document.createElement( "LI" );
-        let a         = document.createElement( "A" );
-        a.innerHTML   = section.name;
-        li.appendChild( a );
+        let section    = nodeLib.getSection( i );
+        let li         = document.createElement( "LI" );
+        let a          = document.createElement( "A" );
+        let span       = document.createElement( "SPAN" );
+        span.innerHTML = section.name;
         a.setAttribute( 'for',           ( section.key + "-section" )       );
         a.setAttribute( 'href',          ( "#" + section.key + "-section" ) );
         a.setAttribute( 'data-toggle',   "collapse"                         );
@@ -48,6 +48,8 @@ function Configurator ( size ) {
         let ul       = document.createElement( "UL" );
         ul.id        = section.key + "-section";
         ul.className = "collapse list-unstyled";
+        a.appendChild( span );
+        li.appendChild( a );
         li.appendChild( ul );
         nodeLibrary.appendChild( li );
         section.records.forEach( function( record, i ) {

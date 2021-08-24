@@ -39,11 +39,21 @@
   border-radius: 0.25rem;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); }
+  #sidebar svg {
+    width: 1em;
+    height: 1em;}
   #nodeLib .list {
     min-height: 450px; }
-  #nodeLib li {
-    border-bottom: 1px solid #dbdcdd;
-  }
+  #nodeLib ul li {
+    border-bottom: 1px solid #dbdcdd;}
+  #nodeLib ul li a {
+    height: 40px;
+    color: #4d5055;
+    display: block;}
+    #nodeLib ul li a span {
+      display: inline-block;
+      padding-top: 8px;
+    }
   #nodeLib .item {
     display: block;
     cursor: default;
