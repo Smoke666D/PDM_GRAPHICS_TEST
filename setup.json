@@ -1,4 +1,4 @@
-  {
+{
   "nodNumber"     : 100,
   "availableNods" : {
     "node_varBool"        : true,

@@ -3,6 +3,7 @@ const fs = require('fs');
 /*----------------------------------------------------------------------------*/
 const typePriority = ["variable",  "logic",   "timers",  "math",       "loops", "inputs", "outputs"];
 const typeNames    = ["Переменные", "Логика", "Таймеры", "Математика", "Циклы", "Входы",  "Выходы" ];
+const setupKeys    = ["nodNumber", "availableNods"];
 /*----------------------------------------------------------------------------*/
 function portRecord () {
   var self    = this;
@@ -33,13 +34,43 @@ function NodeSection ( key, name ) {
 }
 function NodeLib () {
   var self      = this;
-  var source    = "";
-  var filesList = [];
-  var records   = [];
-  var ready     = false;
-  var sections  = [];
+  var ready     = false; /* Status of library         */
+  var setup     = null;  /* Setup of current device   */
+  var records   = [];    /* Records of the nodes data */
+  var sections  = [];    /* Node data by the sections */
   /*----------------------------------------*/
   /*----------------------------------------*/
+  function checkSetupFile ( callback ) {
+    let checker = 0;
+    setupKeys.forEach( function ( key, i ) {
+      if ( Object.keys( setup ).indexOf( key ) >= 0 ) {
+        checker++;
+      }
+    });
+    if ( checker == Object.keys( setup ).length ) {
+      callback();
+    } else {
+      console.log( "Wrong setup file!" );
+    }
+    return;
+  }
+  function getSetupFile ( callback ) {
+    setup = null;
+    try {
+      setup = JSON.parse( fs.readFileSync( ( process.cwd() + "\\setup.json" ), "utf8" ) );
+      callback();
+    } catch (e) {
+      console.log(  "error on parsing setup file" );
+    }
+    return;
+  }
+  function isNodeAvailable ( name ) {
+    let res = false;
+    if ( setup.availableNods[name] == true ) {
+      res = true;
+    }
+    return res;
+  }
   function getFileList ( callback ) {
     let dir = process.cwd() + "\\nodes";
     fs.readdir( dir, function ( err, files ) {
@@ -64,7 +95,10 @@ function NodeLib () {
   }
   function processFiles ( files, callback ) {
     files.forEach( function ( file, i ) {
-      records.push( getRecordFromFile( file ) );
+      let record = getRecordFromFile( file )
+      if ( isNodeAvailable( record.name ) == true ) {
+        records.push( record );
+      }
     });
     callback();
     return;
@@ -87,9 +121,13 @@ function NodeLib () {
   function init () {
     getFileList( function ( files ) {
       records = [];
-      processFiles( files, function () {
-        sortingRecords( function () {
-          ready = true;
+      getSetupFile( function () {
+        checkSetupFile( function () {
+          processFiles( files, function () {
+            sortingRecords( function () {
+              ready = true;
+            });
+          });
         });
       });
     });

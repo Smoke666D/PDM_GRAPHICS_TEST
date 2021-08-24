@@ -114,7 +114,6 @@ function Configurator ( size ) {
     self.scheme.addNode( id );
     return;
   }
-
   init( size );
   return;
 }
