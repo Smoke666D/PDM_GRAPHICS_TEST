@@ -36,50 +36,57 @@ function NodeAdr ( node = 0, pin = 0 ) {
   return;
 }
 function Link ( from, to, start, end, type, id ) {
-  var self = this;
-  var box  = box;
+  var self  = this;
+  var box   = box;   /* Object of scheme in DOM   */
+  var start = start; /* Object of from pin in DOM */
+  var end   = end;   /* Object of to pin in DOM   */
+  var type  = type;  /* Line type (data type)     */
+  var line  = null;  /* LeaderLine object         */
+  var obj   = null;  /* DOM element of the line   */
   /*----------------------------------------*/
-  this.id    = id;
-  this.from  = new NodeAdr();
-  this.to    = new NodeAdr();
-  this.start = start;
-  this.end   = end;
-  this.type  = type;
-  this.line  = null; /* LeaderLine object */
-  this.obj   = null; /* DOM element of the line */
+  this.id    = id;            /* ID number of the link   */
+  this.from  = new NodeAdr(); /* Coordinates of from pin */
+  this.to    = new NodeAdr(); /* Coordinates of to pin   */
   /*----------------------------------------*/
   function init ( from, to, start, end, type, id ) {
     self.id    = id;
     self.from  = from;
     self.to    = to;
-    self.start = start;
-    self.end   = end;
-    self.type  = type;
+    type       = type;
+    start      = start;
+    end        = end;
     self.draw();
     return;
   }
   /*----------------------------------------*/
   this.draw    = function () {
-    if ( self.line == null ) {
-      self.line   = new LeaderLine( self.start, self.end, lineTypes[self.type] );
-      self.obj    = document.querySelector('.leader-line:last-of-type');
-      self.obj.id = "link" + self.id;
+    if ( line == null ) {
+      line   = new LeaderLine( start, end, lineTypes[type] );
+      obj    = document.querySelector('.leader-line:last-of-type');
+      obj.id = "link" + self.id;
     } else {
-      self.line.position();
+      line.position();
     }
     return;
   }
   this.setFrom = function ( from, start ) {
-    if ( self.line != null ) {
-      self.from  = from;
-      self.start = start;
-      self.line.setOptions( {"start" : self.start } );
+    if ( line != null ) {
+      from  = from;
+      start = start;
+      line.setOptions( {"start" : start } );
     }
     return;
   }
+  this.getData = function () {
+    return {
+      "id"   : self.id,
+      "from" : self.from,
+      "to"   : self.to,
+    };
+  }
   this.remove  = function () {
-    if ( self.line != null ) {
-      self.line.remove();
+    if ( line != null ) {
+      line.remove();
     }
     return;
   }
@@ -983,6 +990,13 @@ function Scheme ( id ) {
       scale -= scaleStep;
     }
     zoom();
+    return;
+  }
+  this.getData       = function () {
+    self.links.forEach( function( link, i ) {
+      link.getData();
+    });
+
     return;
   }
   /*----------------------------------------*/

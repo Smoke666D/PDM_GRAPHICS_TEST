@@ -110,9 +110,13 @@ function Configurator ( size ) {
     /*-------------------------------------------------*/
     return;
   }
+  /*----------------------------------------*/
   this.addNode = function ( id ) {
     self.scheme.addNode( id );
     return;
+  }
+  this.save    = function () {
+    
   }
   init( size );
   return;
