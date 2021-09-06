@@ -8663,27 +8663,6 @@ a[data-toggle="collapse"] {
   }
 }
 
-/* Средние девайсы («таблетки», < 992px) */
-@media (max-width: 991.98px) {
-  #sidebar {
-    position: absolute;
-    padding-top: 0;
-    margin-left: -300px;
-    z-index: 20;}
-    #sidebar .sidebar-button{
-      height: auto;
-      overflow: visible;}
-    #sidebar ul.components {
-      height: auto; }
-    #sidebar.active {
-      margin-left: 0; }
-}
-
-@media (max-width: 1900px) {
-  .content-data .pos-name{
-    padding-left: 0px;}
-}
-
 .btn.btn-primary {
   background: #f8b739;
   border-color: #f8b739; }

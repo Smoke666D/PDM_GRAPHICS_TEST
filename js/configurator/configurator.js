@@ -42,7 +42,7 @@ function Configurator ( size ) {
         let span       = document.createElement( "SPAN" );
         span.innerHTML = section.name;
         a.setAttribute( 'for',           ( section.key + "-section" )       );
-        a.setAttribute( 'href',          ( "#" + section.key + "-section" ) );
+        a.setAttribute( 'data-target',   ( "#" + section.key + "-section" ) );
         a.setAttribute( 'data-toggle',   "collapse"                         );
         a.setAttribute( 'aria-expanded', "false"                            );
         a.setAttribute( 'class',         "dropdown-toggle"                  );
@@ -116,7 +116,7 @@ function Configurator ( size ) {
     return;
   }
   this.save    = function () {
-    
+
   }
   init( size );
   return;

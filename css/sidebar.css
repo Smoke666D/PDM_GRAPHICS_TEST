@@ -36,38 +36,49 @@
     flex-direction: column;
     height: calc(100% - 60px);
   }
+    #sidebar .fild .panel .content {}
     #sidebar .fild .panel {
-      flex-grow: 1;
-      flex-basis: 0;
+      min-height: 100px;
       margin-left: -200px;
       position: absolute;
       display: block;
       overflow-y: scroll;
-      resize: vertical;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);}
       #sidebar .fild .panel.active {
         position: relative!important;
         margin-left: 0px!important;}
-      #sidebar .fild .panel .header {
-        background-color: #25272b;
-        display: flex;
-        height: 30px;
-        justify-content: space-between;
-        align-items: center;}
-        #sidebar .fild .panel .header a {
-          color: #d2d3d4;
+    #sidebar .fild .resizer {
+      min-height: 3px;
+      height: 3px;
+      margin-left: -200px;
+      position: absolute;
+      background-color: rgba(255, 255, 255, 0.1);
+      cursor: row-resize; }
+      #sidebar .fild .resizer.active {
+        position: relative!important;
+        margin-left: 0px!important; }
+    #sidebar .fild .header {
+      margin-left: -200px;
+      color: #d2d3d4;
+      background: #25272b;
+      position: absolute;
+      display: flex;
+      min-height: 30px;
+      height: 30px;
+      padding-left: 12px;
+      justify-content: space-between;
+      align-items: center;}
+      #sidebar .fild .header.active {
+        position: relative!important;
+        margin-left: 0px!important;}
+      }
+      #sidebar .fild .header .ticket {
+        width: 30px;}
+        #sidebar .fild .header .ticket:hover {
+          background: #4d5055;}
+        #sidebar .fild .header .ticket svg {
           padding-top: 4px;
-          padding-left: 12px;}
-        #sidebar .fild .panel .header .ticket {
-          width: 30px;}
-          #sidebar .fild .panel .header .ticket:hover {
-            background: #4d5055;}
-          #sidebar .fild .panel .header .ticket svg {
-            padding-top: 4px;
-            height: 20px;}
-        #sidebar .fild .panel .content {
-
-        }
+          height: 20px;}
   #sidebar .footer {
     height: 30px;
     background: #373a40;}
@@ -131,8 +142,7 @@
       -webkit-transform:rotate(-90deg);
 }
 
-#nodeLib-list {
-  }
+#nodeLib-list {}
   #nodeLib-list .item {
     padding-top: 5px;
     padding-left: 12px;
