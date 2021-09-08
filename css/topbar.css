@@ -1,0 +1,31 @@
+#topbar {
+  position: absolute;
+  background: #373a40;
+  top: 0px;
+  left: calc( 50% - 60px );
+  z-index: 10;
+  height: 30px;
+  width: 260px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none; }
+  #topbar .fild {
+    display: flex;
+    flex-direction: row;
+    justify-content:center;
+    height: 30px;
+    padding-left: 10px;
+    padding-right: 10px;}
+    #topbar .fild .ticket {
+      transition: background .12s ease-in-out;
+      text-align: center;
+      color: #d2d3d4;
+      height: 100%;
+      width: 30px; }
+      #topbar .fild .ticket:hover {
+        background: #4d5055; }
+      #topbar .fild .ticket svg {
+        width: 1em;
+        height: 1em;}

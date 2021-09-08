@@ -8572,96 +8572,14 @@ a[data-toggle="collapse"] {
 }
 
 #content {
-  width: 100%;
+  width: auto;
+  position: relative;
   overflow: auto;
   padding: 0;
   min-height: 100vh;
   -webkit-transition: all 0.3s;
   -o-transition: all 0.3s;
   transition: all 0.3s; }
-
-.content-data {
-  position: flex;
-  width: 100%;
-  transition: opacity .22s ease-in, height .12s step-start;}
-  .content-data.hidden {
-    opacity: 0;
-    height: 0;
-    overflow: hidden;
-    transition-timing-function: linear, step-end;}
-  .content-data h2{
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
-    user-select: none; /* Standard syntax */}
-  .content-data h3{
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
-    user-select: none; /* Standard syntax */}
-  .content-data h4{
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
-    user-select: none; /* Standard syntax */}
-  .content-data h5{
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
-    user-select: none; /* Standard syntax */}
-  .content-data h6{
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
-    user-select: none; /* Standard syntax */
-    padding: 10px}
-  .content-data label{
-    line-height: 1rem;
-  }
-  .data-select {
-    width: 140px!important;}
-  }
-  .sensor-select{}
-  .content-data .pos-name{
-    text-align: left!important;
-    }
-
-/* Экстрамалые девайсы («телефоны», < 576px) */
-@media (max-width: 575.98px) {
-  .content-data .pos-name{
-    max-width: 50%!important;
-    flex-grow: 1!important; }
-  .content-data h6{
-    text-align: center; }
-  .content-data .col-slider{
-    position: absolute;
-    top: -100px;
-    left: -100px;
-    opacity: 0;
-    overflow: hidden;}
-  .content-data{
-    width: 300px!important;
-  }
-  #sidebar {
-    position: absolute;
-    width: 100%;
-    padding-top: 0;
-    left: -575px;
-    z-index: 20;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
-    user-select: none; /* Standard syntax */}
-    #sidebar ul.components {
-      height: 100%; }
-    #sidebar.active {
-      left: 0; }
-    #sidebar .sidebar-button{
-      height: auto;
-      overflow: visible;}
-  .col-select{
-    -ms-flex-preferred-size: 0;
-    flex-basis: 0;
-    -webkit-box-flex: 1;
-    -ms-flex-positive: 1;
-    flex-grow: 1;
-    max-width: 100%;
-  }
-}
 
 .btn.btn-primary {
   background: #f8b739;

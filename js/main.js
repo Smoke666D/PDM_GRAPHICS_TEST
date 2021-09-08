@@ -10,22 +10,6 @@ document.addEventListener ( 'touchmove', function( e ) {
 /*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
-function hideContent() {
-	var contentPages = document.getElementsByClassName( 'content-data' );
-	for ( var i=0; i<contentPages.length; i++ ) {
-		contentPages[i].classList.add( 'hidden' );
-	}
-	return;
-}
-function loadContent( id ) {
-	hideContent();
-	document.getElementById( id ).classList.remove( 'hidden' );
-	document.getElementById( 'content' ).scrollTop = 0;
-	return;
-}
-/*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
 document.addEventListener( "DOMContentLoaded", function( event ) {
   $( function () {
 		$( '[data-toggle="tooltip"]' ).tooltip( {
@@ -35,7 +19,6 @@ document.addEventListener( "DOMContentLoaded", function( event ) {
 			animation: true,
 		})
 	});
-  loadContent( 'devicePage' );
 	return;
 });
 /*----------------------------------------------------------------------------*/
