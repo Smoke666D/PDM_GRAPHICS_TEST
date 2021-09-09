@@ -1,0 +1,17 @@
+{
+  "name"    : "node_inputRTC",
+  "type"    : "inputs",
+  "table"   : 0,
+  "heading" : "Часы",
+  "short"   : "RTC",
+  "help"    : "",
+  "default" : null,
+  "inputs"  : [],
+  "outputs" : [
+    {
+      "type"   : "date",
+      "help"   : "Данные",
+      "expand" : false
+    }
+  ]
+}

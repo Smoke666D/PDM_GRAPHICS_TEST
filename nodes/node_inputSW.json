@@ -1,0 +1,17 @@
+{
+  "name"    : "node_inputSW",
+  "type"    : "inputs",
+  "table"   : 0,
+  "heading" : "Кнопка",
+  "short"   : "SW",
+  "help"    : "",
+  "default" : 0,
+  "inputs"  : [],
+  "outputs" : [
+    {
+      "type"   : "bool",
+      "help"   : "Данные",
+      "expand" : false
+    }
+  ]
+}

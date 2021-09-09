@@ -1,0 +1,17 @@
+{
+  "name"    : "node_inputEvent",
+  "type"    : "inputs",
+  "table"   : 3,
+  "heading" : "Авария",
+  "short"   : "alarm",
+  "help"    : "",
+  "default" : 0,
+  "inputs"  : [],
+  "outputs" : [
+    {
+      "type"   : "event",
+      "help"   : "Событие",
+      "expand" : false
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name"    : "node_outputLED",
+  "type"    : "outputs",
+  "table"   : 0,
+  "heading" : "Светодиод",
+  "short"   : "LED",
+  "help"    : "",
+  "default" : 0,
+  "inputs"  : [
+    {
+      "type"   : "bool",
+      "help"   : "Данные",
+      "expand" : false
+    }
+  ],
+  "outputs" : []
+}

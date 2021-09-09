@@ -1,0 +1,27 @@
+{
+  "name"    : "node_timersTrigger",
+  "type"    : "timers",
+  "table"   : 0,
+  "heading" : "Таймер",
+  "short"   : "trigger",
+  "help"    : "",
+  "default" : 0,
+  "inputs"  : [
+    {
+      "type"   : "bool",
+      "help"   : "Разрешение",
+      "expand" : false
+    },{
+      "type"   : "bool",
+      "help"   : "Сброс",
+      "expand" : false
+    }
+  ],
+  "outputs" : [
+    {
+      "type"   : "bool",
+      "help"   : "Окончание задержки",
+      "expand" : false
+    }
+  ]
+}

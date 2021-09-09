@@ -1,0 +1,17 @@
+{
+  "name"    : "node_outputDisplay",
+  "type"    : "outputs",
+  "table"   : 0,
+  "heading" : "Дисплей",
+  "short"   : "Display",
+  "help"    : "",
+  "default" : 0,
+  "inputs"  : [
+    {
+      "type"   : "string",
+      "help"   : "Сообщение",
+      "expand" : false
+    }
+  ],
+  "outputs" : []
+}

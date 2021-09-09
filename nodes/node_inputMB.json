@@ -1,0 +1,17 @@
+{
+  "name"    : "node_inputMB",
+  "type"    : "inputs",
+  "table"   : 0,
+  "heading" : "ModBus",
+  "short"   : "ModBus",
+  "help"    : "",
+  "default" : 0,
+  "inputs"  : [],
+  "outputs" : [
+    {
+      "type"   : "any",
+      "help"   : "Данные",
+      "expand" : false
+    }
+  ]
+}

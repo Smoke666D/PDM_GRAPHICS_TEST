@@ -1,0 +1,27 @@
+{
+  "name"    : "node_logicXor",
+  "type"    : "logic",
+  "table"   : 0,
+  "heading" : "Логическое искл.ИЛИ",
+  "short"   : "xor",
+  "help"    : "",
+  "default" : null,
+  "inputs"  : [
+    {
+      "type"   : "bool",
+      "help"   : "Условие 1",
+      "expand" : true
+    },{
+      "type"   : "bool",
+      "help"   : "Условие 2",
+      "expand" : true
+    }
+  ],
+  "outputs" : [
+    {
+      "type"   : "bool",
+      "help"   : "Результат операции",
+      "expand" : false
+    }
+  ]
+}

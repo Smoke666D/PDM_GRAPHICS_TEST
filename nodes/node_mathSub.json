@@ -1,0 +1,27 @@
+{
+  "name"    : "node_mathSub",
+  "type"    : "math",
+  "table"   : 0,
+  "heading" : "Разница",
+  "short"   : "-",
+  "help"    : "",
+  "default" : null,
+  "inputs"  : [
+    {
+      "type"   : "number",
+      "help"   : "Член 1",
+      "expand" : true
+    },{
+      "type"   : "number",
+      "help"   : "Член 2",
+      "expand" : true
+    }
+  ],
+  "outputs" : [
+    {
+      "type"   : "number",
+      "help"   : "Результат операции",
+      "expand" : false
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "name"    : "node_varShort",
+  "type"    : "variable",
+  "table"   : 0,
+  "heading" : "Слово переменная",
+  "short"   : "short",
+  "help"    : "",
+  "default" : 0,
+  "inputs"  : [
+    {
+      "type"   : "short",
+      "help"   : "Запись переменной",
+      "expand" : false
+    }
+  ],
+  "outputs" : [
+    {
+      "type"   : "short",
+      "help"   : "Чтение переменной",
+      "expand" : false
+    }
+  ]
+}

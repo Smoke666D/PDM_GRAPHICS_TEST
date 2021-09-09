@@ -2,6 +2,8 @@
 var nodeLib     = require('./nodeLib.js').nodeLib;
 var dragElement = require('./drag.js').dragElement;
 /*----------------------------------------------------------------------------*/
+const pinSize  = 10; /*px*/
+/*----------------------------------------------------------------------------*/
 const lineTypes       = {
   "bool"   : {
     color       : '#33f233',
@@ -272,6 +274,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
   var height              = 0;
   var width               = 0;
   var short               = "";
+  var body                = null;
   /*----------------------------------------*/
   this.id      = id;    /* ID number of node               */
   this.name    = "";    /* Name of the node                */
@@ -339,10 +342,14 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     let inputPort       = document.createElement("DIV");
     inputPort.className = 'port input';
     for ( var i=0; i<self.inputs.length; i++ ) {
-      let pin       = document.createElement("DIV");
-      pin.id        = 'pin' + pinCounter++;
-      pin.className = 'pin input';
-      pin.title     = self.inputs[i].help;
+      let pin               = document.createElement("DIV");
+      pin.id                = 'pin' + pinCounter++;
+      pin.className         = 'pin ' + self.inputs[i].data;
+      pin.title             = self.inputs[i].help;
+      pin.style.height      = pinSize + "px";
+      pin.style.width       = pinSize + "px";
+      pin.style.marginLeft  = ( mesh.getBaseWidth() - pinSize ) / 2 + "px";
+      pin.style.marginRight = pin.style.marginLeft;
       pin.setAttribute( 'data-toggle', 'tooltip' );
       if ( self.inputs[i].type == "none" ) {
         pin.className += " reseved";
@@ -363,7 +370,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
       }
     }
     /*--------------- BODY ---------------*/
-    let body           = document.createElement("DIV");
+    body               = document.createElement("DIV");
     body.className     = 'body';
     let bodyText       = document.createElement("A");
     bodyText.innerHTML = short;
@@ -372,10 +379,14 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     let outputPort       = document.createElement("DIV");
     outputPort.className = 'port output';
     for ( var i=0; i<self.outputs.length; i++ ) {
-      let pin       = document.createElement("DIV");
-      pin.id        = 'pin' + pinCounter++;
-      pin.className = 'pin output';
-      pin.title     = self.outputs[i].help;
+      let pin               = document.createElement("DIV");
+      pin.id                = 'pin' + pinCounter++;
+      pin.className         = 'pin ' + self.outputs[i].data;
+      pin.title             = self.outputs[i].help;
+      pin.style.height      = pinSize + "px";
+      pin.style.width       = pinSize + "px";
+      pin.style.marginLeft  = ( mesh.getBaseWidth() - pinSize ) / 2 + "px";
+      pin.style.marginRight = pin.style.marginLeft;
       if ( self.outputs[i].type == "none" ) {
         pin.className += " reseved";
       } else {
@@ -401,17 +412,13 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     }
     function onDrop () {
       self.focus = false;
-      self.obj.classList.remove( "focus" );
+      body.classList.remove( "focus" );
       self.x = parseInt( self.obj.style.top  );
       self.y = parseInt( self.obj.style.left );
       return;
     }
-    for ( var i=0; i<self.obj.children.length; i++ ) {
-      if ( self.obj.children[i].className == "body" ) {
-        dragElement( self.obj, self.obj.children[i], self.shift, onDrag, onDrop );
-      }
-    }
-    return
+    dragElement( self.obj, body, self.shift, onDrag, onDrop );
+    return;
   }
   function pinsInit () {
     let inPort  = null;
@@ -452,9 +459,9 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
         self.obj.children[i].addEventListener( 'click', function () {
           self.focus = !self.focus;
           if ( self.focus == true ) {
-            self.obj.classList.add( "focus" );
+            body.classList.add( "focus" );
           } else {
-            self.obj.classList.remove( "focus" );
+            body.classList.remove( "focus" );
           }
           return;
         });
@@ -697,12 +704,12 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
   }
   this.setFocus           = function () {
     self.focus = true;
-    self.obj.classList.add( "focus" );
+    body.classList.add( "focus" );
     return;
   }
   this.resetFocus         = function () {
     self.focus = false;
-    self.obj.classList.remove( "focus" );
+    body.classList.remove( "focus" );
     return;
   }
   this.closeMenu          = function () {

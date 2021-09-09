@@ -1,0 +1,23 @@
+{
+  "name"    : "node_logicNot",
+  "type"    : "logic",
+  "table"   : 0,
+  "heading" : "Логическое НЕ",
+  "short"   : "not",
+  "help"    : "",
+  "default" : null,
+  "inputs"  : [
+    {
+      "type"   : "bool",
+      "help"   : "вход",
+      "expand" : false
+    }
+  ],
+  "outputs" : [
+    {
+      "type"   : "bool",
+      "help"   : "выход",
+      "expand" : false
+    }
+  ]
+}

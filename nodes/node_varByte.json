@@ -1,0 +1,23 @@
+{
+  "name"    : "node_varByte",
+  "type"    : "variable",
+  "table"   : 0,
+  "heading" : "Байт переменная",
+  "short"   : "byte",
+  "help"    : "",
+  "default" : 0,
+  "inputs"  : [
+    {
+      "type"   : "byte",
+      "help"   : "Запись переменной",
+      "expand" : false
+    }
+  ],
+  "outputs" : [
+    {
+      "type"   : "byte",
+      "help"   : "Чтение переменной",
+      "expand" : false
+    }
+  ]
+}

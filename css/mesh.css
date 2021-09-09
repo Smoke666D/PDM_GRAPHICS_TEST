@@ -4,11 +4,11 @@
   left: 10px;
   height: 64px;
   width: 39px;
-  border-top: 1px  solid #828587;
-  border-bottom: 1px  solid #828587;
-  border-right: 1px  solid #828587; }
+  border-top: 1px  solid #4c5058;
+  border-bottom: 1px  solid #4c5058;
+  border-right: 1px  solid #4c5058; }
     .meshCell.left {
-      border-left: 1px  solid #828587;}
+      border-left: 1px  solid #4c5058;}
 .nodeShadow {
   position: absolute;
   border-radius: 10px;

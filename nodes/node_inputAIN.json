@@ -1,0 +1,17 @@
+{
+  "name"    : "node_inputAIN",
+  "type"    : "float",
+  "table"   : 0,
+  "heading" : "АЦП",
+  "short"   : "AIN",
+  "help"    : "",
+  "default" : 0,
+  "inputs"  : [],
+  "outputs" : [
+    {
+      "type"   : "float",
+      "help"   : "Данные",
+      "expand" : false
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name"    : "node_inputMEM",
+  "type"    : "inputs",
+  "table"   : 2,
+  "heading" : "Память",
+  "short"   : "memory",
+  "help"    : "",
+  "default" : 0,
+  "inputs"  : [],
+  "outputs" : [
+    {
+      "type"   : "any",
+      "help"   : "Данные",
+      "expand" : false
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name"    : "node_outputDOUT",
+  "type"    : "outputs",
+  "table"   : 0,
+  "heading" : "Дискретный вход",
+  "short"   : "DOUT",
+  "help"    : "",
+  "default" : 0,
+  "inputs"  : [
+    {
+      "type"   : "bool",
+      "help"   : "Данные",
+      "expand" : false
+    }
+  ],
+  "outputs" : []
+}

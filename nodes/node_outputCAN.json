@@ -1,0 +1,17 @@
+{
+  "name"    : "node_outputCAN",
+  "type"    : "outputs",
+  "table"   : 1,
+  "heading" : "CAN",
+  "short"   : "CAN",
+  "help"    : "",
+  "default" : 0,
+  "inputs"  : [
+    {
+      "type"   : "any",
+      "help"   : "Данные",
+      "expand" : false
+    }
+  ],
+  "outputs" : []
+}

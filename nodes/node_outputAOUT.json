@@ -1,0 +1,16 @@
+{
+  "name"    : "node_outputAOUT",
+  "type"    : "outputs",
+  "table"   : 0,
+  "heading" : "ЦАП",
+  "short"   : "AOUT",
+  "help"    : "",
+  "default" : 0,
+  "inputs"  : [
+    {
+      "type"   : "float",
+      "help"   : "Данные",
+      "expand" : false
+    }
+  ]
+}

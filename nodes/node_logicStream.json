@@ -1,0 +1,51 @@
+{
+  "name"    : "node_logicStream",
+  "type"    : "logic",
+  "table"   : 0,
+  "heading" : "Сформировать байт",
+  "short"   : "and",
+  "help"    : "",
+  "default" : 0,
+  "inputs"  : [
+    {
+      "type"   : "bool",
+      "help"   : "Бит 0",
+      "expand" : false
+    },{
+      "type"   : "bool",
+      "help"   : "Бит 1",
+      "expand" : false
+    },{
+      "type"   : "bool",
+      "help"   : "Бит 2",
+      "expand" : false
+    },{
+      "type"   : "bool",
+      "help"   : "Бит 3",
+      "expand" : false
+    },{
+      "type"   : "bool",
+      "help"   : "Бит 4",
+      "expand" : false
+    },{
+      "type"   : "bool",
+      "help"   : "Бит 5",
+      "expand" : false
+    },{
+      "type"   : "bool",
+      "help"   : "Бит 6",
+      "expand" : false
+    },{
+      "type"   : "bool",
+      "help"   : "Бит 7",
+      "expand" : false
+    }
+  ],
+  "outputs" : [
+    {
+      "type"   : "byte",
+      "help"   : "Результат операции",
+      "expand" : false
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "name"    : "node_varDate",
+  "type"    : "variable",
+  "table"   : 0,
+  "heading" : "Строка переменная",
+  "short"   : "date",
+  "help"    : "",
+  "default" : null,
+  "inputs"  : [
+    {
+      "type"   : "date",
+      "help"   : "Запись переменной",
+      "expand" : false
+    }
+  ],
+  "outputs" : [
+    {
+      "type"   : "date",
+      "help"   : "Чтение переменной",
+      "expand" : false
+    }
+  ]
+}

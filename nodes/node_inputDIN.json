@@ -1,0 +1,17 @@
+{
+  "name"    : "node_inputDIN",
+  "type"    : "inputs",
+  "table"   : 0,
+  "heading" : "Дискретный вход",
+  "short"   : "DIN",
+  "help"    : "",
+  "default" : 0,
+  "inputs"  : [],
+  "outputs" : [
+    {
+      "type"   : "bool",
+      "help"   : "Данные",
+      "expand" : false
+    }
+  ]
+}

@@ -1,124 +1,126 @@
 .scheme-frame {
   overflow: scroll;
   position: relative;
-  background: #5b606a;
+  background: #3d4046;
   width: 100%;
   height: calc(100% - 30px); }
   .scheme-frame::-webkit-scrollbar-track {
-	  background-color: #e9ecef; }
+	  background-color: #363738; }
   .scheme-frame::-webkit-scrollbar {
 	  width: 4px;
     height: 4px;
-	  background-color: #e9ecef; }
+	  background-color: #363738; }
   .scheme-frame::-webkit-scrollbar-thumb {
-    -webkit-box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
-	  background-color: #828587; }
+	  background-color: #7a7b7d; }
 .scheme {
   min-height: 3840px;
   min-width:  3900px;
 }
-#nodeLib {
-  position: absolute;
-  width: 200px;
-  height: 400px;
-  z-index: 10;
-  overflow-y: scroll;
-  color: #4d5055;
-  border: 1px solid #d3d3d3;
-  text-align: center;
-  background-color: #fff;
-  background-clip: border-box;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  border-radius: 0.25rem;
-  -webkit-box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); }
-  #sidebar svg {
-    width: 1em;
-    height: 1em;}
-  #nodeLib .list {
-    min-height: 450px; }
-  #nodeLib ul li {
-    border-bottom: 1px solid #dbdcdd;}
-  #nodeLib ul li a {
-    height: 40px;
-    color: #4d5055;
-    display: block;}
-    #nodeLib ul li a span {
-      display: inline-block;
-      padding-top: 8px;
-    }
-  #nodeLib .item {
-    display: block;
-    cursor: default;
-    color: #4d5055; }
-    #nodeLib .item:hover {
-      transition: background-color 0.5s ease;
-      background: #d2d3d4;
-    }
+/*----------------------------------------------------------------------------*/
+.none {
+  background-color: #c2c2c2;
+  border: 2px solid #c2c2c2;
+}
+.bool {
+  background-color: #33f233;
+  border: 2px solid #33f233;
+}
+.byte {
+  background-color: #f2333c;
+  border: 2px solid #f2333c;
+}
+.short {
+  background-color: #33f2e9;
+  border: 2px solid #33f2e9;
+}
+.float {
+  background-color: #b824bd;
+  border: 2px solid #b824bd;
+}
+.number {
+  background-color: #f2339b;
+  border: 2px solid #f2339b;
+}
+.date {
+  background-color: #f28a33;
+  border: 2px solid #f28a33;
+}
+.string {
+  background-color: #f2e933;
+  border: 2px solid #f2e933;
+}
+.any {
+  background-color: #339bf2;
+  border: 2px solid #339bf2;
+}
+/*----------------------------------------------------------------------------*/
 .node {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   z-index: 9;
   color: #4d5055;
-  border: 1px solid #686a6c;
-  background-color: #373a40;
   text-align: center;
-  background-clip: border-box;
-  border-radius: 0.25rem;
-  -webkit-box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);}
-  .node:hover {
-    transition: background-color 0.5s ease;
-    border: 1px solid #f8b739;}
-  .node.focus {
-    transition: background-color 0.5s ease;
-    border: 1px solid #f8b739;
-    -webkit-box-shadow: 0 4px 8px 0 #f8b739;
-    box-shadow: 0 4px 8px 0 #f8b739;
-  }
+  background-clip: border-box; }
   .node .port {
     height: 10px;
     width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;}
+    text-align: left;
+    z-index: 8;
+    position: relative;}
+    .node .port.input {
+      bottom: 11px;}
+    .node .port.output {
+      bottom: 22px;}
+    .node .port .mount {
+      height: 15px;
+      width: 15px;
+      margin-left: 0px;
+      margin-right: 0px;
+      text-align: center;
+    }
     .node .port .pin {
       height: 10px;
       width: 10px;
+      margin-left: 0px;
+      margin-right: 0px;
       cursor : pointer;
       border-radius: 10px;
       display: inline-block;}
-      .node .port .pin.input {}
-      .node .port .pin.output {}
-      .node .port .pin.hide {
-        position: absolute;
-        opacity: 0}
       .node .port .pin.reserved {
-        background-color: #bbb;}
+        }
       .node .port .pin.available {
-        background-color: #28a745;}
+
+        }
       .node .port .pin.connected {
-        background-color: #20c997;}
+        }
       .node .port .pin.disconnected {
-        background-color: #0062cc;}
+        background-color: transparent; }
   .node .body {
-    display:flex;
-    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    position: relative;
+    display: flex;
     justify-content: center;
+    align-items: center;
+    top: -10px;
     cursor: move;
+    border: 1px solid #7f8183;
+    background-color: #2f3136;
+    border-radius: 0.25rem;
+    transition: all 0.5s ease;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none; }
-  .node.hide {
-    left: -400px!important;
+    .node .body:hover {
+      border: 1px solid #bdbebf; }
+    .node .body.focus {
+      border: 1px solid #f8b739; }
+      .node .body.focus:hover {
+        border: 1px solid #f8b739!important;
 }
+/*----------------------------------------------------------------------------*/
 .node-menu {
   display: block;
   position: absolute;
