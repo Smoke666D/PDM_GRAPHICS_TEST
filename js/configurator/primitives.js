@@ -269,7 +269,8 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
       "icon"     : "<svg viewBox='0 0 448 512'><path fill='currentColor' d='M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z'></path></svg>"
     }
   ];
-
+  var height              = 0;
+  var width               = 0;
   var short               = "";
   /*----------------------------------------*/
   this.id      = id;    /* ID number of node               */
@@ -278,19 +279,23 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
   this.inputs  = [];    /* Array of inputs pins            */
   this.outputs = [];    /* Array of outputs pins           */
   this.focus   = false; /* Is node in focus                */
-  this.x       = 0;     /* Left coordinate of node box     */
-  this.y       = 0;     /* Top coordinate of node box      */
-  this.width   = 0;     /* Width of node box               */
-  this.height  = 0;     /* Height of node box              */
+  this.x       = 0;     /* Left coordinate in mesh         */
+  this.y       = 0;     /* Top coordinate in mesh          */
   this.obj     = null;  /* DOM object of node              */
   this.shift   = 0;     /* Top shift in parent of node box */
   this.expand  = new Expand();
   /*----------------------------------------*/
   function makeNode ( type ) {
-    let data     = nodeLib.getNodeRecord( type );
-    let pinID    = 0;
-    self.width   = data.width;
-    self.height  = data.height;
+    let data  = nodeLib.getNodeRecord( type );
+    let pinID = 0;
+    let wN    = 0;
+    if ( data.inputs.length > data.outputs.length ) {
+      wN = data.inputs.length;
+    } else {
+      wN = data.outputs.length;
+    }
+    width        = wN * mesh.getBaseWidth();
+    height       = mesh.getBaseHeight();
     self.name    = data.name;
     short        = data.short;
     self.inputs  = [];
@@ -304,8 +309,8 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     return;
   }
   function setSize () {
-    self.obj.style.width  = self.width  + "px";
-    self.obj.style.height = self.height + "px";
+    self.obj.style.width  = width  + "px";
+    self.obj.style.height = height + "px";
     return;
   }
   function hide() {
@@ -336,7 +341,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     for ( var i=0; i<self.inputs.length; i++ ) {
       let pin       = document.createElement("DIV");
       pin.id        = 'pin' + pinCounter++;
-      pin.className = 'pin';
+      pin.className = 'pin input';
       pin.title     = self.inputs[i].help;
       pin.setAttribute( 'data-toggle', 'tooltip' );
       if ( self.inputs[i].type == "none" ) {
@@ -369,7 +374,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     for ( var i=0; i<self.outputs.length; i++ ) {
       let pin       = document.createElement("DIV");
       pin.id        = 'pin' + pinCounter++;
-      pin.className = 'pin';
+      pin.className = 'pin output';
       pin.title     = self.outputs[i].help;
       if ( self.outputs[i].type == "none" ) {
         pin.className += " reseved";
@@ -706,17 +711,6 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
         menu.remove();
       }
     }
-    return;
-  }
-  this.pinExpand          = function () {
-    self.inputs[self.expand.viewed].show();
-    self.expand.viewed++;
-
-    console.log("expand");
-    return;
-  }
-  this.pinRollup          = function () {
-    console.log("rollup");
     return;
   }
   this.remove             = function () {

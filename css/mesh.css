@@ -1,0 +1,16 @@
+.meshCell {
+  position: absolute;
+  top: 100px;
+  left: 10px;
+  height: 64px;
+  width: 39px;
+  border-top: 1px  solid #828587;
+  border-bottom: 1px  solid #828587;
+  border-right: 1px  solid #828587; }
+    .meshCell.left {
+      border-left: 1px  solid #828587;}
+.nodeShadow {
+  position: absolute;
+  border-radius: 10px;
+  background-color: rgba(54,57,61,0.3);
+}

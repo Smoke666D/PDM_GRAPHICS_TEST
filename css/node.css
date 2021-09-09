@@ -1,22 +1,21 @@
 .scheme-frame {
-  overflow: auto;
+  overflow: scroll;
+  position: relative;
   background: #5b606a;
   width: 100%;
-  height: 100%; }
+  height: calc(100% - 30px); }
   .scheme-frame::-webkit-scrollbar-track {
-	  border-radius: 12px;
 	  background-color: #e9ecef; }
   .scheme-frame::-webkit-scrollbar {
-	  width: 12px;
-    border-radius: 12px;
+	  width: 4px;
+    height: 4px;
 	  background-color: #e9ecef; }
   .scheme-frame::-webkit-scrollbar-thumb {
-	  border-radius: 10px;
     -webkit-box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
-	  background-color: #f8b739; }
+	  background-color: #828587; }
 .scheme {
-  min-height: 450px;
-  min-width:  1000px;
+  min-height: 3840px;
+  min-width:  3900px;
 }
 #nodeLib {
   position: absolute;
@@ -61,13 +60,13 @@
 .node {
   position: relative;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
   z-index: 9;
   color: #4d5055;
-  border: 1px solid #d3d3d3;
+  border: 1px solid #686a6c;
+  background-color: #373a40;
   text-align: center;
-  background-color: #fff;
   background-clip: border-box;
   border-radius: 0.25rem;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
@@ -82,19 +81,19 @@
     box-shadow: 0 4px 8px 0 #f8b739;
   }
   .node .port {
-    height: 100%;
-    width: 10px;
+    height: 10px;
+    width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;}
     .node .port .pin {
       height: 10px;
       width: 10px;
       cursor : pointer;
-      margin-top: 3px;
-      margin-bottom: 3px;
-      border-radius: 0.1rem;
+      border-radius: 10px;
       display: inline-block;}
+      .node .port .pin.input {}
+      .node .port .pin.output {}
       .node .port .pin.hide {
         position: absolute;
         opacity: 0}
@@ -111,14 +110,12 @@
     flex-direction: column;
     justify-content: center;
     cursor: move;
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none;   /* Chrome/Safari/Opera */
-    -khtml-user-select: none;    /* Konqueror */
-    -moz-user-select: none;      /* Firefox */
-    -ms-user-select: none;       /* Internet Explorer/Edge */
-    user-select: none;           /* Non-prefixed version, currently
-                                    not supported by any browser */
-  }
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none; }
   .node.hide {
     left: -400px!important;
 }
