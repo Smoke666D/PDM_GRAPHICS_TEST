@@ -2,7 +2,8 @@
 var nodeLib     = require('./nodeLib.js').nodeLib;
 var dragElement = require('./drag.js').dragElement;
 /*----------------------------------------------------------------------------*/
-const pinSize  = 10; /*px*/
+const pinSize      = 10; /*px*/
+const pinMountSize = 16; /*px*/
 /*----------------------------------------------------------------------------*/
 const lineTypes       = {
   "bool"   : {
@@ -97,7 +98,8 @@ function Link ( from, to, start, end, type, id ) {
   return;
 }
 function Pin ( id, type, data ) {
-  var self = this;
+  var self  = this;
+  var mount = null;
   /*----------------------------------------*/
   this.id         = 0;          /* ID number, unique in same node    */
   this.type       = "none";     /* Input or Output or None           */
@@ -108,7 +110,6 @@ function Pin ( id, type, data ) {
   this.linked     = false;      /* Is Pin connected to outher pin    */
   this.linkedWith = [];         /* ID of the Link                    */
   this.state      = "reserved"; /**/
-  this.hide       = false;
   this.obj        = null;       /* Object in DOM                     */
   /*----------------------------------------*/
   function init ( id, type, data ) {
@@ -138,51 +139,29 @@ function Pin ( id, type, data ) {
     this.state = "disconnected";
     return;
   }
-  this.setReserved     = function () {
-    self.obj.classList.remove( "disconnected" );
-    self.obj.classList.remove( "connected" );
-    self.obj.classList.add( "reserved" );
-    this.state = "reserved";
+  this.setFrom     = function () {
     return;
+    mount.classList.add( "from" );
   }
   this.setAvailable    = function ( type, data ) {
-    self.obj.classList.remove( "disconnected" );
-    self.obj.classList.remove( "connected" );
-    self.obj.classList.remove( "available" );
-    self.obj.classList.remove( "reserved" );
+    mount.classList.remove( "available" );
     if ( ( self.data == data ) && ( self.type == type ) && ( ( type == "output" ) || ( self.linked == false ) ) ) {
-      self.obj.classList.add( "available" );
+      mount.classList.add( "available" );
       this.state = "available";
-    } else {
-      self.obj.classList.add( "reserved" );
-      this.state = "reserved";
     }
     return;
   }
-  this.resetAvailable  = function () {
-    self.obj.classList.remove( "available" );
-    self.obj.classList.remove( "reserved" );
-    if ( self.linked == false ) {
-      self.obj.classList.add( "disconnected" );
-      this.state = "disconnected";
-    } else {
-      self.obj.classList.add( "connected" );
-      this.state = "connected";
-    }
+  this.resetAvailable = function () {
+    mount.classList.remove( "from" );
+    mount.classList.remove( "available" );
     return;
   }
-  this.hide            = function () {
-    self.obj.classList.add( 'hide' );
-    self.hide = true;
-    return;
-  }
-  this.show            = function () {
-    self.obj.classList.remove( 'hide' );
-    self.hide = false;
-    return;
-  }
-  this.setObj          = function ( obj ) {
+  this.setPin         = function ( obj ) {
     self.obj = obj;
+    return;
+  }
+  this.setMount       = function ( obj ) {
+    mount = obj;
     return;
   }
   /*----------------------------------------*/
@@ -342,32 +321,32 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     let inputPort       = document.createElement("DIV");
     inputPort.className = 'port input';
     for ( var i=0; i<self.inputs.length; i++ ) {
-      let pin               = document.createElement("DIV");
-      pin.id                = 'pin' + pinCounter++;
-      pin.className         = 'pin ' + self.inputs[i].data;
-      pin.title             = self.inputs[i].help;
-      pin.style.height      = pinSize + "px";
-      pin.style.width       = pinSize + "px";
-      pin.style.marginLeft  = ( mesh.getBaseWidth() - pinSize ) / 2 + "px";
-      pin.style.marginRight = pin.style.marginLeft;
+      let mount               = document.createElement("DIV");
+      mount.id                = 'mount' + pinCounter;
+      mount.className         = 'mount';
+      mount.style.height      = pinMountSize + "px";
+      mount.style.width       = pinMountSize + "px";
+      mount.style.marginLeft  = ( mesh.getBaseWidth() - pinMountSize ) / 2 + "px";
+      mount.style.marginRight = mount.style.marginLeft;
+      let pin                 = document.createElement("DIV");
+      pin.id                  = 'pin' + pinCounter;
+      pin.className           = 'pin ' + self.inputs[i].data;
+      pin.title               = self.inputs[i].help;
+      pin.style.height        = pinSize + "px";
+      pin.style.width         = pinSize + "px";
+      pinCounter++;
       pin.setAttribute( 'data-toggle', 'tooltip' );
       if ( self.inputs[i].type == "none" ) {
         pin.className += " reseved";
       } else {
         pin.className += " disconnected";
       }
-      inputPort.appendChild( pin );
+      mount.appendChild( pin );
+      inputPort.appendChild( mount );
       $( pin ).tooltip( {
-        'placement' : 'left',
+        'placement' : 'top',
         'trigger'   : 'hover',
       });
-      if ( self.inputs[i].expand == true ) {
-        if ( expandCounter >= expandGroupSize ) {
-          self.inputs[i].hide  = true;
-          pin.className       += " hide";
-        }
-        expandCounter++;
-      }
     }
     /*--------------- BODY ---------------*/
     body               = document.createElement("DIV");
@@ -379,22 +358,29 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     let outputPort       = document.createElement("DIV");
     outputPort.className = 'port output';
     for ( var i=0; i<self.outputs.length; i++ ) {
+      let mount               = document.createElement("DIV");
+      mount.id                = 'mount' + pinCounter;
+      mount.className         = 'mount';
+      mount.style.height      = pinMountSize + "px";
+      mount.style.width       = pinMountSize + "px";
+      mount.style.marginLeft  = ( mesh.getBaseWidth() - pinMountSize ) / 2 + "px";
+      mount.style.marginRight = mount.style.marginLeft;
       let pin               = document.createElement("DIV");
-      pin.id                = 'pin' + pinCounter++;
+      pin.id                = 'pin' + pinCounter;
       pin.className         = 'pin ' + self.outputs[i].data;
       pin.title             = self.outputs[i].help;
       pin.style.height      = pinSize + "px";
       pin.style.width       = pinSize + "px";
-      pin.style.marginLeft  = ( mesh.getBaseWidth() - pinSize ) / 2 + "px";
-      pin.style.marginRight = pin.style.marginLeft;
+      pinCounter++
       if ( self.outputs[i].type == "none" ) {
         pin.className += " reseved";
       } else {
         pin.className += " disconnected";
       }
-      outputPort.appendChild( pin );
+      mount.appendChild( pin );
+      outputPort.appendChild( mount );
       $( pin ).tooltip( {
-        'placement' : 'right',
+        'placement' : 'bottom',
         'trigger'   : 'hover',
       });
     }
@@ -432,8 +418,9 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
       }
     }
     for ( var i=0; i<self.inputs.length; i++ ) {
-      self.inputs[i].setObj( inPort.children[i] );
-      inPort.children[i].addEventListener( 'click', ( function () {
+      self.inputs[i].setMount( inPort.children[i] );
+      self.inputs[i].setPin( inPort.children[i].children[0] );
+      inPort.children[i].children[0].addEventListener( 'click', ( function () {
         var j = i;
         return function () {
           let adr = new NodeAdr( self.id, self.inputs[j].id );
@@ -442,7 +429,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
       })());
     }
     for ( var i=0; i<self.outputs.length; i++ ) {
-      self.outputs[i].setObj( outPort.children[i] );
+      self.outputs[i].setPin( outPort.children[i] );
       outPort.children[i].addEventListener( 'click', ( function () {
         var j = i;
         return function () {

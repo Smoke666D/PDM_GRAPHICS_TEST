@@ -20,44 +20,53 @@
 .none {
   background-color: #c2c2c2;
   border: 2px solid #c2c2c2;
+  color: #c2c2c2;
 }
 .bool {
   background-color: #33f233;
   border: 2px solid #33f233;
+  color: #33f233;
 }
 .byte {
   background-color: #f2333c;
   border: 2px solid #f2333c;
+  color: #f2333c;
 }
 .short {
   background-color: #33f2e9;
   border: 2px solid #33f2e9;
+  color: #33f2e9;
 }
 .float {
   background-color: #b824bd;
   border: 2px solid #b824bd;
+  color: #b824bd;
 }
 .number {
   background-color: #f2339b;
   border: 2px solid #f2339b;
+  color: #f2339b;
 }
 .date {
   background-color: #f28a33;
   border: 2px solid #f28a33;
+  color: #f28a33;
 }
 .string {
   background-color: #f2e933;
   border: 2px solid #f2e933;
+  color: #f2e933;
 }
 .any {
   background-color: #339bf2;
   border: 2px solid #339bf2;
+  color: #339bf2;
 }
 /*----------------------------------------------------------------------------*/
 .node {
   position: relative;
   z-index: 9;
-  color: #4d5055;
+  color: #d2d3d4;
   text-align: center;
   background-clip: border-box; }
   .node .port {
@@ -67,33 +76,32 @@
     z-index: 8;
     position: relative;}
     .node .port.input {
-      bottom: 11px;}
+      bottom: 8px;}
     .node .port.output {
-      bottom: 22px;}
+      bottom: 19px;}
     .node .port .mount {
-      height: 15px;
-      width: 15px;
-      margin-left: 0px;
-      margin-right: 0px;
+      height: 16px;
+      width: 16px;
+      border-radius: 16px;
       text-align: center;
-    }
-    .node .port .pin {
-      height: 10px;
-      width: 10px;
+      background-color: #2f3136;
       margin-left: 0px;
       margin-right: 0px;
-      cursor : pointer;
-      border-radius: 10px;
-      display: inline-block;}
-      .node .port .pin.reserved {
-        }
-      .node .port .pin.available {
-
-        }
-      .node .port .pin.connected {
-        }
-      .node .port .pin.disconnected {
-        background-color: transparent; }
+      text-align: center; }
+      .node .port .mount.from {
+        box-shadow:0 0 0 6px rgba(73, 177, 222, 0.5); }
+      .node .port .mount.available {
+        box-shadow:0 0 0 6px rgba(210, 211, 212, 0.5); }
+      .node .port .mount .pin {
+        height: 10px;
+        width: 10px;
+        bottom: 3px;
+        position: relative;
+        cursor : pointer;
+        border-radius: 10px;
+        display: inline-block;}
+        .node .port .pin.disconnected {
+          background-color: transparent; }
   .node .body {
     height: 100%;
     width: 100%;
