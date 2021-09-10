@@ -11,11 +11,15 @@ function dragElement ( elmnt, trig, shift, onDrag, onDrop ) {
   var rightBorder  = parent.width - parseInt( elmnt.style.width );
   var topBorder    = shift;
   var bottomBorder = parent.height - parseInt( elmnt.style.height ) + shift;
+  var shadow       = null;
   if ( document.getElementById( trig.id ) ) {
     document.getElementById( trig.id ).onmousedown = dragMouseDown;
   } else {
     elmnt.onmousedown = dragMouseDown;
   }
+  /*--------------------------------------------------------------------------*/
+  /*--------------------------------------------------------------------------*/
+  /*--------------------------------------------------------------------------*/
   function dragMouseDown ( e ) {
     parent       = elmnt.parentElement.parentElement.getBoundingClientRect();
     rightBorder  = parent.width - parseInt( elmnt.style.width );
@@ -27,11 +31,19 @@ function dragElement ( elmnt, trig, shift, onDrag, onDrop ) {
     cY = e.clientY;
     startX = cX;
     startY = cY;
+
+    shadow = document.createElement("DIV");
+    shadow.className    = "nodeShadow";
+    shadow.style.height = elmnt.style.height;
+    shadow.style.width  = elmnt.style.width;
+    
+
     document.onmouseup   = closeDragElement;
     document.onmousemove = elementDrag;      // call a function whenever the cursor moves:
     return;
   }
-  function elementDrag( e ) {
+  /*--------------------------------------------------------------------------*/
+  function elementDrag ( e ) {
     e = e || window.event;
     e.preventDefault();
     // calculate the new cursor position:
@@ -59,7 +71,8 @@ function dragElement ( elmnt, trig, shift, onDrag, onDrop ) {
     onDrag();
     return;
   }
-  function closeDragElement() {
+  /*--------------------------------------------------------------------------*/
+  function closeDragElement () {
     document.onmouseup   = null;
     document.onmousemove = null;
     if ( ( cX != startX ) || ( cY != startY ) ) {
