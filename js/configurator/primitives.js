@@ -238,7 +238,7 @@ function Expand () {
   this.viewed  = 2;
   return;
 }
-function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contextMenuCallback ) {
+function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contextMenuCallback, focusCallBack ) {
   var self                = this;
   var box                 = box;
   var pinCallback         = pinCallback;
@@ -257,6 +257,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
   var width               = 0;
   var short               = "";
   var body                = null;
+  var dragFlag            = false;
   /*----------------------------------------*/
   this.id      = id;    /* ID number of node               */
   this.name    = "";    /* Name of the node                */
@@ -270,15 +271,15 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
   this.shift   = 0;     /* Top shift in parent of node box */
   /*----------------------------------------*/
   function Drag () {
-    var dX           = 0;
-    var dY           = 0;
-    var cX           = 0;
-    var cY           = 0;
-    var startX       = 0;
-    var startY       = 0;
-    var shadowX      = self.x;
-    var shadowY      = self.y;
-    var meshBorder   = mesh.getBorders( self.x, self.y );
+    var dX         = 0;
+    var dY         = 0;
+    var cX         = 0;
+    var cY         = 0;
+    var startX     = 0;
+    var startY     = 0;
+    var shadowX    = self.x;
+    var shadowY    = self.y;
+    var meshBorder = mesh.getBorders( self.x, self.y );
     function dragStart ( e ) {
       e = e || window.event;
       e.preventDefault();
@@ -333,13 +334,13 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
       move();
       mesh.hideShadow();
       if ( ( cX != startX ) || ( cY != startY ) ) {
-        startX = cX;
-        startY = cY;
-        self.x = parseInt( self.obj.style.top  );
-        self.y = parseInt( self.obj.style.left );
+        startX   = cX;
+        startY   = cY;
+        dragFlag = true;
       }
       return;
     }
+    /*----------------------------------------*/
     if ( body ) {
       body.onmousedown = dragStart;
     } else {
@@ -402,19 +403,21 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     let inputPort       = document.createElement("DIV");
     inputPort.className = 'port input';
     for ( var i=0; i<self.inputs.length; i++ ) {
-      let mount               = document.createElement("DIV");
-      mount.id                = 'mount' + pinCounter;
-      mount.className         = 'mount';
-      mount.style.height      = pinMountSize + "px";
-      mount.style.width       = pinMountSize + "px";
-      mount.style.marginLeft  = ( mesh.getBaseWidth() - pinMountSize ) / 2 + "px";
-      mount.style.marginRight = mount.style.marginLeft;
-      let pin                 = document.createElement("DIV");
-      pin.id                  = 'pin' + pinCounter;
-      pin.className           = 'pin ' + self.inputs[i].data;
-      pin.title               = self.inputs[i].help;
-      pin.style.height        = pinSize + "px";
-      pin.style.width         = pinSize + "px";
+      let mount                = document.createElement("DIV");
+      mount.id                 = 'mount' + pinCounter;
+      mount.className          = 'mount';
+      mount.style.height       = pinMountSize + "px";
+      mount.style.width        = pinMountSize + "px";
+      mount.style.borderRadius = pinMountSize + "px";
+      mount.style.marginLeft   = ( mesh.getBaseWidth() - pinMountSize ) / 2 + "px";
+      mount.style.marginRight  = mount.style.marginLeft;
+      let pin                  = document.createElement("DIV");
+      pin.id                   = 'pin' + pinCounter;
+      pin.className            = 'pin ' + self.inputs[i].data;
+      pin.style.height         = pinSize + "px";
+      pin.style.width          = pinSize + "px";
+      pin.style.borderRadius   = pinSize + "px";
+      pin.title                = self.inputs[i].help;
       pinCounter++;
       pin.setAttribute( 'data-toggle', 'tooltip' );
       if ( self.inputs[i].type == "none" ) {
@@ -514,11 +517,18 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     for ( var i=0; i<self.obj.children.length; i++ ) {
       if ( self.obj.children[i].className == "body" ) {
         self.obj.children[i].addEventListener( 'click', function () {
-          self.focus = !self.focus;
-          if ( self.focus == true ) {
-            body.classList.add( "focus" );
+          if ( dragFlag == false ) {
+            self.focus = !self.focus;
+            if ( self.focus == true ) {
+              self.setFocus();
+            } else {
+              self.resetFocus();
+            }
           } else {
-            body.classList.remove( "focus" );
+            dragFlag   = false;
+            if ( self.focus == false ) {
+              self.setFocus();
+            }
           }
           return;
         });
@@ -762,6 +772,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
   this.setFocus           = function () {
     self.focus = true;
     body.classList.add( "focus" );
+    focusCallBack( self.id );
     return;
   }
   this.resetFocus         = function () {
@@ -798,7 +809,7 @@ function Scheme ( id ) {
   this.nodes   = [];   /* Nodes of scheme         */
   this.links   = [];   /* Links of scheme         */
   this.box     = null; /* Scheme element in DOM   */
-  this.inFocus = [];   /* Array of focus elements */
+  this.inFocus = null; /* Array of focus elements */
   /*----------------------------------------*/
   function init ( id ) {
     self.id  = id;
@@ -928,16 +939,13 @@ function Scheme ( id ) {
     }
     return;
   }
-  function afterFocus ( adr, focus ) {
-    if ( focus == true ) {
-      self.inFocus.push( adr );
-    } else {
-      for ( var i=0; i<self.inFocus.length; i++ ) {
-        if ( self.inFocus[i] == adr ) {
-          self.inFocus.splice( i, 1 );
-        }
+  function onNodeFocus ( adr ) {
+    self.nodes.forEach( function ( node, i ) {
+      if ( i != adr ) {
+        node.resetFocus();
       }
-    }
+      return;
+    });
     return;
   }
   function beforNodeRemove ( adr ) {
@@ -958,7 +966,7 @@ function Scheme ( id ) {
     return;
   }
   this.addNode       = function ( type ) {
-    self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrag, beforNodeRemove, beforContextMenu ) );
+    self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrag, beforNodeRemove, beforContextMenu, onNodeFocus ) );
     return;
   }
   this.addLink       = function ( from, to ) {
@@ -1025,7 +1033,7 @@ function Scheme ( id ) {
     return res;
   }
   this.resetFocus    = function () {
-    self.inFocus = [];
+    self.inFocus = null;
     for ( var i=0; i<self.nodes.length; i++ ) {
       self.nodes[i].resetFocus();
     }
