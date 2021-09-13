@@ -20,46 +20,64 @@
 .none {
   background-color: #c2c2c2;
   border: 2px solid #c2c2c2;
+}
+.none-text {
   color: #c2c2c2;
 }
 .bool {
   background-color: #33f233;
   border: 2px solid #33f233;
+}
+.bool-text {
   color: #33f233;
 }
 .byte {
   background-color: #f2333c;
   border: 2px solid #f2333c;
+}
+.byte-text {
   color: #f2333c;
 }
 .short {
   background-color: #33f2e9;
   border: 2px solid #33f2e9;
+}
+.short-text {
   color: #33f2e9;
 }
 .float {
   background-color: #b824bd;
   border: 2px solid #b824bd;
+}
+.float-text {
   color: #b824bd;
 }
 .number {
   background-color: #f2339b;
   border: 2px solid #f2339b;
+}
+.number-text {
   color: #f2339b;
 }
 .date {
   background-color: #f28a33;
   border: 2px solid #f28a33;
+}
+.date-text {
   color: #f28a33;
 }
 .string {
   background-color: #f2e933;
   border: 2px solid #f2e933;
+}
+.string-text {
   color: #f2e933;
 }
 .any {
   background-color: #339bf2;
   border: 2px solid #339bf2;
+}
+.any-text {
   color: #339bf2;
 }
 /*----------------------------------------------------------------------------*/
@@ -127,6 +145,10 @@
       border: 1px solid #f8b739; }
       .node .body.focus:hover {
         border: 1px solid #f8b739!important;
+}
+/*----------------------------------------------------------------------------*/
+.link {
+  z-index: 20;
 }
 /*----------------------------------------------------------------------------*/
 .node-menu {

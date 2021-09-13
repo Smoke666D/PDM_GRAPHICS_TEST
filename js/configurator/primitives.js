@@ -1,6 +1,5 @@
 /*----------------------------------------------------------------------------*/
 var nodeLib     = require('./nodeLib.js').nodeLib;
-var dragElement = require('./drag.js').dragElement;
 /*----------------------------------------------------------------------------*/
 const pinSize      = 10; /*px*/
 const pinMountSize = 16; /*px*/
@@ -10,6 +9,8 @@ const lineTypes       = {
     color       : '#33f233',
     animation   : true,
     size        : 3,
+    startPlug   : 'behind',
+    endPlug     : 'behind',
     path        : 'straight',
     startSocket : 'bottom',
     endSocket   : 'top'
@@ -18,6 +19,8 @@ const lineTypes       = {
     color       : '#b824bd',
     animation   : true,
     size        : 3,
+    startPlug   : 'behind',
+    endPlug     : 'behind',
     path        : 'straight',
     startSocket : 'bottom',
     endSocket   : 'top'
@@ -26,6 +29,8 @@ const lineTypes       = {
     color       : '#f2e933',
     animation   : true,
     size        : 3,
+    startPlug   : 'behind',
+    endPlug     : 'behind',
     path        : 'straight',
     startSocket : 'bottom',
     endSocket   : 'top'
@@ -67,9 +72,10 @@ function Link ( from, to, start, end, type, id ) {
   /*----------------------------------------*/
   this.draw    = function () {
     if ( line == null ) {
-      line   = new LeaderLine( start, end, lineTypes[type] );
-      obj    = document.querySelector('.leader-line:last-of-type');
-      obj.id = "link" + self.id;
+      line             = new LeaderLine( start, end, lineTypes[type] );
+      obj              = document.querySelector('.leader-line:last-of-type');
+      obj.id           = "link" + self.id;
+      obj.style.zIndex = '8';
     } else {
       line.position();
     }
@@ -142,28 +148,28 @@ function Pin ( id, type, data ) {
     this.state = "disconnected";
     return;
   }
-  this.setFrom     = function () {
-    return;
+  this.setFrom         = function () {
     mount.classList.add( "from" );
+    return;
   }
   this.setAvailable    = function ( type, data ) {
     mount.classList.remove( "available" );
     if ( ( self.data == data ) && ( self.type == type ) && ( ( type == "output" ) || ( self.linked == false ) ) ) {
       mount.classList.add( "available" );
-      this.state = "available";
+      self.state = "available";
     }
     return;
   }
-  this.resetAvailable = function () {
+  this.resetAvailable  = function () {
     mount.classList.remove( "from" );
     mount.classList.remove( "available" );
     return;
   }
-  this.setPin         = function ( obj ) {
+  this.setPin          = function ( obj ) {
     self.obj = obj;
     return;
   }
-  this.setMount       = function ( obj ) {
+  this.setMount        = function ( obj ) {
     mount = obj;
     return;
   }
@@ -232,10 +238,59 @@ function Menu ( box, object, items = [] ) {
   init( box, object, items );
   return;
 }
-function Expand () {
-  var self = this;
-  this.counter = 0;
-  this.viewed  = 2;
+function NodeOption ( data ) {
+  var self   = this;
+  var box    = null;
+  this.name  = data.name;
+  this.text  = data.text;
+  this.type  = data.type;
+  this.value = data.value;
+  function makeBoolInput () {
+    let out = document.createElement( "SELECT" );
+    let op1 = document.createElement( "OPTION" );
+    let op2 = document.createElement( "OPTION" );
+    op1.innerHTML = "false";
+    op2.innerHTML = "true";
+    if ( self.value == true ) {
+      op2.selected = 'selected';
+    }
+    out.appendChild( op1 );
+    out.appendChild( op2 );
+    out.addEventListener( 'change', function () {
+      if ( op2.selected == true ) {
+        self.value = true;
+      } else {
+        self.value = false;
+      }
+      return;
+    });
+    return out;
+  }
+  function draw () {
+    box             = document.createElement( "DIV" );
+    box.className   = 'row';
+    let col1        = document.createElement( "DIV" );
+    col1.className  = "col " + self.type + '-text';;
+    let col2        = document.createElement( "DIV" );
+    col2.className  = "col";
+    let label       = document.createElement( "A" );
+    label.innerHTML = self.text;
+    let input       = null;
+    switch ( self.type ) {
+      case "bool":
+        input = makeBoolInput();
+        break;
+    }
+    col1.appendChild( label );
+    col2.appendChild( input );
+    box.appendChild( col1 );
+    box.appendChild( col2 );
+    return;
+  }
+  this.getBox = function () {
+    return box;
+  }
+  draw();
   return;
 }
 function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contextMenuCallback, focusCallBack ) {
@@ -269,6 +324,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
   this.y       = 0;     /* Top coordinate in mesh          */
   this.obj     = null;  /* DOM object of node              */
   this.shift   = 0;     /* Top shift in parent of node box */
+  this.options = [];    /* Options of the node             */
   /*----------------------------------------*/
   function Drag () {
     var dX         = 0;
@@ -332,6 +388,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
       self.x = shadowX;
       self.y = shadowY;
       move();
+      dragCallback( self.id );
       mesh.hideShadow();
       if ( ( cX != startX ) || ( cY != startY ) ) {
         startX   = cX;
@@ -353,6 +410,9 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     let data  = nodeLib.getNodeRecord( type );
     let pinID = 0;
     let wN    = 0;
+    self.inputs  = [];
+    self.outputs = [];
+    self.options = [];
     if ( data.inputs.length > data.outputs.length ) {
       wN = data.inputs.length;
     } else {
@@ -364,12 +424,19 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     short        = data.short;
     self.inputs  = [];
     self.outputs = [];
-    for ( var i=0; i<data.inputs.length; i++ ) {
-      self.inputs.push( new Pin( pinID++, "input", data.inputs[i] ) );
-    }
-    for ( var i=0; i<data.outputs.length; i++ ) {
-      self.outputs.push( new Pin( pinID++, "output", data.outputs[i] ) );
-    }
+    data.inputs.forEach( function ( input, i ) {
+      self.inputs.push( new Pin( pinID++, "input", input ) );
+      return;
+    });
+    data.outputs.forEach( function ( output, i ) {
+      self.outputs.push( new Pin( pinID++, "output", output ) );
+      return;
+    });
+    data.options.forEach( function ( option, i) {
+      self.options.push( new NodeOption( option ) );
+      return;
+    });
+
     return;
   }
   function setSize () {
@@ -395,7 +462,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     let pinCounter    = 0;
     let expandCounter = 0;
     /*--------------- NODE ---------------*/
-    self.obj            = document.createElement("DIV");
+    self.obj            = document.createElement( "DIV" );
     self.obj.id         = 'node' + self.id;
     self.obj.className  = 'node';
     /*------------ INPUT PORT ------------*/
@@ -502,7 +569,8 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
       })());
     }
     for ( var i=0; i<self.outputs.length; i++ ) {
-      self.outputs[i].setPin( outPort.children[i] );
+      self.outputs[i].setMount( outPort.children[i] );
+      self.outputs[i].setPin( outPort.children[i].children[0] );
       outPort.children[i].addEventListener( 'click', ( function () {
         var j = i;
         return function () {
@@ -591,20 +659,17 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     return;
   }
   this.setPinsInProgress  = function ( n ) {
-    for ( var i=0; i<self.inputs.length; i++ ) {
-      if ( self.inputs[i].id != n ) {
-        self.inputs[i].setReserved();
-      } else {
-        self.inputs[i].setDisconnected();
+    self.inputs.forEach( function ( input, i ) {
+      if ( input.id == n ) {
+        input.setFrom();
       }
-    }
-    for ( var i=0; i<self.outputs.length; i++ ) {
-      if ( self.outputs[i].id != n ) {
-        self.outputs[i].setReserved();
-      } else {
-        self.outputs[i].setDisconnected();
+      return;
+    });
+    self.outputs.forEach( function ( output, i ) {
+      if ( output.id == n ) {
+        output.setFrom();
       }
-    }
+    });
     return;
   }
   this.setPinConnected    = function ( n, link ) {
@@ -780,6 +845,13 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     body.classList.remove( "focus" );
     return;
   }
+  this.getOptions         = function () {
+    let out = [];
+    self.options.forEach( function ( option, i ) {
+      out.push( option.getBox() );
+    });
+    return out;
+  }
   this.closeMenu          = function () {
     if ( menu != null ) {
       if ( menu.exist == true ) {
@@ -804,6 +876,9 @@ function Scheme ( id ) {
   var prevAdr  = new NodeAdr(); /* Previus pin for connecting */
   var prevLink = null;          /* Link number for changing   */
   var scale    = 1;             /* Scale of zooming           */
+  /*----------------------------------------*/
+  var helpFild    = document.getElementById( "content-help" );
+  var optionsFild = document.getElementById( "content-options" );
   /*----------------------------------------*/
   this.id      = 0;    /* ID number of scheme     */
   this.nodes   = [];   /* Nodes of scheme         */
@@ -892,6 +967,14 @@ function Scheme ( id ) {
     }
     return;
   }
+  function cleanHelpFild () {
+    helpFild.innerHTML = "";
+    return;
+  }
+  function cleanOptionsFild () {
+    optionsFild.innerHTML = "";
+    return;
+  }
   /* Callbacks */
   function linkStart ( adr ) {
     self.resetFocus();
@@ -940,6 +1023,11 @@ function Scheme ( id ) {
     return;
   }
   function onNodeFocus ( adr ) {
+    cleanHelpFild();
+    cleanOptionsFild();
+    self.nodes[adr].getOptions().forEach( function( option, i) {
+      optionsFild.appendChild( option );
+    });
     self.nodes.forEach( function ( node, i ) {
       if ( i != adr ) {
         node.resetFocus();
@@ -967,6 +1055,7 @@ function Scheme ( id ) {
   }
   this.addNode       = function ( type ) {
     self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrag, beforNodeRemove, beforContextMenu, onNodeFocus ) );
+    self.nodes[nodeID - 1].setFocus();
     return;
   }
   this.addLink       = function ( from, to ) {
@@ -1034,6 +1123,8 @@ function Scheme ( id ) {
   }
   this.resetFocus    = function () {
     self.inFocus = null;
+    cleanHelpFild();
+    cleanOptionsFild();
     for ( var i=0; i<self.nodes.length; i++ ) {
       self.nodes[i].resetFocus();
     }

@@ -19,10 +19,10 @@ function NodeRecord () {
   this.table   = 0;
   this.heading = "";
   this.short   = "";
+  this.help    = "";
+  this.options = [];
   this.inputs  = [];
   this.outputs = [];
-  this.width   = 0;
-  this.height  = 0;
   this.expansionShift = 0;
   return;
 }

@@ -5,7 +5,14 @@
   "heading" : "Булевая переменная",
   "short"   : "bool",
   "help"    : "",
-  "default" : false,
+  "options" : [
+    {
+      "name"  : "default",
+      "text"  : "Значение",
+      "type"  : "bool",
+      "value" : false
+    }
+  ],
   "inputs"  : [
     {
       "type"   : "bool",

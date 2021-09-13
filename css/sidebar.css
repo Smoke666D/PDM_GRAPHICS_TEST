@@ -153,3 +153,8 @@
       background: #4d5055; }
     #nodeLib-list .item span {
       color: #d2d3d4;}
+#content-options {}
+  #content-options a {}
+  #content-options input,
+  #content-options select {
+    min-width: 70px; }
