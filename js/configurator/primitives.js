@@ -10,22 +10,25 @@ const lineTypes       = {
     color       : '#33f233',
     animation   : true,
     size        : 3,
-    startSocket : 'right',
-    endSocket   : 'left'
+    path        : 'straight',
+    startSocket : 'bottom',
+    endSocket   : 'top'
   },
   "float"  : {
     color       : '#b824bd',
     animation   : true,
     size        : 3,
-    startSocket : 'right',
-    endSocket   : 'left'
+    path        : 'straight',
+    startSocket : 'bottom',
+    endSocket   : 'top'
   },
   "string" : {
     color       : '#f2e933',
     animation   : true,
     size        : 3,
-    startSocket : 'right',
-    endSocket   : 'left'
+    path        : 'straight',
+    startSocket : 'bottom',
+    endSocket   : 'top'
   }
 }
 const scaleStep       = 0.1;
@@ -382,7 +385,6 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     return;
   }
   function move () {
-    self.shift          = self.obj.parentElement.offsetTop - self.obj.offsetTop;
     pos = mesh.getPosition( self.x, self.y );
     self.obj.style.left = pos.x + "px";
     self.obj.style.top  = pos.y + "px";
