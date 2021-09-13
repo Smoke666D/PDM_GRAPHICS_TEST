@@ -273,20 +273,10 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     var cY           = 0;
     var startX       = 0;
     var startY       = 0;
-    var parent       = null;
-    var rightBorder  = 0;
-    var topBorder    = 0;
-    var bottomBorder = 0;
     var shadowX      = self.x;
     var shadowY      = self.y;
     var meshBorder   = mesh.getBorders( self.x, self.y );
     function dragStart ( e ) {
-      let w = parseInt( self.obj.style.width );
-      let h = parseInt( self.obj.style.height );
-      parent       = self.obj.parentElement.parentElement.getBoundingClientRect();
-      rightBorder  = parent.width - w;
-      topBorder    = self.shift;
-      bottomBorder = parent.height - h + self.shift;
       e = e || window.event;
       e.preventDefault();
       cX = e.clientX;
@@ -294,7 +284,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
       startX = cX;
       startY = cY;
       mesh.moveShadow( shadowX, shadowY );
-      mesh.setShadow( h, w );
+      mesh.setShadow( parseInt( self.obj.style.height ), parseInt( self.obj.style.width ) );
       document.onmouseup   = dragFinish;
       document.onmousemove = dragProcess;
       return;
@@ -327,22 +317,8 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
         meshBorder = mesh.getBorders( shadowX, shadowY );
       }
       // set the element's new position:
-      let newX = ( parseInt( self.obj.style.left ) - dX );
-      let newY = ( parseInt( self.obj.style.top )  - dY );
-      if ( newX < 0 ) {
-        newX = 0;
-      }
-      if ( newX > rightBorder ) {
-        newX = rightBorder;
-      }
-      if ( newY < topBorder ) {
-        newY = topBorder;
-      }
-      if ( newY > bottomBorder ) {
-        newY = bottomBorder;
-      }
-      self.obj.style.top  = newY + "px"
-      self.obj.style.left = newX + "px";
+      self.obj.style.top  = ( parseInt( self.obj.style.top )  - dY ) + "px"
+      self.obj.style.left = ( parseInt( self.obj.style.left ) - dX ) + "px";
       dragCallback( self.id );
       return;
     }
@@ -356,15 +332,11 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
       if ( ( cX != startX ) || ( cY != startY ) ) {
         startX = cX;
         startY = cY;
-        self.focus = false;
-        body.classList.remove( "focus" );
         self.x = parseInt( self.obj.style.top  );
         self.y = parseInt( self.obj.style.left );
       }
       return;
     }
-
-
     if ( body ) {
       body.onmousedown = dragStart;
     } else {
