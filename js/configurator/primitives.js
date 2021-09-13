@@ -265,7 +265,6 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
   this.y       = 0;     /* Top coordinate in mesh          */
   this.obj     = null;  /* DOM object of node              */
   this.shift   = 0;     /* Top shift in parent of node box */
-  this.expand  = new Expand();
   /*----------------------------------------*/
   function Drag () {
     var dX           = 0;
@@ -278,17 +277,24 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     var rightBorder  = 0;
     var topBorder    = 0;
     var bottomBorder = 0;
+    var shadowX      = self.x;
+    var shadowY      = self.y;
+    var meshBorder   = mesh.getBorders( self.x, self.y );
     function dragStart ( e ) {
+      let w = parseInt( self.obj.style.width );
+      let h = parseInt( self.obj.style.height );
       parent       = self.obj.parentElement.parentElement.getBoundingClientRect();
-      rightBorder  = parent.width - parseInt( self.obj.style.width );
+      rightBorder  = parent.width - w;
       topBorder    = self.shift;
-      bottomBorder = parent.height - parseInt( self.obj.style.height ) + self.shift;
+      bottomBorder = parent.height - h + self.shift;
       e = e || window.event;
       e.preventDefault();
       cX = e.clientX;
       cY = e.clientY;
       startX = cX;
       startY = cY;
+      mesh.moveShadow( shadowX, shadowY );
+      mesh.setShadow( h, w );
       document.onmouseup   = dragFinish;
       document.onmousemove = dragProcess;
       return;
@@ -301,6 +307,25 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
       dY = cY - e.clientY;
       cX = e.clientX;
       cY = e.clientY;
+      // Shadow calc:
+      if ( ( e.clientX < meshBorder.left ) && ( shadowX > 0 ) ) {
+        shadowX--;
+        mesh.moveShadow( shadowX, shadowY );
+        meshBorder = mesh.getBorders( shadowX, shadowY );
+      } else if ( ( e.clientX > meshBorder.right ) && ( shadowX < mesh.getWidth() ) ) {
+        shadowX++;
+        mesh.moveShadow( shadowX, shadowY );
+        meshBorder = mesh.getBorders( shadowX, shadowY );
+      }
+      if ( ( e.clientY < meshBorder.top ) && ( shadowY > 0 ) ) {
+        shadowY--;
+        mesh.moveShadow( shadowX, shadowY );
+        meshBorder = mesh.getBorders( shadowX, shadowY );
+      } else if ( ( e.clientY > meshBorder.bottom ) && ( shadowY < mesh.getHight() ) ) {
+        shadowY++;
+        mesh.moveShadow( shadowX, shadowY );
+        meshBorder = mesh.getBorders( shadowX, shadowY );
+      }
       // set the element's new position:
       let newX = ( parseInt( self.obj.style.left ) - dX );
       let newY = ( parseInt( self.obj.style.top )  - dY );
@@ -324,6 +349,10 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     function dragFinish () {
       document.onmouseup   = null;
       document.onmousemove = null;
+      self.x = shadowX;
+      self.y = shadowY;
+      move();
+      mesh.hideShadow();
       if ( ( cX != startX ) || ( cY != startY ) ) {
         startX = cX;
         startY = cY;
@@ -372,18 +401,19 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     self.obj.style.height = height + "px";
     return;
   }
-  function hide() {
+  function hide () {
     self.obj.classList.add( "hide" );
     return;
   }
-  function show() {
+  function show () {
     self.obj.classList.remove( "hide" );
     return;
   }
-  function move() {
+  function move () {
     self.shift          = self.obj.parentElement.offsetTop - self.obj.offsetTop;
-    self.obj.style.top  = ( self.shift + self.x ) + "px";
-    self.obj.style.left = self.y + "px";
+    pos = mesh.getPosition( self.x, self.y );
+    self.obj.style.left = pos.x + "px";
+    self.obj.style.top  = pos.y + "px";
     return;
   }
   function draw () {
