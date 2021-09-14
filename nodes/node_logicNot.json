@@ -2,22 +2,20 @@
   "name"    : "node_logicNot",
   "type"    : "logic",
   "table"   : 0,
-  "heading" : "Логическое НЕ",
+  "heading" : "Булева НЕ",
   "short"   : "not",
-  "help"    : "",
-  "default" : null,
+  "help"    : "Булева операция отрицания. Инвертирует значение",
+  "options" : [],
   "inputs"  : [
     {
       "type"   : "bool",
-      "help"   : "вход",
-      "expand" : false
+      "help"   : "вход"
     }
   ],
   "outputs" : [
     {
       "type"   : "bool",
-      "help"   : "выход",
-      "expand" : false
+      "help"   : "выход"
     }
   ]
 }

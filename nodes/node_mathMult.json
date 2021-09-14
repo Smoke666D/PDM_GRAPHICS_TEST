@@ -4,24 +4,21 @@
   "table"   : 0,
   "heading" : "Умножение",
   "short"   : "x",
-  "help"    : "",
-  "default" : null,
+  "help"    : "Математическая операция умножения",
+  "options" : [],
   "inputs"  : [
     {
       "type"   : "number",
-      "help"   : "Член 1",
-      "expand" : true
+      "help"   : "Член 1"
     },{
       "type"   : "number",
-      "help"   : "Член 2",
-      "expand" : true
+      "help"   : "Член 2"
     }
   ],
   "outputs" : [
     {
       "type"   : "number",
-      "help"   : "Результат операции",
-      "expand" : false
+      "help"   : "Результат операции"
     }
   ]
 }

@@ -4,14 +4,20 @@
   "table"   : 0,
   "heading" : "Кнопка",
   "short"   : "SW",
-  "help"    : "",
-  "default" : 0,
+  "help"    : "Чтение состояния внешней кнопки. Необходимо выбрать номер внешней кнопки.",
+  "options" : [
+    {
+      "name"  : "adr",
+      "text"  : "конпка",
+      "type"  : "byte",
+      "value" : 0
+    }
+  ],
   "inputs"  : [],
   "outputs" : [
     {
       "type"   : "bool",
-      "help"   : "Данные",
-      "expand" : false
+      "help"   : "Данные"
     }
   ]
 }

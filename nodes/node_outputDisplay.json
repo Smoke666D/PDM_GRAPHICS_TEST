@@ -4,13 +4,12 @@
   "table"   : 0,
   "heading" : "Дисплей",
   "short"   : "Display",
-  "help"    : "",
-  "default" : 0,
+  "help"    : "Вывод строковых данных на дисплей",
+  "options" : [],
   "inputs"  : [
     {
       "type"   : "string",
-      "help"   : "Сообщение",
-      "expand" : false
+      "help"   : "Сообщение"
     }
   ],
   "outputs" : []

@@ -4,8 +4,15 @@
   "table"   : 0,
   "heading" : "Строка переменная",
   "short"   : "date",
-  "help"    : "",
-  "default" : null,
+  "help"    : "Чтение и запись переменной времени и даты. Можно использовать, как буфер или константу.",
+  "options" : [
+    {
+      "name"  : "default",
+      "text"  : "значение",
+      "type"  : "date",
+      "value" : 0
+    }
+  ],
   "inputs"  : [
     {
       "type"   : "date",

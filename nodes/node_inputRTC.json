@@ -4,14 +4,13 @@
   "table"   : 0,
   "heading" : "Часы",
   "short"   : "RTC",
-  "help"    : "",
-  "default" : null,
+  "help"    : "Чтение даты и времени из внутреннего источника времени (часы реального времени)",
+  "options" : [],
   "inputs"  : [],
   "outputs" : [
     {
       "type"   : "date",
-      "help"   : "Данные",
-      "expand" : false
+      "help"   : "Данные"
     }
   ]
 }

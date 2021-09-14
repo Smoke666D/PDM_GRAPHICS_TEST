@@ -4,8 +4,20 @@
   "table"   : 1,
   "heading" : "CAN",
   "short"   : "CAN",
-  "help"    : "",
-  "default" : 0,
+  "help"    : "Запись данных по CAN шине. Необходимо выбрать тип данных, затем выбрать сообщение и расположение данных в сообщении",
+  "options" : [
+    {
+      "name"  : "type",
+      "text"  : "тип",
+      "type"  : "byte",
+      "value" : 0
+    },{
+      "name"  : "adr",
+      "text"  : "адрес",
+      "type"  : "adr",
+      "value" : null
+    }
+  ],
   "inputs"  : [
     {
       "type"   : "any",

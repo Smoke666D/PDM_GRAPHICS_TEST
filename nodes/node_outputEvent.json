@@ -4,13 +4,24 @@
   "table"   : 3,
   "heading" : "Авария",
   "short"   : "alarm",
-  "help"    : "",
-  "default" : 0,
+  "help"    : "Генерация системного события. По переднему фронту (переход с false на true) на входе генерируеться выбранное системное событие.",
+  "options" : [
+    {
+      "name"  : "type",
+      "text"  : "тип",
+      "type"  : "byte",
+      "value" : 0
+    },{
+      "name"  : "event",
+      "text"  : "событие",
+      "type"  : "byte",
+      "value" : 0
+    }
+  ],
   "inputs"  : [
     {
-      "type"   : "event",
-      "help"   : "Событие",
-      "expand" : false
+      "type"   : "bool",
+      "help"   : "Запись события",
     }
   ],
   "outputs" : []

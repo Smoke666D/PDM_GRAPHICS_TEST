@@ -4,8 +4,15 @@
   "table"   : 0,
   "heading" : "Байт переменная",
   "short"   : "byte",
-  "help"    : "",
-  "default" : 0,
+  "help"    : "Чтение и запись буйтовой переменной. Можно использовать, как буфер или константу.",
+  "options" : [
+    {
+      "name"  : "default",
+      "text"  : "значение",
+      "type"  : "byte",
+      "value" : 0
+    }
+  ],
   "inputs"  : [
     {
       "type"   : "byte",

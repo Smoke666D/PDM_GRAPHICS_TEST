@@ -4,48 +4,39 @@
   "table"   : 0,
   "heading" : "Сформировать байт",
   "short"   : "and",
-  "help"    : "",
-  "default" : 0,
+  "help"    : "Сформировать байт из битов. Порядок нумеруеться с младшего бита. Неиспользуемые входы интерпретируеться, как false",
+  "options" : [],
   "inputs"  : [
     {
       "type"   : "bool",
-      "help"   : "Бит 0",
-      "expand" : false
+      "help"   : "Бит 0"
     },{
       "type"   : "bool",
-      "help"   : "Бит 1",
-      "expand" : false
+      "help"   : "Бит 1"
     },{
       "type"   : "bool",
-      "help"   : "Бит 2",
-      "expand" : false
+      "help"   : "Бит 2"
     },{
       "type"   : "bool",
-      "help"   : "Бит 3",
-      "expand" : false
+      "help"   : "Бит 3"
     },{
       "type"   : "bool",
-      "help"   : "Бит 4",
-      "expand" : false
+      "help"   : "Бит 4"
     },{
       "type"   : "bool",
-      "help"   : "Бит 5",
-      "expand" : false
+      "help"   : "Бит 5"
     },{
       "type"   : "bool",
-      "help"   : "Бит 6",
-      "expand" : false
+      "help"   : "Бит 6"
     },{
       "type"   : "bool",
-      "help"   : "Бит 7",
-      "expand" : false
+      "help"   : "Бит 7"
     }
   ],
   "outputs" : [
     {
       "type"   : "byte",
-      "help"   : "Результат операции",
-      "expand" : false
+      "help"   : "Результат операции"
     }
   ]
 }

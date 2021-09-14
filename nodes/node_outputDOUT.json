@@ -2,15 +2,21 @@
   "name"    : "node_outputDOUT",
   "type"    : "outputs",
   "table"   : 0,
-  "heading" : "Дискретный вход",
+  "heading" : "Дискретный выход",
   "short"   : "DOUT",
-  "help"    : "",
-  "default" : 0,
+  "help"    : "Дискретный выход. Необходимо выбрать номер канала",
+  "options" : [
+    {
+      "name"  : "adr",
+      "text"  : "выход",
+      "type"  : "byte",
+      "value" : 0
+    }
+  ],
   "inputs"  : [
     {
       "type"   : "bool",
-      "help"   : "Данные",
-      "expand" : false
+      "help"   : "Данные"
     }
   ],
   "outputs" : []

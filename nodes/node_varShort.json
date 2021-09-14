@@ -4,8 +4,15 @@
   "table"   : 0,
   "heading" : "Слово переменная",
   "short"   : "short",
-  "help"    : "",
-  "default" : 0,
+  "help"    : "Чтение и запись двух байтовой переменной. Можно использовать, как буфер или константу.",
+  "options" : [
+    {
+      "name"  : "default",
+      "text"  : "значение",
+      "type"  : "short",
+      "value" : 0
+    }
+  ],
   "inputs"  : [
     {
       "type"   : "short",

@@ -4,14 +4,20 @@
   "table"   : 0,
   "heading" : "АЦП",
   "short"   : "AIN",
-  "help"    : "",
-  "default" : 0,
+  "help"    : "Аналоговый вход. Выбирете необходимый канал перед использованием.",
+  "options" : [
+    {
+      "name"  : "adr",
+      "text"  : "канал",
+      "type"  : "byte",
+      "value" : 0
+    }
+  ],
   "inputs"  : [],
   "outputs" : [
     {
       "type"   : "float",
-      "help"   : "Данные",
-      "expand" : false
+      "help"   : "Данные"
     }
   ]
 }

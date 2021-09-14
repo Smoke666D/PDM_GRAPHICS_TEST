@@ -4,13 +4,19 @@
   "table"   : 0,
   "heading" : "Светодиод",
   "short"   : "LED",
-  "help"    : "",
-  "default" : 0,
+  "help"    : "Внешний светодиод. Необходимо выбрать номер внешнего светодиода.",
+  "options" : [
+    {
+      "name"  : "adr",
+      "text"  : "выход",
+      "type"  : "byte",
+      "value" : 0
+    }
+  ],
   "inputs"  : [
     {
       "type"   : "bool",
-      "help"   : "Данные",
-      "expand" : false
+      "help"   : "Данные"
     }
   ],
   "outputs" : []
