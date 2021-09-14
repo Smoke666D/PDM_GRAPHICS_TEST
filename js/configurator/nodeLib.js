@@ -3,7 +3,7 @@ const fs = require('fs');
 /*----------------------------------------------------------------------------*/
 const typePriority = ["variable",  "logic",   "timers",  "math",       "loops", "inputs", "outputs"];
 const typeNames    = ["Переменные", "Логика", "Таймеры", "Математика", "Циклы", "Входы",  "Выходы" ];
-const setupKeys    = ["nodNumber", "availableNods"];
+const setupKeys    = ["nodNumber", "hardware", "help", "options", "availableNods"];
 /*----------------------------------------------------------------------------*/
 function portRecord () {
   var self    = this;
@@ -57,7 +57,7 @@ function NodeLib () {
   function getSetupFile ( callback ) {
     setup = null;
     try {
-      setup = JSON.parse( fs.readFileSync( ( process.cwd() + "\\setup.json" ), "utf8" ) );
+      setup = JSON.parse( fs.readFileSync( ( process.cwd() + "\\system\\setup.json" ), "utf8" ) );
       callback();
     } catch (e) {
       console.log(  "error on parsing setup file" );
@@ -148,6 +148,9 @@ function NodeLib () {
   }
   this.getStatus        = function () {
     return ready;
+  }
+  this.getSetup         = function () {
+    return setup;
   }
   /*----------------------------------------*/
   init();

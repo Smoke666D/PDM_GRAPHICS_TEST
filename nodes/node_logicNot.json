@@ -17,5 +17,8 @@
       "type"   : "bool",
       "help"   : "выход"
     }
-  ]
+  ],
+  "script" : {
+    "command" : "Inv"
+  }
 }

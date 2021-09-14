@@ -46,6 +46,13 @@ function NodeAdr ( node = 0, pin = 0 ) {
   this.pin  = pin;
   return;
 }
+function Device () {
+  var self    = this;
+  this.id     = 0;
+  this.speed  = 500;
+  this.keypad = "blink8"
+  return;
+}
 function Link ( from, to, start, end, type, id ) {
   var self  = this;
   var box   = box;   /* Object of scheme in DOM   */
@@ -238,7 +245,7 @@ function Menu ( box, object, items = [] ) {
   init( box, object, items );
   return;
 }
-function NodeOption ( data ) {
+function Option ( data ) {
   var self   = this;
   var box    = null;
   this.name  = data.name;
@@ -280,6 +287,10 @@ function NodeOption ( data ) {
       case "bool":
         input = makeBoolInput();
         break;
+      default:
+        input = document.createElement( "DIV" );
+        input.innerHTML = "no data";
+        break;
     }
     col1.appendChild( label );
     col2.appendChild( input );
@@ -290,6 +301,28 @@ function NodeOption ( data ) {
   this.getBox = function () {
     return box;
   }
+  draw();
+  return;
+}
+function Help ( text ) {
+  var self = this;
+  var box  = null;
+
+  this.text = text;
+
+  function draw () {
+    box           = document.createElement( "DIV" );
+    let txt       = document.createElement( "A" );
+    box.className = "pr-2 pl-2";
+    txt.innerHTML = self.text;
+    box.appendChild( txt );
+    return;
+  }
+
+  this.getBox = function () {
+    return box;
+  }
+
   draw();
   return;
 }
@@ -435,7 +468,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
       return;
     });
     data.options.forEach( function ( option, i) {
-      self.options.push( new NodeOption( option ) );
+      self.options.push( new Option( option ) );
       return;
     });
 
@@ -893,12 +926,36 @@ function Scheme ( id ) {
   this.id      = 0;    /* ID number of scheme     */
   this.nodes   = [];   /* Nodes of scheme         */
   this.links   = [];   /* Links of scheme         */
+  this.options = [];   /* Options of the scheme   */
+  this.help    = "";   /* Help string for options */
   this.box     = null; /* Scheme element in DOM   */
   this.inFocus = null; /* Array of focus elements */
+  this.device  = null; /* Data of the device      */
   /*----------------------------------------*/
+  function awaitReady ( callback ) {
+    setTimeout( function() {
+      if ( nodeLib.getStatus() == true ) {
+        callback();
+      } else {
+        awaitReady( callback );
+      }
+    }, 10 );
+    return;
+  }
   function init ( id ) {
-    self.id  = id;
-    self.box = document.getElementById( 'scheme' );
+    awaitReady( function () {
+      self.id      = id;
+      self.box     = document.getElementById( 'scheme' );
+      nodeLib.getSetup().options.forEach( function ( data, i ) {
+        self.options.push( new Option( data ) );
+        return;
+      });
+      self.help   = new Help( nodeLib.getSetup().help );
+      self.device = new Device();
+      showSchemeOptions();
+      showSchemeHelp();
+      return;
+    });
     return;
   }
   function removeNode ( id ) {
@@ -985,6 +1042,19 @@ function Scheme ( id ) {
     optionsFild.innerHTML = "";
     return;
   }
+  function showSchemeHelp () {
+    cleanHelpFild();
+    helpFild.appendChild( self.help.getBox() );
+    return;
+  }
+  function showSchemeOptions () {
+    cleanOptionsFild();
+    self.options.forEach( function( option, i ) {
+      optionsFild.appendChild( option.getBox() );
+      return;
+    });
+    return;
+  }
   /* Callbacks */
   function linkStart ( adr ) {
     self.resetFocus();
@@ -1037,6 +1107,7 @@ function Scheme ( id ) {
     cleanHelpFild();
     self.nodes[adr].getOptions().forEach( function( option, i) {
       optionsFild.appendChild( option );
+      return;
     });
     helpFild.appendChild( self.nodes[adr].getHelp() );
     self.nodes.forEach( function ( node, i ) {
@@ -1134,8 +1205,8 @@ function Scheme ( id ) {
   }
   this.resetFocus    = function () {
     self.inFocus = null;
-    cleanHelpFild();
-    cleanOptionsFild();
+    showSchemeHelp();
+    showSchemeOptions();
     for ( var i=0; i<self.nodes.length; i++ ) {
       self.nodes[i].resetFocus();
     }

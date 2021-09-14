@@ -20,5 +20,8 @@
       "type"   : "bool",
       "help"   : "Результат сравнения"
     }
-  ]
+  ],
+  "script" : {
+    "command" : "COMPARE_CONST"
+  }
 }

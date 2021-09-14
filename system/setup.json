@@ -1,5 +1,30 @@
 {
   "nodNumber"     : 100,
+  "hardware"      : {
+    "din"  : 10,
+    "dout" : 10,
+    "ain"  : 5,
+    "aout" : 5
+  },
+  "options" : [
+    {
+      "name"  : "dev_id",
+      "text"  : "ID",
+      "type"  : "byte",
+      "value" : 0
+    },{
+      "name"  : "can_speed",
+      "text"  : "скорость",
+      "type"  : "canSpeed",
+      "value" : 500
+    },{
+      "name"  : "keypad",
+      "text"  : "клавиатура",
+      "type"  : "keypad",
+      "value" : "blink8"
+    }
+  ],
+  "help"          : "Установите адрес устройства (ID) в сети и скорость шины. Выбирите используемую клавиатуру.",
   "availableNods" : {
     "node_varBool"        : true,
     "node_varByte"        : true,
