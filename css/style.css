@@ -8778,10 +8778,10 @@ a[data-toggle="collapse"] {
 }
 
 ::selection {
-  background: #f8b739;
+  background: rgb(78,213,237);
 }
 ::-moz-selection {
-  background: #f8b739;
+  background: rgb(78,213,237);
 }
 
 

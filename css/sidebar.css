@@ -157,4 +157,23 @@
   #content-options a {}
   #content-options input,
   #content-options select {
+    height: 30px;
+    background-color: #373a40;
+    border: 1px solid #4c5058;
+    border-radius: 0.25rem;
+    transition: all 0.5s ease;
+    outline: 0;
+    color: #d2d3d4;
     min-width: 70px; }
+    #content-options input:hover,
+    #content-options select:hover {
+      border: 1px solid #bdbebf;
+    }
+    #content-options input:focus,
+    #content-options select:focus {
+      border-color: rgb(78,213,237);
+      outline: 0;
+    }
+#content-help {
+  color: #d2d3d4;
+}

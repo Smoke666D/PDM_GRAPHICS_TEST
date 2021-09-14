@@ -313,6 +313,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
   var short               = "";
   var body                = null;
   var dragFlag            = false;
+  var help                = "";
   /*----------------------------------------*/
   this.id      = id;    /* ID number of node               */
   this.name    = "";    /* Name of the node                */
@@ -410,6 +411,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     let data  = nodeLib.getNodeRecord( type );
     let pinID = 0;
     let wN    = 0;
+    help = data.help;
     self.inputs  = [];
     self.outputs = [];
     self.options = [];
@@ -852,6 +854,14 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     });
     return out;
   }
+  this.getHelp            = function () {
+    let out       = document.createElement( "DIV" );
+    let txt       = document.createElement( "A" );
+    out.className = "pr-2 pl-2";
+    txt.innerHTML = help;
+    out.appendChild( txt );
+    return out;
+  }
   this.closeMenu          = function () {
     if ( menu != null ) {
       if ( menu.exist == true ) {
@@ -1023,11 +1033,12 @@ function Scheme ( id ) {
     return;
   }
   function onNodeFocus ( adr ) {
-    cleanHelpFild();
     cleanOptionsFild();
+    cleanHelpFild();
     self.nodes[adr].getOptions().forEach( function( option, i) {
       optionsFild.appendChild( option );
     });
+    helpFild.appendChild( self.nodes[adr].getHelp() );
     self.nodes.forEach( function ( node, i ) {
       if ( i != adr ) {
         node.resetFocus();
