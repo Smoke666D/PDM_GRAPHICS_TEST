@@ -1,27 +1,35 @@
 {
   "nodNumber"     : 100,
   "hardware"      : {
-    "din"  : 10,
-    "dout" : 10,
-    "ain"  : 5,
-    "aout" : 5
+    "din"    : 10,
+    "dout"   : 10,
+    "ain"    : 5,
+    "aout"   : 5,
+    "sw"     : 0,
+    "led"    : 0,
+    "rtc"    : false,
+    "can"    : true,
+    "modbus" : false
   },
   "options" : [
     {
-      "name"  : "dev_id",
-      "text"  : "ID",
-      "type"  : "byte",
-      "value" : 0
+      "name"   : "dev_id",
+      "text"   : "ID",
+      "type"   : "byte",
+      "select" : null,
+      "value"  : 0
     },{
-      "name"  : "can_speed",
-      "text"  : "скорость",
-      "type"  : "canSpeed",
-      "value" : 500
+      "name"   : "can_speed",
+      "text"   : "скорость",
+      "type"   : "select",
+      "select" : [ 250, 500, 1000 ],
+      "value"  : 500
     },{
-      "name"  : "keypad",
-      "text"  : "клавиатура",
-      "type"  : "keypad",
-      "value" : "blink8"
+      "name"   : "keypad",
+      "text"   : "переферия",
+      "type"   : "dialog",
+      "select" : "external",
+      "value"  : []
     }
   ],
   "help"          : "Установите адрес устройства (ID) в сети и скорость шины. Выбирите используемую клавиатуру.",
@@ -49,17 +57,17 @@
     "node_mathSub"        : true,
     "node_mathMult"       : true,
     "node_mathDiv"        : true,
-    "node_mathPow"        : 0,
-    "node_mathRoot"       : 0,
-    "node_mathSin"        : 0,
-    "node_mathCos"        : 0,
-    "node_mathTg"         : 0,
-    "node_mathCtg"        : 0,
-    "node_mathArcsin"     : 0,
-    "node_mathArccos"     : 0,
-    "node_mathArctg"      : 0,
-    "node_mathArcctg"     : 0,
-    "node_mathProc"       : 0,
+    "node_mathPow"        : false,
+    "node_mathRoot"       : false,
+    "node_mathSin"        : false,
+    "node_mathCos"        : false,
+    "node_mathTg"         : false,
+    "node_mathCtg"        : false,
+    "node_mathArcsin"     : false,
+    "node_mathArccos"     : false,
+    "node_mathArctg"      : false,
+    "node_mathArcctg"     : false,
+    "node_mathProc"       : false,
 
     "node_inputDIN"       : true,
     "node_inputSW"        : true,
@@ -79,7 +87,7 @@
     "node_outputEvent"    : true,
     "node_outputDisplay"  : true,
 
-    "node_loopsFor"       : 0,
-    "node_loopsWhile"     : 0
+    "node_loopsFor"       : false,
+    "node_loopsWhile"     : false
   }
 }

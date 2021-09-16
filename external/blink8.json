@@ -1,0 +1,9 @@
+{
+  "id"      : 21,
+  "class"   : "Клавиатуры",
+  "name"    : "blink8",
+  "endian"  : "LITTLE",
+  "tdg"     : true,
+  "leds"    : 8,
+  "toggles" : 8,
+}

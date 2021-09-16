@@ -1,8 +1,0 @@
-{
-  "id"     : 21,
-  "name"   : "blink8",
-  "endian" : "LITTLE",
-  "tdg"    : true,
-  "leds"   : [],
-  "sw"     : []
-}

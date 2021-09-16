@@ -3,6 +3,7 @@ var nodeLib     = require('./nodeLib.js').nodeLib;
 /*----------------------------------------------------------------------------*/
 const pinSize      = 10; /*px*/
 const pinMountSize = 16; /*px*/
+const stringLength = 16;
 /*----------------------------------------------------------------------------*/
 const lineTypes       = {
   "bool"   : {
@@ -246,12 +247,29 @@ function Menu ( box, object, items = [] ) {
   return;
 }
 function Option ( data ) {
-  var self   = this;
-  var box    = null;
-  this.name  = data.name;
-  this.text  = data.text;
-  this.type  = data.type;
-  this.value = data.value;
+  var self    = this;
+  var box     = null;
+  this.name   = data.name;
+  this.text   = data.text;
+  this.type   = data.type;
+  this.value  = data.value;
+  this.select = data.select;
+
+  function numberInputCheck ( obj ) {
+    if ( obj.value < obj.min ) {
+      obj.value = obj.min;
+    } else if ( obj.value > obj.max ) {
+      obj.value = obj.max;
+    } else {
+      obj.value = Math.trunc( obj.value );
+    }
+    return;
+  }
+  function stringInputCheck ( obj ) {
+    if ( obj.value.length > stringLength ) {
+      obj.value = obj.value.slice( 0, stringLength );
+    }
+  }
   function makeBoolInput () {
     let out = document.createElement( "SELECT" );
     let op1 = document.createElement( "OPTION" );
@@ -273,25 +291,112 @@ function Option ( data ) {
     });
     return out;
   }
+  function makeByteInput () {
+    let out   = document.createElement( "INPUT" );
+    out.type  = "number";
+    out.min   = "0";
+    out.max   = "255";
+    out.value = self.value;
+    out.addEventListener( 'change', function () {
+      numberInputCheck( out );
+      self.value = out.value;
+      return;
+    });
+    return out;
+  }
+  function makeShortInput () {
+    let out   = document.createElement( "INPUT" );
+    out.type  = "number";
+    out.min   = "0";
+    out.max   = "65535";
+    out.value = self.value;
+    out.addEventListener( 'change', function () {
+      numberInputCheck( out );
+      self.value = out.value;
+      return;
+    });
+    return out;
+  }
+  function makeFloatInput () {
+    let out   = document.createElement( "INPUT" );
+    out.type  = "number";
+    out.value = self.value;
+    out.addEventListener( 'change', function () {
+      self.value = out.value;
+      return;
+    });
+    return out;
+  }
+  function makeStringInput () {
+    let out   = document.createElement( "INPUT" );
+    out.type  = "text";
+    out.value = self.value;
+    out.addEventListener( 'change', function () {
+      stringInputCheck( out );
+      self.value = out.value;
+      return;
+    });
+    return out;
+  }
+  function makeSelectInput () {
+    let out = null;
+    out = document.createElement( "SELECT" );
+    self.select.forEach( function ( item, i ) {
+      let opt       = document.createElement( "OPTION" );
+      opt.innerHTML = item;
+      if ( self.value == item ) {
+        opt.selected = true;
+      }
+      out.appendChild( opt );
+    });
+    return out;
+  }
+  function makeDialogButton ( dialog ) {
+    let out       = document.createElement( "BUTTON" );
+    out.innerHTML = "...";
+    out.addEventListener( 'click', function () {
+      $("#dialogModal").modal('toggle'); //see here usage
+    });
+    return out;
+  }
+  function makeInput () {
+    let out = null;
+    switch ( self.type ) {
+      case "bool":
+        out = makeBoolInput();
+        break;
+      case "byte":
+        out = makeByteInput();
+        break;
+      case "short":
+        out = makeShortInput();
+        break;
+      case "float":
+        out = makeFloatInput();
+        break;
+      case "select":
+        out = makeSelectInput();
+        break;
+      case "dialog":
+        out = makeDialogButton( self.select );
+        break;
+      default:
+        out = document.createElement( "DIV" );
+        out.innerHTML = "no data";
+        break;
+    }
+    return out;
+  }
   function draw () {
     box             = document.createElement( "DIV" );
     box.className   = 'row';
     let col1        = document.createElement( "DIV" );
-    col1.className  = "col " + self.type + '-text';;
+    col1.className  = "col-6 " + self.type + '-text';;
     let col2        = document.createElement( "DIV" );
-    col2.className  = "col";
+    col2.className  = "col-6";
     let label       = document.createElement( "A" );
     label.innerHTML = self.text;
-    let input       = null;
-    switch ( self.type ) {
-      case "bool":
-        input = makeBoolInput();
-        break;
-      default:
-        input = document.createElement( "DIV" );
-        input.innerHTML = "no data";
-        break;
-    }
+    let input       = makeInput();
     col1.appendChild( label );
     col2.appendChild( input );
     box.appendChild( col1 );
