@@ -12,20 +12,6 @@ function portRecord () {
   this.expand = false;
   return;
 }
-function NodeRecord () {
-  var self = this;
-  this.name    = "";
-  this.type    = "";
-  this.table   = 0;
-  this.heading = "";
-  this.short   = "";
-  this.help    = "";
-  this.options = [];
-  this.inputs  = [];
-  this.outputs = [];
-  this.expansionShift = 0;
-  return;
-}
 function NodeSection ( key, name ) {
   var self     = this;
   this.key     = key;
@@ -38,6 +24,7 @@ function NodeLib () {
   var setup     = null;  /* Setup of current device   */
   var records   = [];    /* Records of the nodes data */
   var sections  = [];    /* Node data by the sections */
+  var external  = [];    /* External devices list     */
   /*----------------------------------------*/
   /*----------------------------------------*/
   function checkSetupFile ( callback ) {
@@ -71,8 +58,11 @@ function NodeLib () {
     }
     return res;
   }
-  function getFileList ( callback ) {
-    let dir = process.cwd() + "\\nodes";
+  function isDeviceAvailable () {
+    return true;
+  }
+  function getFileList ( way, callback ) {
+    let dir = process.cwd() + way;
     fs.readdir( dir, function ( err, files ) {
       if ( err == null ) {
         files.forEach( function ( file, i ) {
@@ -84,21 +74,32 @@ function NodeLib () {
     return;
   }
   function getRecordFromFile ( file ) {
-    let record = new NodeRecord();
+    let record = null;
     try {
-      let data   = JSON.parse( fs.readFileSync( file, "utf8" ) );
-      record = data;
+      record = JSON.parse( fs.readFileSync( file, "utf8" ) );
     } catch (e) {
       console.log(  "error on parsing file: " + file );
     }
     return record;
   }
-  function processFiles ( files, callback ) {
+  function processNodeFiles ( files, callback ) {
     files.forEach( function ( file, i ) {
-      let record = getRecordFromFile( file )
+      let record = getRecordFromFile( file );
       if ( isNodeAvailable( record.name ) == true ) {
         records.push( record );
       }
+      return;
+    });
+    callback();
+    return;
+  }
+  function processDeviceFiles ( files, callback ) {
+    files.forEach( function ( file, i ) {
+      let record = getRecordFromFile( file );
+      if ( isDeviceAvailable() == true ) {
+        external.push( record );
+      }
+      return;
     });
     callback();
     return;
@@ -119,13 +120,18 @@ function NodeLib () {
     return;
   }
   function init () {
-    getFileList( function ( files ) {
+    getFileList( "\\nodes", function ( files ) {
       records = [];
       getSetupFile( function () {
         checkSetupFile( function () {
-          processFiles( files, function () {
+          processNodeFiles( files, function () {
             sortingRecords( function () {
-              ready = true;
+              getFileList( "\\external", function ( files ) {
+                external = [];
+                processDeviceFiles( files, function () {
+                  ready = true;
+                });
+              });
             });
           });
         });
@@ -151,6 +157,20 @@ function NodeLib () {
   }
   this.getSetup         = function () {
     return setup;
+  }
+  this.getExternal      = function () {
+    return external;
+  }
+  this.awaitReady       = function ( callback ) {
+    setTimeout( function () {
+      if ( ready == true ) {
+        callback();
+      } else {
+        self.awaitReady( callback );
+      }
+      return;
+    }, 1 );
+    return;
   }
   /*----------------------------------------*/
   init();

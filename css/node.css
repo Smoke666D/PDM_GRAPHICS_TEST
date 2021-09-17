@@ -18,11 +18,11 @@
 }
 /*----------------------------------------------------------------------------*/
 .none {
-  background-color: #c2c2c2;
-  border: 2px solid #c2c2c2;
+  background-color: #d2d3d4;
+  border: 2px solid #d2d3d4;
 }
 .none-text {
-  color: #c2c2c2;
+  color: #d2d3d4;
 }
 .bool {
   background-color: #33f233;

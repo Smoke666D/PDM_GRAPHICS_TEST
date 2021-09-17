@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-var nodeLib     = require('./nodeLib.js').nodeLib;
+var nodeLib = require('./nodeLib.js').nodeLib;
 /*----------------------------------------------------------------------------*/
 const pinSize      = 10; /*px*/
 const pinMountSize = 16; /*px*/
