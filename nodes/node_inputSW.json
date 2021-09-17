@@ -8,9 +8,8 @@
   "options" : [
     {
       "name"   : "adr",
-      "text"   : "конпка",
-      "type"   : "byte",
-      "select" : "sw",
+      "text"   : "канал",
+      "type"   : "sw",
       "value"  : 0
     }
   ],

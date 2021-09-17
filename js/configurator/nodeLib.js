@@ -204,7 +204,7 @@ function NodeLib () {
     return;
   }
   this.getHardware      = function () {
-    return hardware();
+    return hardware;
   }
   this.awaitReady       = function ( callback ) {
     setTimeout( function () {

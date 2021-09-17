@@ -8,9 +8,8 @@
   "options" : [
     {
       "name"   : "adr",
-      "text"   : "выход",
-      "type"   : "byte",
-      "select" : "led",
+      "text"   : "канал",
+      "type"   : "led",
       "value"  : 0
     }
   ],

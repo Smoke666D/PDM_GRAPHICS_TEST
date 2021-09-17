@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-var nodeLib = require('./nodeLib.js').nodeLib;
+var lib = require('./nodeLib.js').nodeLib;
 /*----------------------------------------------------------------------------*/
 const pinSize      = 10; /*px*/
 const pinMountSize = 16; /*px*/
@@ -270,6 +270,13 @@ function Option ( data ) {
       obj.value = obj.value.slice( 0, stringLength );
     }
   }
+  function selectLine ( size ) {
+    let out = [];
+    for ( var i=0; i<size; i++ ) {
+      out.push( i );
+    }
+    return out;
+  }
   function makeBoolInput () {
     let out = document.createElement( "SELECT" );
     let op1 = document.createElement( "OPTION" );
@@ -375,6 +382,30 @@ function Option ( data ) {
         out = makeFloatInput();
         break;
       case "select":
+        out = makeSelectInput();
+        break;
+      case "din":
+        self.select = selectLine( lib.getHardware().din );
+        out = makeSelectInput();
+        break;
+      case "dout":
+        self.select = selectLine( lib.getHardware().dout );
+        out = makeSelectInput();
+        break;
+      case "ain":
+        self.select = selectLine( lib.getHardware().ain );
+        out = makeSelectInput();
+        break;
+      case "aout":
+        self.select = selectLine( lib.getHardware().aout );
+        out = makeSelectInput();
+        break;
+      case "sw":
+        self.select = selectLine( lib.getHardware().sw );
+        out = makeSelectInput();
+        break;
+      case "led":
+        self.select = selectLine( lib.getHardware().led );
         out = makeSelectInput();
         break;
       case "dialog":
@@ -546,7 +577,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
   }
   /*----------------------------------------*/
   function makeNode ( type ) {
-    let data  = nodeLib.getNodeRecord( type );
+    let data  = lib.getNodeRecord( type );
     let pinID = 0;
     let wN    = 0;
     help = data.help;
@@ -1039,7 +1070,7 @@ function Scheme ( id ) {
   /*----------------------------------------*/
   function awaitReady ( callback ) {
     setTimeout( function() {
-      if ( nodeLib.getStatus() == true ) {
+      if ( lib.getStatus() == true ) {
         callback();
       } else {
         awaitReady( callback );
@@ -1051,11 +1082,11 @@ function Scheme ( id ) {
     awaitReady( function () {
       self.id      = id;
       self.box     = document.getElementById( 'scheme' );
-      nodeLib.getSetup().options.forEach( function ( data, i ) {
+      lib.getSetup().options.forEach( function ( data, i ) {
         self.options.push( new Option( data ) );
         return;
       });
-      self.help   = new Help( nodeLib.getSetup().help );
+      self.help   = new Help( lib.getSetup().help );
       self.device = new Device();
       showSchemeOptions();
       showSchemeHelp();

@@ -8,9 +8,8 @@
   "options" : [
     {
       "name"   : "adr",
-      "text"   : "выход",
-      "type"   : "byte",
-      "select" : "dout",
+      "text"   : "канал",
+      "type"   : "dout",
       "value"  : 0
     }
   ],
