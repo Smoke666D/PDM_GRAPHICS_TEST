@@ -1,7 +1,6 @@
 /*----------------------------------------------------------------------------*/
 var lib = require('./nodeLib.js').nodeLib;
-/*----------------------------------------------------------------------------*/
-
+var can = require('./can.js');
 /*----------------------------------------------------------------------------*/
 function Dialog () {
   var self     = this;
@@ -69,13 +68,22 @@ function Dialog () {
   this.makeCAN = function () {
     self.title             = "CAN шина";
     self.content           = document.createElement( "DIV" );
+
     self.content.innerHTML = "No data!"
+    self.action = function () {
+      console.log("her can");
+      return;
+    }
     return;
   }
   this.makeMB  = function () {
     self.title             = "ModBUS шина";
     self.content           = document.createElement( "DIV" );
     self.content.innerHTML = "No data!"
+    self.action = function () {
+      console.log("her mb");
+      return;
+    }
     return;
   }
   return;
@@ -96,34 +104,70 @@ function Dialogs () {
 function Modal () {
   var self    = this;
   var dialogs = new Dialogs();
+  var currant = "ext";
   var title   = document.getElementById( "dialogModal-title" );
   var body    = document.getElementById( "dialogModal-body"  );
   var button  = document.getElementById( "modal-button"      );
   function init () {
     lib.awaitReady( function () {
       dialogs.init();
+      button.addEventListener( 'click', function () {
+        buttonEvent( currant );
+      });
       self.showExternal();
+      document.getElementById( "bus-button" ).addEventListener( 'click', function () {
+        if ( lib.getSetup().hardware.can == true ) {
+          self.showCan();
+          $("#dialogModal").modal('toggle');
+        } else if ( lib.hardware.mb == true ) {
+          self.showMb();
+          $("#dialogModal").modal('toggle');
+        }
+        return;
+      });
+      return;
     });
     return;
   }
   function clean () {
     title.innerHTML = "";
     body.innerHTML  = "";
-    button.onclick  = null;
+    return;
+  }
+  function buttonEvent ( adr ) {
+    switch ( adr ) {
+      case "ext":
+        dialogs.external.action();
+        break;
+      case "can":
+        dialogs.can.action();
+        break;
+      case "mb":
+        dialogs.mb.action();
+        break;
+    }
     return;
   }
   function draw ( dialog ) {
     clean();
     title.innerHTML = dialog.title;
     body.appendChild( dialog.content );
-    button.addEventListener( 'click', function () {
-      dialog.action();
-    });
     return;
   }
 
   this.showExternal = function () {
+    currant = "ext";
     draw( dialogs.external );
+    return;
+  }
+  this.showCan      = function () {
+    currant = "can";
+    draw( dialogs.can );
+    return;
+  }
+  this.showMb       = function () {
+    currant = "mb";
+    draw( dialogs.mb );
     return;
   }
 
@@ -131,4 +175,6 @@ function Modal () {
   return;
 }
 /*----------------------------------------------------------------------------*/
-let modal = new Modal();
+let dialog = new Modal();
+/*----------------------------------------------------------------------------*/
+module.exports.dialog = dialog;

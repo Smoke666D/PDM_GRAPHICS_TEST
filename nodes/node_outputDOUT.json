@@ -11,6 +11,31 @@
       "text"   : "канал",
       "type"   : "dout",
       "value"  : 0
+    },{
+      "name"   : "current nominal",
+      "text"   : "ток номинальный",
+      "type"   : "byte",
+      "value"  : 0
+    },{
+      "name"   : "current startup",
+      "text"   : "ток пусковой",
+      "type"   : "byte",
+      "value"  : 0
+    },{
+      "name"   : "delay",
+      "text"   : "задержка",
+      "type"   : "byte",
+      "value"  : 0
+    },{
+      "name"   : "curve",
+      "text"   : "кривая",
+      "type"   : "bool",
+      "value"  : 0
+    },{
+      "name"   : "name",
+      "text"   : "имя",
+      "type"   : "string",
+      "value"  : ""
     }
   ],
   "inputs"  : [

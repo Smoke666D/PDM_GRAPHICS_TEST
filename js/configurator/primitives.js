@@ -1,5 +1,6 @@
 /*----------------------------------------------------------------------------*/
-var lib = require('./nodeLib.js').nodeLib;
+var lib    = require('./nodeLib.js').nodeLib;
+var dialog = require('./dialog.js').dialog;
 /*----------------------------------------------------------------------------*/
 const pinSize      = 10; /*px*/
 const pinMountSize = 16; /*px*/
@@ -358,11 +359,16 @@ function Option ( data ) {
     });
     return out;
   }
-  function makeDialogButton ( dialog ) {
+  function makeDialogButton ( type ) {
     let out       = document.createElement( "BUTTON" );
     out.innerHTML = "...";
     out.addEventListener( 'click', function () {
-      $("#dialogModal").modal('toggle'); //see here usage
+      switch ( type ) {
+        case "external":
+          dialog.showExternal();
+          break;
+      }
+      $("#dialogModal").modal('toggle');
     });
     return out;
   }
@@ -383,6 +389,9 @@ function Option ( data ) {
         break;
       case "select":
         out = makeSelectInput();
+        break;
+      case "string":
+        out = makeStringInput();
         break;
       case "din":
         self.select = selectLine( lib.getHardware().din );
@@ -413,7 +422,7 @@ function Option ( data ) {
         break;
       default:
         out = document.createElement( "DIV" );
-        out.innerHTML = "no data";
+        out.innerHTML = "error";
         break;
     }
     return out;
