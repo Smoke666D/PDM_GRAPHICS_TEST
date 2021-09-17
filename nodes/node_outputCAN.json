@@ -21,8 +21,7 @@
   "inputs"  : [
     {
       "type"   : "any",
-      "help"   : "Данные",
-      "expand" : false
+      "help"   : "Данные"
     }
   ],
   "outputs" : []

@@ -7,10 +7,11 @@
   "help"    : "Дискретный вход. Перед использованием выбирете номер входа",
   "options" : [
     {
-      "name"  : "adr",
-      "text"  : "вход",
-      "type"  : "byte",
-      "value" : 0
+      "name"   : "adr",
+      "text"   : "вход",
+      "type"   : "byte",
+      "select" : "din",
+      "value"  : 0
     }
   ],
   "inputs"  : [],

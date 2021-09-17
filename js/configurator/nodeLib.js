@@ -18,13 +18,25 @@ function NodeSection ( key, name ) {
   this.name    = name;
   this.records = [];
 }
+function Hardware () {
+  var self  = this;
+  this.din  = 0;
+  this.dout = 0;
+  this.ain  = 0;
+  this.aout = 0;
+  this.sw   = 0;
+  this.led  = 0;
+  return;
+}
 function NodeLib () {
-  var self      = this;
-  var ready     = false; /* Status of library         */
-  var setup     = null;  /* Setup of current device   */
-  var records   = [];    /* Records of the nodes data */
-  var sections  = [];    /* Node data by the sections */
-  var external  = [];    /* External devices list     */
+  var self     = this;
+  var ready    = false; /* Status of library         */
+  var setup    = null;  /* Setup of current device   */
+  var records  = [];    /* Records of the nodes data */
+  var sections = [];    /* Node data by the sections */
+  var external = [];    /* External devices list     */
+  var usedExt  = [];    /* Used external device list */
+  var hardware = new Hardware();
   /*----------------------------------------*/
   /*----------------------------------------*/
   function checkSetupFile ( callback ) {
@@ -47,7 +59,7 @@ function NodeLib () {
       setup = JSON.parse( fs.readFileSync( ( process.cwd() + "\\system\\setup.json" ), "utf8" ) );
       callback();
     } catch (e) {
-      console.log(  "error on parsing setup file" );
+      console.log( "error on parsing setup file" );
     }
     return;
   }
@@ -129,6 +141,7 @@ function NodeLib () {
               getFileList( "\\external", function ( files ) {
                 external = [];
                 processDeviceFiles( files, function () {
+                  self.reinitHardware();
                   ready = true;
                 });
               });
@@ -160,6 +173,38 @@ function NodeLib () {
   }
   this.getExternal      = function () {
     return external;
+  }
+  this.setupExternal    = function ( ext ) {
+    usedExt = [];
+    ext.forEach( function ( device, i ) {
+      let index = external.indexOf( device );
+      if ( index != -1 ) {
+        usedExt.push( device );
+      }
+    });
+    self.reinitHardware();
+    return;
+  }
+  this.reinitHardware   = function () {
+    hardware.din  = setup.hardware.din;
+    hardware.dout = setup.hardware.dout;
+    hardware.ain  = setup.hardware.ain;
+    hardware.aout = setup.hardware.aout;
+    hardware.sw   = setup.hardware.sw;
+    hardware.led  = setup.hardware.led;
+    usedExt.forEach( function ( device, i ) {
+      hardware.din  += device.din;
+      hardware.dout += device.dout;
+      hardware.ain  += device.ain;
+      hardware.aout += device.aout;
+      hardware.sw   += device.sw;
+      hardware.led  += device.led;
+      return;
+    });
+    return;
+  }
+  this.getHardware      = function () {
+    return hardware();
   }
   this.awaitReady       = function ( callback ) {
     setTimeout( function () {

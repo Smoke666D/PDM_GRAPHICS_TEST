@@ -7,10 +7,11 @@
   "help"    : "Аналоговый вход. Выбирете необходимый канал перед использованием.",
   "options" : [
     {
-      "name"  : "adr",
-      "text"  : "канал",
-      "type"  : "byte",
-      "value" : 0
+      "name"   : "adr",
+      "text"   : "канал",
+      "type"   : "byte",
+      "select" : "ain",
+      "value"  : 0
     }
   ],
   "inputs"  : [],

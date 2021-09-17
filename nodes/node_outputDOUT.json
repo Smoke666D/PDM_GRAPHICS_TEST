@@ -7,10 +7,11 @@
   "help"    : "Дискретный выход. Необходимо выбрать номер канала",
   "options" : [
     {
-      "name"  : "adr",
-      "text"  : "выход",
-      "type"  : "byte",
-      "value" : 0
+      "name"   : "adr",
+      "text"   : "выход",
+      "type"   : "byte",
+      "select" : "dout",
+      "value"  : 0
     }
   ],
   "inputs"  : [

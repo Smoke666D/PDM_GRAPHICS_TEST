@@ -7,10 +7,11 @@
   "help"    : "Внешний светодиод. Необходимо выбрать номер внешнего светодиода.",
   "options" : [
     {
-      "name"  : "adr",
-      "text"  : "выход",
-      "type"  : "byte",
-      "value" : 0
+      "name"   : "adr",
+      "text"   : "выход",
+      "type"   : "byte",
+      "select" : "led",
+      "value"  : 0
     }
   ],
   "inputs"  : [

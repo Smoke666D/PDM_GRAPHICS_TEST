@@ -1,12 +1,15 @@
 /*----------------------------------------------------------------------------*/
 var lib = require('./nodeLib.js').nodeLib;
 /*----------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------*/
 function Dialog () {
   var self     = this;
   var names    = [];
   var sections = [];
   this.title   = "";
   this.content = document.createElement( "DIV" );
+  this.action  = null;
 
   this.makeExternal = function ()  {
     self.title             = "Переферийные устройства";
@@ -49,6 +52,18 @@ function Dialog () {
       self.content.appendChild( section );
       return;
     });
+    self.action = function () {
+      let out      = [];
+      lib.getExternal().forEach( function ( device, i ) {
+        let checker = document.getElementById( device.name );
+        if ( checker.checked == true ) {
+          out.push( device );
+        }
+        return;
+      });
+      lib.setupExternal( out );
+      return;
+    }
     return;
   }
   this.makeCAN = function () {
@@ -83,6 +98,7 @@ function Modal () {
   var dialogs = new Dialogs();
   var title   = document.getElementById( "dialogModal-title" );
   var body    = document.getElementById( "dialogModal-body"  );
+  var button  = document.getElementById( "modal-button"      );
   function init () {
     lib.awaitReady( function () {
       dialogs.init();
@@ -93,12 +109,16 @@ function Modal () {
   function clean () {
     title.innerHTML = "";
     body.innerHTML  = "";
+    button.onclick  = null;
     return;
   }
   function draw ( dialog ) {
     clean();
     title.innerHTML = dialog.title;
     body.appendChild( dialog.content );
+    button.addEventListener( 'click', function () {
+      dialog.action();
+    });
     return;
   }
 

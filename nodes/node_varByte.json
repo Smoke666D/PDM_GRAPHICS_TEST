@@ -16,15 +16,13 @@
   "inputs"  : [
     {
       "type"   : "byte",
-      "help"   : "Запись переменной",
-      "expand" : false
+      "help"   : "Запись переменной"
     }
   ],
   "outputs" : [
     {
       "type"   : "byte",
-      "help"   : "Чтение переменной",
-      "expand" : false
+      "help"   : "Чтение переменной"
     }
   ]
 }

@@ -16,15 +16,13 @@
   "inputs"  : [
     {
       "type"   : "float",
-      "help"   : "Запись переменной",
-      "expand" : false
+      "help"   : "Запись переменной"
     }
   ],
   "outputs" : [
     {
       "type"   : "float",
-      "help"   : "Чтение переменной",
-      "expand" : false
+      "help"   : "Чтение переменной"
     }
   ]
 }
