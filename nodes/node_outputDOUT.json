@@ -2,19 +2,47 @@
   "name"    : "node_outputDOUT",
   "type"    : "outputs",
   "table"   : 0,
-  "heading" : "Дискретный вход",
+  "heading" : "Дискретный выход",
   "short"   : "DOUT",
-  "help"    : "",
-  "default" : 0,
+  "help"    : "Дискретный выход. Необходимо выбрать номер канала",
+  "options" : [
+    {
+      "name"   : "adr",
+      "text"   : "канал",
+      "type"   : "dout",
+      "value"  : 0
+    },{
+      "name"   : "current nominal",
+      "text"   : "ток номинальный",
+      "type"   : "byte",
+      "value"  : 0
+    },{
+      "name"   : "current startup",
+      "text"   : "ток пусковой",
+      "type"   : "byte",
+      "value"  : 0
+    },{
+      "name"   : "delay",
+      "text"   : "задержка",
+      "type"   : "byte",
+      "value"  : 0
+    },{
+      "name"   : "curve",
+      "text"   : "кривая",
+      "type"   : "bool",
+      "value"  : 0
+    },{
+      "name"   : "name",
+      "text"   : "имя",
+      "type"   : "string",
+      "value"  : ""
+    }
+  ],
   "inputs"  : [
     {
       "type"   : "bool",
-      "help"   : "Данные",
-      "expand" : false
+      "help"   : "Данные"
     }
   ],
-  "outputs" : [],
-  "width"          : 100,
-  "height"         : 50,
-  "expansionShift" : 0
+  "outputs" : []
 }

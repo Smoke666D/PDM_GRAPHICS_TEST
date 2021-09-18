@@ -1,10 +1,10 @@
 {
-  "name": "template",
-  "productName": "template",
-  "description": "template",
+  "name": "logicTools",
+  "productName": "Logic Tools",
+  "description": "Logic tools to make logic schems for PLC",
   "version": "0.0.1",
   "main": "js/index.js",
-  "license": "MIT",
+  "private": true,
   "scripts": {
     "start": "electron .",
     "rebuild": "electron-rebuild --force",

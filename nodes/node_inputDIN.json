@@ -4,17 +4,20 @@
   "table"   : 0,
   "heading" : "Дискретный вход",
   "short"   : "DIN",
-  "help"    : "",
-  "default" : 0,
+  "help"    : "Дискретный вход. Перед использованием выбирете номер входа",
+  "options" : [
+    {
+      "name"   : "adr",
+      "text"   : "канал",
+      "type"   : "din",
+      "value"  : 0
+    }
+  ],
   "inputs"  : [],
   "outputs" : [
     {
       "type"   : "bool",
-      "help"   : "Данные",
-      "expand" : false
+      "help"   : "Данные"
     }
-  ],
-  "width"          : 100,
-  "height"         : 50,
-  "expansionShift" : 0
+  ]
 }

@@ -4,27 +4,28 @@
   "table"   : 0,
   "heading" : "Таймер",
   "short"   : "trigger",
-  "help"    : "",
-  "default" : 0,
+  "help"    : "Циклический таймер. ",
+  "options" : [
+    {
+      "name"  : "delay",
+      "text"  : "задержка",
+      "type"  : "byte",
+      "value" : 0
+    }
+  ],
   "inputs"  : [
     {
       "type"   : "bool",
-      "help"   : "Разрешение",
-      "expand" : false
+      "help"   : "Разрешение"
     },{
       "type"   : "bool",
-      "help"   : "Сброс",
-      "expand" : false
+      "help"   : "Сброс"
     }
   ],
   "outputs" : [
     {
       "type"   : "bool",
-      "help"   : "Окончание задержки",
-      "expand" : false
+      "help"   : "Окончание задержки"
     }
-  ],
-  "width"          : 100,
-  "height"         : 50,
-  "expansionShift" : 0
+  ]
 }

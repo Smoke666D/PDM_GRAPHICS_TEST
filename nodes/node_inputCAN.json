@@ -4,17 +4,25 @@
   "table"   : 1,
   "heading" : "CAN",
   "short"   : "CAN",
-  "help"    : "",
-  "default" : 0,
+  "help"    : "Чтение данных из CAN шины. Необходимо выбрать тип данных, затем выбрать сообщение и расположение данных в сообщении",
+  "options" : [
+    {
+      "name"  : "type",
+      "text"  : "тип",
+      "type"  : "byte",
+      "value" : 0
+    },{
+      "name"  : "adr",
+      "text"  : "адрес",
+      "type"  : "adr",
+      "value" : null
+    }
+  ],
   "inputs"  : [],
   "outputs" : [
     {
       "type"   : "any",
-      "help"   : "Данные",
-      "expand" : false
+      "help"   : "Данные"
     }
-  ],
-  "width"          : 100,
-  "height"         : 50,
-  "expansionShift" : 0
+  ]
 }

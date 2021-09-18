@@ -2,53 +2,44 @@
   "name"    : "node_logicOr",
   "type"    : "logic",
   "table"   : 0,
-  "heading" : "Логическое ИЛИ",
+  "heading" : "Булева ИЛИ",
   "short"   : "or",
-  "help"    : "",
-  "default" : null,
+  "help"    : "Булева операция ИЛИ",
+  "options" : [],
   "inputs"  : [
     {
       "type"   : "bool",
-      "help"   : "Условие 1",
-      "expand" : true
+      "help"   : "Условие 1"
     },{
       "type"   : "bool",
-      "help"   : "Условие 2",
-      "expand" : true
+      "help"   : "Условие 2"
     },{
       "type"   : "bool",
-      "help"   : "Условие 3",
-      "expand" : true
+      "help"   : "Условие 3"
     },{
       "type"   : "bool",
-      "help"   : "Условие 4",
-      "expand" : true
+      "help"   : "Условие 4"
     },{
       "type"   : "bool",
-      "help"   : "Условие 5",
-      "expand" : true
+      "help"   : "Условие 5"
     },{
       "type"   : "bool",
-      "help"   : "Условие 6",
-      "expand" : true
+      "help"   : "Условие 6"
     },{
       "type"   : "bool",
-      "help"   : "Условие 7",
-      "expand" : true
+      "help"   : "Условие 7"
     },{
       "type"   : "bool",
-      "help"   : "Условие 8",
-      "expand" : true
+      "help"   : "Условие 8"
     }
   ],
   "outputs" : [
     {
       "type"   : "bool",
-      "help"   : "Результат операции",
-      "expand" : false
+      "help"   : "Результат операции"
     }
   ],
-  "width"          : 100,
-  "height"         : 150,
-  "expansionShift" : 5
+  "script" : {
+    "command" : "Or"
+  }
 }

@@ -1,0 +1,93 @@
+{
+  "nodNumber"     : 100,
+  "hardware"      : {
+    "din"    : 10,
+    "dout"   : 10,
+    "ain"    : 5,
+    "aout"   : 5,
+    "sw"     : 0,
+    "led"    : 0,
+    "rtc"    : false,
+    "can"    : true,
+    "modbus" : false
+  },
+  "options" : [
+    {
+      "name"   : "dev_id",
+      "text"   : "ID",
+      "type"   : "byte",
+      "select" : null,
+      "value"  : 0
+    },{
+      "name"   : "can_speed",
+      "text"   : "скорость",
+      "type"   : "select",
+      "select" : [ 250, 500, 1000 ],
+      "value"  : 500
+    },{
+      "name"   : "keypad",
+      "text"   : "переферия",
+      "type"   : "dialog",
+      "select" : "external",
+      "value"  : []
+    }
+  ],
+  "help"          : "Установите адрес устройства (ID) в сети и скорость шины. Выбирите используемую клавиатуру.",
+  "availableNods" : {
+    "node_varBool"        : true,
+    "node_varByte"        : true,
+    "node_varShort"       : true,
+    "node_varFloat"       : true,
+    "node_varString"      : true,
+    "node_varDate"        : true,
+
+    "node_logicNot"       : true,
+    "node_logicAnd"       : true,
+    "node_logicOr"        : true,
+    "node_logicXor"       : true,
+    "node_logicStream"    : true,
+    "node_logicMore"      : true,
+    "node_logicMoreEqual" : true,
+    "node_logicEqual"     : true,
+
+    "node_timersDelay"    : true,
+    "node_timersTrigger"  : true,
+
+    "node_mathAdd"        : true,
+    "node_mathSub"        : true,
+    "node_mathMult"       : true,
+    "node_mathDiv"        : true,
+    "node_mathPow"        : false,
+    "node_mathRoot"       : false,
+    "node_mathSin"        : false,
+    "node_mathCos"        : false,
+    "node_mathTg"         : false,
+    "node_mathCtg"        : false,
+    "node_mathArcsin"     : false,
+    "node_mathArccos"     : false,
+    "node_mathArctg"      : false,
+    "node_mathArcctg"     : false,
+    "node_mathProc"       : false,
+
+    "node_inputDIN"       : true,
+    "node_inputSW"        : true,
+    "node_inputAIN"       : true,
+    "node_inputRTC"       : true,
+    "node_inputCAN"       : true,
+    "node_inputMB"        : true,
+    "node_inputMEM"       : true,
+    "node_inputEvent"     : true,
+
+    "node_outputDOUT"     : true,
+    "node_outputAOUT"     : true,
+    "node_outputLED"      : true,
+    "node_outputLOG"      : true,
+    "node_outputCAN"      : true,
+    "node_outputMB"       : true,
+    "node_outputEvent"    : true,
+    "node_outputDisplay"  : true,
+
+    "node_loopsFor"       : false,
+    "node_loopsWhile"     : false
+  }
+}

@@ -4,27 +4,21 @@
   "table"   : 0,
   "heading" : "Равенство",
   "short"   : "==",
-  "help"    : "",
-  "default" : null,
+  "help"    : "Операция сравнения на неравенство",
+  "options" : [],
   "inputs"  : [
     {
       "type"   : "any",
-      "help"   : "Вход 1",
-      "expand" : false
+      "help"   : "Вход 1"
     },{
       "type"   : "any",
-      "help"   : "Вход 2",
-      "expand" : false
+      "help"   : "Вход 2"
     }
   ],
   "outputs" : [
     {
       "type"   : "bool",
-      "help"   : "Результат сравнения",
-      "expand" : false
+      "help"   : "Результат сравнения"
     }
-  ],
-  "width"          : 100,
-  "height"         : 50,
-  "expansionShift" : 0
+  ]
 }

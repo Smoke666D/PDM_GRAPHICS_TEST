@@ -4,23 +4,25 @@
   "table"   : 0,
   "heading" : "Числовая переменная",
   "short"   : "float",
-  "help"    : "",
-  "default" : 0,
+  "help"    : "Чтение и запись переменной с плавающей запятой. Можно использовать, как буфер или константу.",
+  "options" : [
+    {
+      "name"  : "default",
+      "text"  : "значение",
+      "type"  : "float",
+      "value" : 0
+    }
+  ],
   "inputs"  : [
     {
       "type"   : "float",
-      "help"   : "Запись переменной",
-      "expand" : false
+      "help"   : "Запись переменной"
     }
   ],
   "outputs" : [
     {
       "type"   : "float",
-      "help"   : "Чтение переменной",
-      "expand" : false
+      "help"   : "Чтение переменной"
     }
-  ],
-  "width"          : 100,
-  "height"         : 50,
-  "expansionShift" : 0
+  ]
 }

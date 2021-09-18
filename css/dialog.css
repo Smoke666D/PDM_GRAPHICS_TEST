@@ -1,0 +1,105 @@
+.dark {
+  background-color: #373a40;
+  border-color: #4c5058;
+  color: #d2d3d4; }
+  .dark button {
+    height: 40px;
+    width: 90px;
+    background-color: #373a40;
+    border: 1px solid #4c5058;
+    border-radius: 0.25rem;
+    transition: all 0.5s ease;
+    outline: 0;
+    color: #d2d3d4; }
+    .dark button:hover {
+      border: 1px solid #bdbebf;
+}
+.small {
+  width: 30px!important;
+  height: 30px!important;
+}
+
+.can {
+
+}
+  .can.frame {
+    background-color: #373a40;
+    border-color: #4c5058;
+    display: flex;
+    height: auto;
+    width: auto;
+  }
+  .can.byte {
+    height: 60px;
+    width: auto;
+    display: flex;
+    padding-left: 5px;
+    padding-right: 5px;
+    background-color: #373a40;
+    border: 1px solid #4c5058;
+  }
+  .can.bit {
+    width: 10px;
+    border: 1px solid #4c5058;
+    height: 100%;
+  }
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 24px;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none; }
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.sliderLabel {
+  color: #d2d3d4;
+  padding-left: 10px;
+}
+.slider {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #373a40;
+  border: 1px solid #4c5058;
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 0.25rem;}
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 3px;
+    background-color: #4c5058;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 0.25rem;
+  }
+
+  input:checked + .slider {
+    background-color: rgb(78,213,237);}
+  input[disabled]:checked + .slider {
+    background-color: #ccc;}
+  input:hover + .slider:before {
+    background-color: #bdbebf; }
+  input:hover + .slider {
+    border-color: #bdbebf; }
+  input:focus + .slider {}
+  input:checked + .slider:before {
+    -webkit-transform: translateX(16px);
+    -ms-transform: translateX(16px);
+    transform: translateX(16px);
+}

@@ -4,17 +4,19 @@
   "table"   : 0,
   "heading" : "ЦАП",
   "short"   : "AOUT",
-  "help"    : "",
-  "default" : 0,
+  "help"    : "Аналоговый выход. Необходимо выбрать канал",
+  "inputs"  : [
+    {
+      "name"  : "adr",
+      "text"  : "канал",
+      "type"  : "aout",
+      "value" : 0
+    }
+  ],
   "inputs"  : [
     {
       "type"   : "float",
-      "help"   : "Данные",
-      "expand" : false
+      "help"   : "Данные"
     }
-  ],
-  "outputs"        : [],
-  "width"          : 100,
-  "height"         : 50,
-  "expansionShift" : 0
+  ]
 }

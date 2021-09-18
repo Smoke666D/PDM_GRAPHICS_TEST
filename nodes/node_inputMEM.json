@@ -4,17 +4,25 @@
   "table"   : 2,
   "heading" : "Память",
   "short"   : "memory",
-  "help"    : "",
-  "default" : 0,
+  "help"    : "Чтение данных из памяти устройства. Необходимо выбрать тип данных и расположение данных в регистровой моделе",
+  "options" : [
+    {
+      "name"  : "type",
+      "text"  : "тип",
+      "type"  : "byte",
+      "value" : 0
+    },{
+      "name"  : "adr",
+      "text"  : "адрес",
+      "type"  : "adr",
+      "value" : 0
+    }
+  ],
   "inputs"  : [],
   "outputs" : [
     {
       "type"   : "any",
-      "help"   : "Данные",
-      "expand" : false
+      "help"   : "Данные"
     }
-  ],
-  "width"          : 100,
-  "height"         : 50,
-  "expansionShift" : 0
+  ]
 }

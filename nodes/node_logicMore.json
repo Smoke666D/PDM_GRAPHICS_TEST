@@ -4,27 +4,24 @@
   "table"   : 0,
   "heading" : "Строгое неравенство",
   "short"   : ">",
-  "help"    : "",
-  "default" : null,
+  "help"    : "Операция строго сравнения (больше)",
+  "options" : [],
   "inputs"  : [
     {
       "type"   : "any",
-      "help"   : "Большее",
-      "expand" : false
+      "help"   : "Большее"
     },{
       "type"   : "any",
-      "help"   : "Меньшее",
-      "expand" : false
+      "help"   : "Меньшее"
     }
   ],
   "outputs" : [
     {
       "type"   : "bool",
-      "help"   : "Результат сравнения",
-      "expand" : false
+      "help"   : "Результат сравнения"
     }
   ],
-  "width"          : 100,
-  "height"         : 50,
-  "expansionShift" : 0
+  "script" : {
+    "command" : "COMPARE_CONST"
+  }
 }

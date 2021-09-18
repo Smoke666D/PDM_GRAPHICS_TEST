@@ -4,27 +4,21 @@
   "table"   : 0,
   "heading" : "Разница",
   "short"   : "-",
-  "help"    : "",
-  "default" : null,
+  "help"    : "Математическая операция вычитания",
+  "options" : [],
   "inputs"  : [
     {
       "type"   : "number",
-      "help"   : "Член 1",
-      "expand" : true
+      "help"   : "Член 1"
     },{
       "type"   : "number",
-      "help"   : "Член 2",
-      "expand" : true
+      "help"   : "Член 2"
     }
   ],
   "outputs" : [
     {
       "type"   : "number",
-      "help"   : "Результат операции",
-      "expand" : false
+      "help"   : "Результат операции"
     }
-  ],
-  "width"          : 100,
-  "height"         : 150,
-  "expansionShift" : 5
+  ]
 }

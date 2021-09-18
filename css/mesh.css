@@ -1,0 +1,20 @@
+.meshCell {
+  position: absolute;
+  z-index: 8;
+  top: 0px;
+  left: 0px;
+  height: 64px;
+  width: 39px;
+  border-top: 1px  solid #4c5058;
+  border-bottom: 1px  solid #4c5058;
+  border-right: 1px  solid #4c5058; }
+    .meshCell.left {
+      border-left: 1px  solid #4c5058;}
+.nodeShadow {
+  position: absolute;
+  z-index: 9;
+  border-radius: 0.25rem;
+  background-color: rgba(51, 242, 233, 0.3); }
+  .nodeShadow.hide {
+    opacity: 0;
+  }
