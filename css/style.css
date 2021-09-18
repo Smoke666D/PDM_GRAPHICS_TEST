@@ -5010,15 +5010,7 @@ a.close.disabled {
   width: auto;
   margin: 0.5rem;
   pointer-events: none; }
-  .modal.fade .modal-dialog {
-    /*-webkit-transition: -webkit-transform 0.3s ease-out;
-    transition: -webkit-transform 0.3s ease-out;
-    -o-transition: transform 0.3s ease-out;
-    transition: transform 0.3s ease-out;
-    transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out;
-    -webkit-transform: translate(0, -50px);
-    -ms-transform: translate(0, -50px);
-    transform: translate(0, -50px);*/ }
+  .modal.fade .modal-dialog {}
     @media (prefers-reduced-motion: reduce) {
       .modal.fade .modal-dialog {
         -webkit-transition: none;

@@ -14,6 +14,36 @@
     .dark button:hover {
       border: 1px solid #bdbebf;
 }
+.small {
+  width: 30px!important;
+  height: 30px!important;
+}
+
+.can {
+
+}
+  .can.frame {
+    background-color: #373a40;
+    border-color: #4c5058;
+    display: flex;
+    height: auto;
+    width: auto;
+  }
+  .can.byte {
+    height: 60px;
+    width: auto;
+    display: flex;
+    padding-left: 5px;
+    padding-right: 5px;
+    background-color: #373a40;
+    border: 1px solid #4c5058;
+  }
+  .can.bit {
+    width: 10px;
+    border: 1px solid #4c5058;
+    height: 100%;
+  }
+
 .switch {
   position: relative;
   display: inline-block;

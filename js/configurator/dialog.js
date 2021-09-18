@@ -65,23 +65,33 @@ function Dialog () {
     }
     return;
   }
-  this.makeCAN = function () {
-    self.title             = "CAN шина";
-    self.content           = document.createElement( "DIV" );
-
-    self.content.innerHTML = "No data!"
+  this.makeCAN      = function () {
+    self.title       = "CAN шина";
+    self.content     = document.createElement( "DIV" );
+    let bar          = document.createElement( "DIV" );
+    bar.className    = "row";
+    let button       = document.createElement( "BUTTON" );
+    button.innerHTML = "+";
+    button.className = "small";
+    button.addEventListener( 'click', function () {
+      let frame       = document.createElement( "DIV" );
+      frame.className = "row";
+      sections.push( new can.Frame() );
+      frame.appendChild( new can.Frame().getBox() );
+      self.content.appendChild( frame );
+    });
+    bar.appendChild( button );
+    self.content.appendChild( bar );
     self.action = function () {
-      console.log("her can");
       return;
     }
     return;
   }
-  this.makeMB  = function () {
+  this.makeMB       = function () {
     self.title             = "ModBUS шина";
     self.content           = document.createElement( "DIV" );
     self.content.innerHTML = "No data!"
     self.action = function () {
-      console.log("her mb");
       return;
     }
     return;
