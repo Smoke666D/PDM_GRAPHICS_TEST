@@ -10,7 +10,15 @@ function Dialog () {
   this.content = document.createElement( "DIV" );
   this.action  = null;
 
-  this.makeExternal = function ()  {
+  function resetSectionsFocus () {
+    sections.forEach( function ( section, i ) {
+      section.resetFocus();
+      return;
+    });
+    return;
+  }
+
+  this.makeExternal = function () {
     self.title             = "Переферийные устройства";
     self.content           = document.createElement( "DIV" );
     lib.getExternal().forEach( function ( device, i ) {
@@ -66,6 +74,7 @@ function Dialog () {
     return;
   }
   this.makeCAN      = function () {
+    let settings     = new can.Settings();
     self.title       = "CAN шина";
     self.content     = document.createElement( "DIV" );
     let bar          = document.createElement( "DIV" );
@@ -76,12 +85,14 @@ function Dialog () {
     button.addEventListener( 'click', function () {
       let frame       = document.createElement( "DIV" );
       frame.className = "row";
-      sections.push( new can.Frame() );
-      frame.appendChild( new can.Frame().getBox() );
+      let cur = sections.length;
+      sections.push( new can.Frame( cur, resetSectionsFocus, settings.set ) );
+      frame.appendChild( sections[cur].getBox() );
       self.content.appendChild( frame );
     });
     bar.appendChild( button );
     self.content.appendChild( bar );
+    self.content.appendChild( settings.draw() );
     self.action = function () {
       return;
     }

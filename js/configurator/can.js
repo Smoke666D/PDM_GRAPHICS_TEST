@@ -5,12 +5,12 @@ function Subadr () {
   var self    = this;
   this.enb    = false;
   this.adr    = 0;
-  this.length = 0;
+  this.length = 1;
 }
 function Checker () {
   var self     = this;
   this.enb     = false;
-  this.timeout = 0;
+  this.timeout = 10;
 }
 function Pointer ( adr, length, id ) {
   var self    = this;
@@ -18,11 +18,111 @@ function Pointer ( adr, length, id ) {
   this.adr    = adr;    /* Address in th frame */
   this.length = length; /* Length of the data  */
 }
-function Frame () {
-  var self    = this;
-  var data    = new Array( dataSize );
-  var box     = null;
+function Settings () {
+  var self        = this;
+  var adr         = null;
+  var chekerEnb   = null;
+  var checkerTime = null;
+  var subadrEnb   = null;
+  var subadr      = null;
 
+  this.draw = function () {
+    function drawText ( text ) {
+      let label       = document.createElement( "SPAN" );
+      label.innerHTML = text;
+      return label;
+    }
+    function addElement ( text, item ) {
+      let col1 = document.createElement( "DIV" );
+      let col2 = document.createElement( "DIV" );
+      col1.className = "can col-setting";
+      col2.className = "can col-setting";
+      col1.appendChild( drawText( text ) );
+      col2.appendChild( item );
+      labelLine.appendChild( col1 );
+      inputLine.appendChild( col2 );
+      return;
+    }
+    function drawAdress () {
+      adr   = document.createElement( "INPUT" );
+      adr.type  = "number";
+      adr.min   = "0";
+      adr.max   = "255";
+      return addElement( "адрес", adr );
+    }
+    function drawCheckerEnb () {
+      let box             = document.createElement( "LABEL" );
+      chekerEnb           = document.createElement( "INPUT" );
+      let span            = document.createElement( "SPAN" );
+      box.className       = "switch shift-down";
+      chekerEnb.type      = "checkbox";
+      chekerEnb.id        = "checkerEnb";
+      chekerEnb.className = "check-input";
+      span.className      = "slider";
+      box.appendChild( chekerEnb );
+      box.appendChild( span );
+      return addElement( "проверка", box );
+    }
+    function drawCheckerTimeout () {
+      checkerTime      = document.createElement( "INPUT" );
+      checkerTime.type = "number";
+      checkerTime.min  = "0";
+      checkerTime.max  = "65535";
+      return addElement( "период", checkerTime );
+    }
+    function drawSubAddressEnb () {
+      let box             = document.createElement( "LABEL" );
+      subadrEnb           = document.createElement( "INPUT" );
+      let span            = document.createElement( "SPAN" );
+      box.className       = "switch shift-down";
+      subadrEnb.type      = "checkbox";
+      subadrEnb.id        = "checkerEnb";
+      subadrEnb.className = "check-input";
+      span.className      = "slider";
+      box.appendChild( subadrEnb );
+      box.appendChild( span );
+      return addElement( "субадрес", box );
+    }
+    function drawSubAdress () {
+      subadr      = document.createElement( "INPUT" );
+      subadr.type = "number";
+      subadr.min  = "0";
+      subadr.max  = "255";
+      return addElement( "субадрес", subadr );
+    }
+
+    let box             = document.createElement( "DIV" );
+    let labelLine       = document.createElement( "DIV" );
+    let inputLine       = document.createElement( "DIV" );
+    labelLine.className = "row";
+    inputLine.className = "row";
+
+    drawAdress();
+    drawCheckerEnb();
+    drawCheckerTimeout();
+    drawSubAddressEnb();
+    drawSubAdress();
+
+    box.appendChild( labelLine );
+    box.appendChild( inputLine );
+    return box;
+  }
+  this.set  = function ( frame ) {
+    adr.value         = frame.adr;
+    chekerEnb.checked = frame.cheker.enb;
+    checkerTime.value = frame.cheker.timeout;
+    subadrEnb.checked = frame.subadr.enb;
+    subadr.value      = frame.subadr.adr;
+  }
+}
+function Frame ( id=0, onClick, setSettings ) {
+  var self       = this;
+  var data       = new Array( dataSize );
+  var box        = null;
+  var messageBox = null;
+  var onClick    = onClick;
+
+  this.id       = id;
   this.adr      = 0;
   this.subadr   = new Subadr();
   this.cheker   = new Checker();
@@ -83,22 +183,53 @@ function Frame () {
     self.pointers.push( new Pointer( adr, length, id ) );
     return;
   }
+
   function draw () {
-    box           = document.createElement( "DIV" );
-    box.className = "can frame";
+    box                 = document.createElement( "DIV" );
+    box.className       = "can frame";
+    box.id              = "frame" + self.id;
+
+    messageBox           = document.createElement( "DIV" );
+    messageBox.className = "can message";
     for ( var i=0; i<( dataSize / 8 ); i++ ) {
       let byte       = document.createElement( "DIV" );
-      byte.className = "can byte";
+      byte.className = "can byte-data";
+      if ( i != ( dataSize / 8 - 1 ) ) {
+        byte.className += " common";
+      } else {
+        byte.className += " last";
+      }
+      /*
       for ( var j=0; j<8; j++ ) {
         let bit       = document.createElement( "DIV" );
         bit.className = "can bit";
         byte.appendChild( bit );
       }
-      box.appendChild( byte );
+      */
+      messageBox.appendChild( byte );
     }
+    messageBox.addEventListener( 'click', function () {
+      self.setFocus();
+    });
+    let label       = document.createElement( "H4" );
+    label.className = "can";
+    label.innerHTML = self.id;
+    box.appendChild( label );
+    box.appendChild( messageBox );
+    self.setFocus();
     return;
   };
 
+  this.resetFocus   = function () {
+    messageBox.classList.remove( "focus" );
+    return;
+  }
+  this.setFocus     = function () {
+    onClick();
+    messageBox.classList.add( "focus" );
+    setSettings( self );
+    return;
+  }
   this.addData      = function ( type, id ) {
     let adr = getSpace( type );
     if ( adr != null ) {
@@ -108,12 +239,12 @@ function Frame () {
     return;
   }
   this.getBox  = function () {
-    console.log( box );
     return box;
   }
   init();
   return;
 }
 /*----------------------------------------------------------------------------*/
-module.exports.Frame = Frame;
+module.exports.Frame    = Frame;
+module.exports.Settings = Settings;
 /*----------------------------------------------------------------------------*/
