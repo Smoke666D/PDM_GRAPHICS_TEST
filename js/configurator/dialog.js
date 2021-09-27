@@ -6,13 +6,17 @@ function Dialog () {
   var self     = this;
   var names    = [];
   var sections = [];
+  var settings = new can.Settings();
   this.title   = "";
   this.content = document.createElement( "DIV" );
   this.action  = null;
 
   function resetSectionsFocus () {
-    sections.forEach( function ( section, i ) {
-      section.resetFocus();
+    sections.forEach( function ( frame, i ) {
+      if ( frame.isFocus() == true ) {
+        settings.get( frame )
+        frame.resetFocus();
+      }
       return;
     });
     return;
@@ -74,7 +78,6 @@ function Dialog () {
     return;
   }
   this.makeCAN      = function () {
-    let settings     = new can.Settings();
     self.title       = "CAN шина";
     self.content     = document.createElement( "DIV" );
     let bar          = document.createElement( "DIV" );

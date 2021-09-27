@@ -113,6 +113,15 @@ function Settings () {
     checkerTime.value = frame.cheker.timeout;
     subadrEnb.checked = frame.subadr.enb;
     subadr.value      = frame.subadr.adr;
+    return;
+  }
+  this.get  = function ( frame ) {
+    frame.adr            = adr.value;
+    frame.cheker.enb     = chekerEnb.checked;
+    frame.cheker.timeout = checkerTime.value;
+    frame.subadr.enb     = subadrEnb.checked;
+    frame.subadr.adr     = subadr.value;
+    return;
   }
 }
 function Frame ( id=0, onClick, setSettings ) {
@@ -183,12 +192,10 @@ function Frame ( id=0, onClick, setSettings ) {
     self.pointers.push( new Pointer( adr, length, id ) );
     return;
   }
-
   function draw () {
-    box                 = document.createElement( "DIV" );
-    box.className       = "can frame";
-    box.id              = "frame" + self.id;
-
+    box                  = document.createElement( "DIV" );
+    box.className        = "can frame";
+    box.id               = "frame" + self.id;
     messageBox           = document.createElement( "DIV" );
     messageBox.className = "can message";
     for ( var i=0; i<( dataSize / 8 ); i++ ) {
@@ -199,13 +206,6 @@ function Frame ( id=0, onClick, setSettings ) {
       } else {
         byte.className += " last";
       }
-      /*
-      for ( var j=0; j<8; j++ ) {
-        let bit       = document.createElement( "DIV" );
-        bit.className = "can bit";
-        byte.appendChild( bit );
-      }
-      */
       messageBox.appendChild( byte );
     }
     messageBox.addEventListener( 'click', function () {
@@ -223,6 +223,13 @@ function Frame ( id=0, onClick, setSettings ) {
   this.resetFocus   = function () {
     messageBox.classList.remove( "focus" );
     return;
+  }
+  this.isFocus      = function () {
+    let res = false;
+    if ( messageBox.classList.contains( "focus" ) ) {
+      res = true;
+    }
+    return res;
   }
   this.setFocus     = function () {
     onClick();
