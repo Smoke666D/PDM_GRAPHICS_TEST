@@ -87,7 +87,7 @@
     "node_outputEvent"    : true,
     "node_outputDisplay"  : true,
 
-    "node_loopsFor"       : false,
-    "node_loopsWhile"     : false
+    "node_loopFor"       : false,
+    "node_loopWhile"     : false
   }
 }
