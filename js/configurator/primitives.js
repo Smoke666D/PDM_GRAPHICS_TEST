@@ -123,7 +123,6 @@ function Pin ( id, type, data ) {
   this.type       = "none";     /* Input or Output or None           */
   this.data       = "none";     /* Bool or self.start.xoat or String */
   this.help       = "none";     /* Help tooltip for the pin          */
-  this.expand     = false;      /* Pin in expand group               */
   this.table      = false;      /* Data of the pin from table        */
   this.linked     = false;      /* Is Pin connected to outher pin    */
   this.linkedWith = [];         /* ID of the Link                    */
@@ -172,6 +171,14 @@ function Pin ( id, type, data ) {
   this.resetAvailable  = function () {
     mount.classList.remove( "from" );
     mount.classList.remove( "available" );
+    return;
+  }
+  this.setType         = function ( newType ) {
+    if ( self.data != newType ) {
+      self.obj.classList.remove( self.data );
+      self.data = newType;
+      self.obj.classList.add( self.data );
+    }
     return;
   }
   this.setPin          = function ( obj ) {
@@ -250,6 +257,7 @@ function Menu ( box, object, items = [] ) {
 function Option ( data ) {
   var self    = this;
   var box     = null;
+  var pin     = null;
   this.name   = data.name;
   this.text   = data.text;
   this.type   = data.type;
@@ -355,6 +363,12 @@ function Option ( data ) {
       if ( self.value == item ) {
         opt.selected = true;
       }
+      out.addEventListener( 'change', function () {
+        self.value = out.value;
+        if ( ( self.name == "type" ) && ( pin != null ) ) {
+          pin.setType( self.value );
+        }
+      });
       out.appendChild( opt );
     });
     return out;
@@ -443,7 +457,10 @@ function Option ( data ) {
     box.appendChild( col2 );
     return;
   }
-  this.getBox = function () {
+  this.getBox = function ( target=null ) {
+    if ( target != null ) {
+      pin = target;
+    }
     return box;
   }
   draw();
@@ -1028,7 +1045,13 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
   this.getOptions         = function () {
     let out = [];
     self.options.forEach( function ( option, i ) {
-      out.push( option.getBox() );
+      let pin = null;
+      if ( self.outputs.length > 0 ) {
+        pin = self.outputs[0];
+      } else if ( self.inputs.length > 0 ) {
+        pin = self.inputs[0];
+      }
+      out.push( option.getBox( pin ) );
     });
     return out;
   }
@@ -1189,13 +1212,13 @@ function Scheme ( id ) {
   }
   function showSchemeHelp () {
     cleanHelpFild();
-    helpFild.appendChild( self.help.getBox() );
+    helpFild.appendChild( self.help.getBox( null ) );
     return;
   }
   function showSchemeOptions () {
     cleanOptionsFild();
     self.options.forEach( function( option, i ) {
-      optionsFild.appendChild( option.getBox() );
+      optionsFild.appendChild( option.getBox( null ) );
       return;
     });
     return;

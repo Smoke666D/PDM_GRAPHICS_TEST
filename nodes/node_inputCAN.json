@@ -7,10 +7,11 @@
   "help"    : "Чтение данных из CAN шины. Необходимо выбрать тип данных, затем выбрать сообщение и расположение данных в сообщении",
   "options" : [
     {
-      "name"  : "type",
-      "text"  : "тип",
-      "type"  : "byte",
-      "value" : 0
+      "name"   : "type",
+      "text"   : "тип",
+      "type"   : "select",
+      "select" : [ "any", "bool", "byte", "short" ],
+      "value"  : "any"
     },{
       "name"  : "adr",
       "text"  : "адрес",

@@ -7,10 +7,11 @@
   "help"    : "Запись данных по шине ModBUS. Необходимо выбрать тип данных и расположение данных в регистровой моделе",
   "options" : [
     {
-      "name"  : "type",
-      "text"  : "тип",
-      "type"  : "byte",
-      "value" : 0
+      "name"   : "type",
+      "text"   : "тип",
+      "type"   : "select",
+      "select" : [ "any", "bool", "byte", "short" ],
+      "value"  : "any"
     },{
       "name"  : "adr",
       "text"  : "адрес",
