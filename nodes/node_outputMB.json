@@ -10,14 +10,14 @@
       "name"   : "type",
       "text"   : "тип",
       "type"   : "select",
-      "select" : [ "any", "bool", "byte", "short" ],
-      "value"  : "any"
+      "select" : [ "bool", "byte", "short" ],
+      "value"  : "byte"
     },{
       "name"   : "adr",
       "text"   : "адрес",
-      "type"   : "adr",
-      "select" : [],
-      "value"  : 0
+      "type"   : "dialog",
+      "select" : "mbAdr",
+      "value"  : null
     }
   ],
   "inputs"  : [

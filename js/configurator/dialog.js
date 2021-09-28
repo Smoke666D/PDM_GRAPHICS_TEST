@@ -186,6 +186,7 @@ function Modal () {
   }
   this.showCan      = function () {
     currant = "can";
+    console.log( currant );
     draw( dialogs.can );
     return;
   }

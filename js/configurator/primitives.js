@@ -355,6 +355,12 @@ function Option ( data ) {
     return out;
   }
   function makeSelectInput () {
+    function onClick () {
+      if ( ( self.name == "type" ) && ( pin != null ) ) {
+        pin.setType( self.value );
+      }
+      return;
+    }
     let out = null;
     out = document.createElement( "SELECT" );
     self.select.forEach( function ( item, i ) {
@@ -365,10 +371,11 @@ function Option ( data ) {
       }
       out.addEventListener( 'change', function () {
         self.value = out.value;
-        if ( ( self.name == "type" ) && ( pin != null ) ) {
-          pin.setType( self.value );
-        }
+        onClick();
+        return;
       });
+      out.value = self.value;
+      onClick();
       out.appendChild( opt );
     });
     return out;
@@ -380,6 +387,13 @@ function Option ( data ) {
       switch ( type ) {
         case "external":
           dialog.showExternal();
+          break;
+        case "canAdr":
+          dialog.showCan();
+          //
+          break;
+        case "mbAdr":
+          dialog.showMb();
           break;
       }
       $("#dialogModal").modal('toggle');
@@ -457,13 +471,17 @@ function Option ( data ) {
     box.appendChild( col2 );
     return;
   }
-  this.getBox = function ( target=null ) {
+  this.setPin = function ( target ) {
     if ( target != null ) {
       pin = target;
     }
+    return;
+  }
+  this.getBox = function ( target=null ) {
+    self.setPin( target );
+    draw();
     return box;
   }
-  draw();
   return;
 }
 function Help ( text ) {
