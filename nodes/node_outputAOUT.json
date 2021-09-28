@@ -7,10 +7,11 @@
   "help"    : "Аналоговый выход. Необходимо выбрать канал",
   "inputs"  : [
     {
-      "name"  : "adr",
-      "text"  : "канал",
-      "type"  : "aout",
-      "value" : 0
+      "name"   : "adr",
+      "text"   : "канал",
+      "type"   : "aout",
+      "select" : [],
+      "value"  : 0
     }
   ],
   "inputs"  : [

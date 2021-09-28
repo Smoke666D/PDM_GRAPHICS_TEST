@@ -10,6 +10,7 @@
       "name"   : "adr",
       "text"   : "канал",
       "type"   : "din",
+      "select" : [],
       "value"  : 0
     }
   ],

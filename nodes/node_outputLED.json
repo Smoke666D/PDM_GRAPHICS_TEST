@@ -10,6 +10,7 @@
       "name"   : "adr",
       "text"   : "канал",
       "type"   : "led",
+      "select" : [],
       "value"  : 0
     }
   ],

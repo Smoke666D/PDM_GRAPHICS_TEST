@@ -13,10 +13,11 @@
       "select" : [ "any", "bool", "byte", "short" ],
       "value"  : "any"
     },{
-      "name"  : "adr",
-      "text"  : "адрес",
-      "type"  : "adr",
-      "value" : null
+      "name"   : "adr",
+      "text"   : "адрес",
+      "type"   : "adr",
+      "select" : [],
+      "value"  : null
     }
   ],
   "inputs"  : [],

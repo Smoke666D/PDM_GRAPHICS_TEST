@@ -7,10 +7,11 @@
   "help"    : "Чтение и запись переменной с плавающей запятой. Можно использовать, как буфер или константу.",
   "options" : [
     {
-      "name"  : "default",
-      "text"  : "значение",
-      "type"  : "float",
-      "value" : 0
+      "name"   : "default",
+      "text"   : "значение",
+      "type"   : "float",
+      "select" : [],
+      "value"  : 0
     }
   ],
   "inputs"  : [

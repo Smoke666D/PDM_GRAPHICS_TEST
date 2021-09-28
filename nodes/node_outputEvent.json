@@ -7,15 +7,17 @@
   "help"    : "Генерация системного события. По переднему фронту (переход с false на true) на входе генерируеться выбранное системное событие.",
   "options" : [
     {
-      "name"  : "type",
-      "text"  : "тип",
-      "type"  : "byte",
-      "value" : 0
+      "name"   : "type",
+      "text"   : "тип",
+      "type"   : "byte",
+      "select" : [],
+      "value"  : 0
     },{
-      "name"  : "event",
-      "text"  : "событие",
-      "type"  : "byte",
-      "value" : 0
+      "name"   : "event",
+      "text"   : "событие",
+      "type"   : "byte",
+      "select" : [],
+      "value"  : 0
     }
   ],
   "inputs"  : [
