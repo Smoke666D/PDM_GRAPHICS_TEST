@@ -10,6 +10,7 @@ function Dialog () {
   this.title   = "";
   this.content = document.createElement( "DIV" );
   this.action  = null;
+  this.data    = null;
 
   function resetSectionsFocus () {
     sections.forEach( function ( frame, i ) {
@@ -112,6 +113,20 @@ function Dialog () {
   }
   return;
 }
+/*
+class Dialog {
+  constructor() {
+
+  }
+  make () {
+
+  }
+}
+
+class External extends Dialog () {
+
+}
+*/
 function Dialogs () {
   var self      = this;
   this.external = new Dialog();
@@ -172,8 +187,9 @@ function Modal () {
     }
     return;
   }
-  function draw ( dialog ) {
+  function draw ( dialog, data=null ) {
     clean();
+    dialog.data     = data;
     title.innerHTML = dialog.title;
     body.appendChild( dialog.content );
     return;
@@ -181,18 +197,19 @@ function Modal () {
 
   this.showExternal = function () {
     currant = "ext";
-    draw( dialogs.external );
+    draw( dialogs.external, null );
     return;
   }
-  this.showCan      = function () {
+  this.showCan      = function ( id=null, type=null ) {
     currant = "can";
-    console.log( currant );
-    draw( dialogs.can );
+    let data = { "id" : id, "type" : type };
+    draw( dialogs.can, data );
     return;
   }
-  this.showMb       = function () {
+  this.showMb       = function ( id=null, type=null ) {
     currant = "mb";
-    draw( dialogs.mb );
+    let data = { "id" : id, "type" : type };
+    draw( dialogs.mb, data );
     return;
   }
 

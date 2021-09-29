@@ -254,10 +254,11 @@ function Menu ( box, object, items = [] ) {
   init( box, object, items );
   return;
 }
-function Option ( data ) {
+function Option ( data, param=null ) {
   var self    = this;
   var box     = null;
   var pin     = null;
+  var param   = param;
   this.name   = data.name;
   this.text   = data.text;
   this.type   = data.type;
@@ -389,11 +390,10 @@ function Option ( data ) {
           dialog.showExternal();
           break;
         case "canAdr":
-          dialog.showCan();
-          //
+          dialog.showCan( param, pin.data );
           break;
         case "mbAdr":
-          dialog.showMb();
+          dialog.showMb( param, pin.data );
           break;
       }
       $("#dialogModal").modal('toggle');
@@ -471,14 +471,10 @@ function Option ( data ) {
     box.appendChild( col2 );
     return;
   }
-  this.setPin = function ( target ) {
+  this.getBox = function ( target=null ) {
     if ( target != null ) {
       pin = target;
     }
-    return;
-  }
-  this.getBox = function ( target=null ) {
-    self.setPin( target );
     draw();
     return box;
   }
@@ -648,7 +644,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
       return;
     });
     data.options.forEach( function ( option, i) {
-      self.options.push( new Option( option ) );
+      self.options.push( new Option( option, self.id  ) );
       return;
     });
 
@@ -1133,7 +1129,7 @@ function Scheme ( id ) {
       self.id      = id;
       self.box     = document.getElementById( 'scheme' );
       lib.getSetup().options.forEach( function ( data, i ) {
-        self.options.push( new Option( data ) );
+        self.options.push( new Option( data, null ) );
         return;
       });
       self.help   = new Help( lib.getSetup().help );
