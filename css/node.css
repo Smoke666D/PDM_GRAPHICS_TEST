@@ -40,8 +40,10 @@
 }
 .short {
   background-color: #33f2e9;
-  border: 2px solid #33f2e9;
-}
+  border: 2px solid #33f2e9; }
+  .short span {
+    color: #363738;
+  }
 .short-text {
   color: #33f2e9;
 }

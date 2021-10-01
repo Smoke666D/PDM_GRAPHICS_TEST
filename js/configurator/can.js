@@ -1,5 +1,22 @@
 /*----------------------------------------------------------------------------*/
-const dataSize = 8 * 8;
+const dataSize  = 8 * 8;
+const boolWidth = 10;
+/*----------------------------------------------------------------------------*/
+function getLength ( type ) {
+  let out = 0;
+  switch ( type ) {
+    case 'bool':
+      out = 1;
+      break;
+    case 'byte':
+      out = 8;
+      break;
+    case 'short':
+      out = 16;
+      break;
+  }
+  return out;
+}
 /*----------------------------------------------------------------------------*/
 function Subadr () {
   var self    = this;
@@ -124,19 +141,136 @@ function Settings () {
     return;
   }
 }
+function Shadow () {
+  var self = this;
+  var box  = null;
+  function draw () {
+    box           = document.createElement( "DIV" );
+    box.className = "can shadow hide";
+  }
+  function init () {
+    draw();
+    self.move( 0, 0 );
+    return;
+  }
+  this.getBox   = function () {
+    return box;
+  }
+  this.hide     = function () {
+    box.classList.add( "hide" );
+    return;
+  }
+  this.show     = function () {
+    box.classList.remove( "hide" );
+    return;
+  }
+  this.move     = function ( x, y ) {
+    box.style.top  = y + "px";
+    box.style.left = x + "px";
+  }
+  this.setWidth = function ( type ) {
+    box.style.width = getLength( type ) * boolWidth;
+    return;
+  }
+  init();
+  return;
+}
+function Chunk ( id, type, onDrag, onDraging, onDrop ) {
+  var self      = this;
+  var length    = 0;
+  var box       = null;
+  var onDrag    = onDrag;
+  var onDraging = onDraging;
+  var onDrop    = onDrop;
+  this.id    = id;
+  this.type  = type;
+  this.frame = null;
+  this.adr   = null;
+
+  function init () {
+    length = getLength( self.type );
+    draw();
+    let drag = new Drag();
+    return;
+  }
+  function draw () {
+    box             = document.createElement( "DIV" );
+    let label       = document.createElement( "SPAN" );
+    label.innerHTML = self.id;
+    box.appendChild( label );
+    self.restyle();
+    return;
+  }
+  function Drag () {
+    var dX = 0;
+    var dY = 0;
+    var cX = 0;
+    var cY = 0;
+    box.onmousedown = dragStart;
+    function dragStart ( e ) {
+      e = e || window.event;
+      e.preventDefault();
+      cX = e.clientX;
+      cY = e.clientY;
+      document.onmouseup   = dragFinish;
+      document.onmousemove = dragProcess;
+      onDrag( self.frame, self.adr, self.type );
+      return;
+    }
+    function dragProcess ( e ) {
+      e = e || window.event;
+      e.preventDefault();
+      dX = cX - e.clientX;
+      dY = cY - e.clientY;
+      cX = e.clientX;
+      cY = e.clientY;
+      box.style.left = ( parseInt( box.style.left ) - dX ) + "px";
+      box.style.top  = ( parseInt( box.style.top )  - dY ) + "px"
+      onDraging( cX, cY );
+      return;
+    }
+    function dragFinish () {
+      document.onmouseup   = null;
+      document.onmousemove = null;
+      onDrop();
+      return;
+    }
+  }
+  this.restyle = function () {
+    if ( box != null ) {
+      box.className   = "can chunk " + self.type;
+      box.style.width = ( boolWidth * getLength( self.type ) ) + "px";
+    }
+
+    return;
+  }
+  this.place   = function ( frame, adr ) {
+    self.frame = frame;
+    self.adr   = adr;
+    return;
+  }
+  this.move    = function ( x, y ) {
+    box.style.top  = y + "px";
+    box.style.left = x + "px";
+    return;
+  }
+  this.getBox  = function () {
+    return box;
+  }
+  init();
+}
 function Frame ( id=0, onClick, setSettings ) {
   var self       = this;
   var data       = new Array( dataSize );
   var box        = null;
   var messageBox = null;
+  var bytes      = [];
   var onClick    = onClick;
-
-  this.id       = id;
-  this.adr      = 0;
-  this.subadr   = new Subadr();
-  this.cheker   = new Checker();
+  this.id        = id;
+  this.adr       = 0;
+  this.subadr    = new Subadr();
+  this.cheker    = new Checker();
   this.pointers = [];
-
   function init () {
     clean();
     draw();
@@ -148,21 +282,6 @@ function Frame ( id=0, onClick, setSettings ) {
       return;
     });
     return;
-  }
-  function getLength ( type ) {
-    let out = 0;
-    switch ( type ) {
-      case 'bool':
-        out = 1;
-        break;
-      case 'byte':
-        out = 8;
-        break;
-      case 'short':
-        out = 16;
-        break;
-    }
-    return out;
   }
   function getSpace ( type ) {
     let length = getLength( type );
@@ -193,19 +312,24 @@ function Frame ( id=0, onClick, setSettings ) {
     return;
   }
   function draw () {
-    box                  = document.createElement( "DIV" );
-    box.className        = "can frame";
-    box.id               = "frame" + self.id;
-    messageBox           = document.createElement( "DIV" );
-    messageBox.className = "can message";
+    bytes                  = [];
+    box                    = document.createElement( "DIV" );
+    box.className          = "can frame";
+    box.id                 = "frame" + self.id;
+    messageBox             = document.createElement( "DIV" );
+    messageBox.className   = "can message";
+    messageBox.style.width = boolWidth * dataSize;
     for ( var i=0; i<( dataSize / 8 ); i++ ) {
-      let byte       = document.createElement( "DIV" );
-      byte.className = "can byte-data";
+      let byte         = document.createElement( "DIV" );
+      byte.className   = "can byte-data";
+      byte.id          = "byte" + i;
+      byte.style.width = boolWidth * 8;
       if ( i != ( dataSize / 8 - 1 ) ) {
         byte.className += " common";
       } else {
         byte.className += " last";
       }
+      bytes.push( byte );
       messageBox.appendChild( byte );
     }
     messageBox.addEventListener( 'click', function () {
@@ -219,7 +343,13 @@ function Frame ( id=0, onClick, setSettings ) {
     self.setFocus();
     return;
   };
-
+  this.isSpace      = function ( type ) {
+    let res = false;
+    if ( getSpace( type ) != null ) {
+      res = true;
+    }
+    return res;
+  }
   this.resetFocus   = function () {
     messageBox.classList.remove( "focus" );
     return;
@@ -237,21 +367,42 @@ function Frame ( id=0, onClick, setSettings ) {
     setSettings( self );
     return;
   }
-  this.addData      = function ( type, id ) {
+  this.addData      = function ( id, type ) {
     let adr = getSpace( type );
     if ( adr != null ) {
       setSpace( adr, type, id );
-      drawData( adr, type );
     }
-    return;
+    return adr;
   }
-  this.getBox  = function () {
+  this.isAdrFree    = function ( adr, type ) {
+    let length = getLength( type );
+    
+  }
+  this.getSize      = function () {
+    return dataSize / 8;
+  }
+  this.getBox       = function () {
     return box;
+  }
+  this.getCoords    = function ( adr, callback ) {
+    setTimeout( function() {
+      callback( bytes[adr].offsetLeft, bytes[adr].offsetTop );
+      return;
+    }, 500 );
+    return { "x" : bytes[adr].offsetLeft, "y" : bytes[adr].offsetTop };
+  }
+  this.getHeight    = function () {
+    return parseInt( messageBox.offsetHeight );
+  }
+  this.getByteWidth = function () {
+    return boolWidth * 8;
   }
   init();
   return;
 }
 /*----------------------------------------------------------------------------*/
 module.exports.Frame    = Frame;
+module.exports.Chunk    = Chunk;
+module.exports.Shadow   = Shadow;
 module.exports.Settings = Settings;
 /*----------------------------------------------------------------------------*/

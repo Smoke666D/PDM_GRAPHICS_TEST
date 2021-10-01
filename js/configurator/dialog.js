@@ -2,28 +2,20 @@
 var lib = require('./nodeLib.js').nodeLib;
 var can = require('./can.js');
 /*----------------------------------------------------------------------------*/
-function Dialog () {
+const rowPadding = 5;
+/*----------------------------------------------------------------------------*/
+function ChunkShadow () {
+  var self = this;
+  var box  = null;
+}
+function ExternalDialog () {
   var self     = this;
-  var names    = [];
-  var sections = [];
-  var settings = new can.Settings();
   this.title   = "";
   this.content = document.createElement( "DIV" );
-  this.action  = null;
-  this.data    = null;
+  var names    = [];
+  var sections = [];
 
-  function resetSectionsFocus () {
-    sections.forEach( function ( frame, i ) {
-      if ( frame.isFocus() == true ) {
-        settings.get( frame )
-        frame.resetFocus();
-      }
-      return;
-    });
-    return;
-  }
-
-  this.makeExternal = function () {
+  this.make = function () {
     self.title             = "Переферийные устройства";
     self.content           = document.createElement( "DIV" );
     lib.getExternal().forEach( function ( device, i ) {
@@ -78,7 +70,80 @@ function Dialog () {
     }
     return;
   }
-  this.makeCAN      = function () {
+}
+function CanDialog () {
+  var self     = this;
+  var names    = [];
+  var frames   = [];
+  var chunks   = [];
+  var settings = new can.Settings();
+  var shadow   = new can.Shadow();
+  var avalible = [];
+  this.title   = "";
+  this.content = document.createElement( "DIV" );
+  this.action  = null;
+  this.data    = null;
+
+  function onChunkDragStart ( frame, adr, type ) {
+    let coords = frames[frame].getCoords( adr, function ( x, y ) {});
+    //calcBorders( frame, adr );
+    shadow.setWidth( type );
+    shadow.move( coords.x, coords.y );
+    shadow.show();
+    return;
+  }
+  function onChunkDraging ( x, y ) {
+
+    return;
+  }
+  function onChunkDrop () {
+    return;
+  }
+  function getAvalibleZones ( frame, adr  ) {
+    avalible = [];
+    frames.forEach( function( frame, i ) {
+      let size = frame.getSize();
+      for ( var j=0; j<size; j++ ) {
+
+      }
+    });
+    let coords    = frames[frame].getCoords( adr, function ( x, y ) {});
+    border.top    = coords.y - rowPadding;
+    border.bottom = coords.y + frames[frame].getHeight() + rowPadding;
+    border.left   = coords.x;
+    border.right  = coords.x + frames[frame].getByteWidth();
+    return;
+  }
+  function resetSectionsFocus () {
+    frames.forEach( function ( frame, i ) {
+      if ( frame.isFocus() == true ) {
+        settings.get( frame )
+        frame.resetFocus();
+      }
+      return;
+    });
+    return;
+  }
+  function isSpace ( type ) {
+    let res = null;
+    for ( var i=0; i<frames.length; i++ ) {
+      if ( frames[i].isSpace( type ) == true ) {
+        res = i;
+        break;
+      }
+    }
+    return res;
+  }
+  function addFrame () {
+    let frame       = document.createElement( "DIV" );
+    frame.className = "row";
+    let cur = frames.length;
+    frames.push( new can.Frame( cur, resetSectionsFocus, settings.set ) );
+    frame.appendChild( frames[cur].getBox() );
+    self.content.appendChild( frame );
+    return frames.length - 1;
+  }
+  this.make     = function () {
     self.title       = "CAN шина";
     self.content     = document.createElement( "DIV" );
     let bar          = document.createElement( "DIV" );
@@ -87,55 +152,58 @@ function Dialog () {
     button.innerHTML = "+";
     button.className = "small";
     button.addEventListener( 'click', function () {
-      let frame       = document.createElement( "DIV" );
-      frame.className = "row";
-      let cur = sections.length;
-      sections.push( new can.Frame( cur, resetSectionsFocus, settings.set ) );
-      frame.appendChild( sections[cur].getBox() );
-      self.content.appendChild( frame );
+      addFrame();
     });
     bar.appendChild( button );
     self.content.appendChild( bar );
+    self.content.appendChild( shadow.getBox() );
     self.content.appendChild( settings.draw() );
     self.action = function () {
       return;
     }
     return;
   }
-  this.makeMB       = function () {
+  this.addChunk = function ( id, type ) {
+    if ( ( id != null ) && ( type != null ) ) {
+      let adr = isSpace( type );
+      if ( adr == null ) {
+        adr = addFrame();
+      }
+      let chunk   = new can.Chunk( id, type, onChunkDragStart, onChunkDraging, onChunkDrop );
+      let pointer = frames[adr].addData( id, type );
+      frames[adr].getCoords( pointer, function( x, y ) {
+        chunk.place( adr, pointer );
+        chunk.move( x, y );
+        self.content.appendChild( chunk.getBox() );
+      });
+    }
+    return;
+  }
+}
+function MbDialog () {
+  var self = this;
+  this.title   = "";
+  this.content = document.createElement( "DIV" );
+  this.action  = null;
+  this.data    = null;
+  this.make = function () {
     self.title             = "ModBUS шина";
     self.content           = document.createElement( "DIV" );
     self.content.innerHTML = "No data!"
     self.action = function () {
       return;
     }
-    return;
-  }
-  return;
-}
-/*
-class Dialog {
-  constructor() {
-
-  }
-  make () {
-
   }
 }
-
-class External extends Dialog () {
-
-}
-*/
 function Dialogs () {
   var self      = this;
-  this.external = new Dialog();
-  this.can      = new Dialog();
-  this.mb       = new Dialog();
+  this.external = new ExternalDialog();
+  this.can      = new CanDialog();
+  this.mb       = new MbDialog();
   this.init     = function () {
-    self.external.makeExternal();
-    self.can.makeCAN();
-    self.mb.makeMB();
+    self.external.make();
+    self.can.make();
+    self.mb.make();
     return;
   }
   return;
@@ -197,19 +265,18 @@ function Modal () {
 
   this.showExternal = function () {
     currant = "ext";
-    draw( dialogs.external, null );
+    draw( dialogs.external );
     return;
   }
   this.showCan      = function ( id=null, type=null ) {
     currant = "can";
-    let data = { "id" : id, "type" : type };
-    draw( dialogs.can, data );
+    draw( dialogs.can );
+    dialogs.can.addChunk( id, type );
     return;
   }
   this.showMb       = function ( id=null, type=null ) {
     currant = "mb";
-    let data = { "id" : id, "type" : type };
-    draw( dialogs.mb, data );
+    draw( dialogs.mb );
     return;
   }
 
