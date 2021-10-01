@@ -76,9 +76,12 @@ function CanDialog () {
   var names    = [];
   var frames   = [];
   var chunks   = [];
+  var avalible = [];
   var settings = new can.Settings();
   var shadow   = new can.Shadow();
-  var avalible = [];
+  var offsetY  = 0;
+  var offsetX  = 0;
+  var current  = null;
   this.title   = "";
   this.content = document.createElement( "DIV" );
   this.action  = null;
@@ -86,32 +89,55 @@ function CanDialog () {
 
   function onChunkDragStart ( frame, adr, type ) {
     let coords = frames[frame].getCoords( adr, function ( x, y ) {});
-    //calcBorders( frame, adr );
+    getAvalibleZones( frame, adr, type );
+    current = null;
     shadow.setWidth( type );
     shadow.move( coords.x, coords.y );
     shadow.show();
     return;
   }
   function onChunkDraging ( x, y ) {
-
+    avalible.forEach( function ( zone, i ) {
+      if ( ( x > ( zone.left + offsetX ) ) && ( x < ( zone.right + offsetX ) ) ) {
+        if ( ( y > ( zone.top + offsetY ) ) && ( y < ( zone.bottom + offsetY ) ) ) {
+          shadow.move( zone.left, ( zone.top + rowPadding ) );
+          current = zone;
+        }
+      }
+    });
     return;
   }
   function onChunkDrop () {
+    return { "x" : current.left, "y" : ( current.top + rowPadding ) };
+  }
+  function calcGlobalOffset () {
+    offsetY = document.getElementById( "dialogModal-body" ).offsetTop +
+              document.getElementById( "contentBox" ).offsetTop       +
+              document.getElementById( "modalBox" ).offsetTop;
+    offsetX = document.getElementById( "dialogModal-body" ).offsetLeft +
+              document.getElementById( "contentBox" ).offsetLeft       +
+              document.getElementById( "modalBox" ).offsetLeft;
     return;
   }
-  function getAvalibleZones ( frame, adr  ) {
+  function getAvalibleZones ( frame, adr, type  ) {
     avalible = [];
+    calcGlobalOffset();
     frames.forEach( function( frame, i ) {
-      let size = frame.getSize();
-      for ( var j=0; j<size; j++ ) {
-
+      for ( var j=0; j<frame.getSize(); j++ ) {
+        if ( frame.isAdrFree( j, type ) == true ) {
+          let coords = frame.getCoords( j, function ( x, y ) {});
+          avalible.push({
+            "frmae"  : i,
+            "byte"   : j,
+            "top"    : coords.y - rowPadding,
+            "bottom" : coords.y + frame.getHeight() + rowPadding,
+            "left"   : coords.x,
+            "right"  : coords.x + frame.getByteWidth()
+          });
+        }
       }
+      return;
     });
-    let coords    = frames[frame].getCoords( adr, function ( x, y ) {});
-    border.top    = coords.y - rowPadding;
-    border.bottom = coords.y + frames[frame].getHeight() + rowPadding;
-    border.left   = coords.x;
-    border.right  = coords.x + frames[frame].getByteWidth();
     return;
   }
   function resetSectionsFocus () {

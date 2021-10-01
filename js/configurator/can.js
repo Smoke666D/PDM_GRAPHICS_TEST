@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
-const dataSize  = 8 * 8;
-const boolWidth = 10;
+const dataSize     = 8;
+const boolWidth    = 10;
 /*----------------------------------------------------------------------------*/
 function getLength ( type ) {
   let out = 0;
@@ -13,6 +13,18 @@ function getLength ( type ) {
       break;
     case 'short':
       out = 16;
+      break;
+  }
+  return out;
+}
+function getLengthByte ( type ) {
+  let out = null;
+  switch ( type ) {
+    case 'byte':
+      out = 1;
+      break;
+    case 'short':
+      out = 2;
       break;
   }
   return out;
@@ -177,7 +189,6 @@ function Shadow () {
 }
 function Chunk ( id, type, onDrag, onDraging, onDrop ) {
   var self      = this;
-  var length    = 0;
   var box       = null;
   var onDrag    = onDrag;
   var onDraging = onDraging;
@@ -188,7 +199,6 @@ function Chunk ( id, type, onDrag, onDraging, onDrop ) {
   this.adr   = null;
 
   function init () {
-    length = getLength( self.type );
     draw();
     let drag = new Drag();
     return;
@@ -214,6 +224,7 @@ function Chunk ( id, type, onDrag, onDraging, onDrop ) {
       cY = e.clientY;
       document.onmouseup   = dragFinish;
       document.onmousemove = dragProcess;
+      console.log(cX + " " + cY);
       onDrag( self.frame, self.adr, self.type );
       return;
     }
@@ -232,7 +243,8 @@ function Chunk ( id, type, onDrag, onDraging, onDrop ) {
     function dragFinish () {
       document.onmouseup   = null;
       document.onmousemove = null;
-      onDrop();
+      coords = onDrop();
+      self.move( coords.x, coords.y );
       return;
     }
   }
@@ -259,9 +271,50 @@ function Chunk ( id, type, onDrag, onDraging, onDrop ) {
   }
   init();
 }
+function Byte ( id ) {
+  var self = this;
+  var box  = null;
+  var id   = id;
+  this.free = true;
+  function draw () {
+    box            = document.createElement( "DIV" );
+    box.className   = "can byte-data";
+    box.id          = "byte" + id;
+    box.style.width = boolWidth * 8;
+    if ( i != ( dataSize - 1 ) ) {
+      box.className += " common";
+    } else {
+      box.className += " last";
+    }
+    return;
+  }
+  function init () {
+    draw();
+    return;
+  }
+  this.reset   = function () {
+    pointer = null;
+    if ( box != null ) {
+      box.parentNode.removeChild( box );
+      box = null;
+    }
+    return;
+  }
+  this.isFree  = function () {
+    return self.free;
+  }
+  this.setFull = function ( id ) {
+    self.free = false;
+    id        = id;
+    return;
+  }
+  this.getBox  = function () {
+    return box;
+  }
+  init();
+}
 function Frame ( id=0, onClick, setSettings ) {
   var self       = this;
-  var data       = new Array( dataSize );
   var box        = null;
   var messageBox = null;
   var bytes      = [];
@@ -277,38 +330,28 @@ function Frame ( id=0, onClick, setSettings ) {
     return;
   }
   function clean () {
-    data.forEach( function ( bit, i ) {
-      bit = 0;
+    bytes.forEach( function ( byte, i ) {
+      byte.reset();
       return;
     });
     return;
   }
   function getSpace ( type ) {
-    let length = getLength( type );
-    let count  = 0;
-    let adr    = 0;
-    data.forEach( function ( bit, i ) {
-      if ( bit == 0 ) {
-        count++;
-        if ( count >= length ) {
+    let adr = null;
+    if ( type != "bool") {
+      for ( var i=0; i<dataSize; i++ ) {
+        if ( self.isAdrFree( i, type ) == true ) {
+          adr = i;
           break;
         }
-      } else {
-        adr = i;
       }
-      return;
-    });
-    if ( adr >= ( dataSize - 1 ) ) {
-      adr = null;
     }
     return adr;
   }
   function setSpace ( adr, type, id ) {
-    let length = getLength( type );
-    for ( var i=0; i<length; i++ ) {
-      data[i + adr] = 1;
+    for ( var i=0; i<getLengthByte( type ); i++ ) {
+      bytes[i + adr].setFull( id );
     }
-    self.pointers.push( new Pointer( adr, length, id ) );
     return;
   }
   function draw () {
@@ -318,19 +361,10 @@ function Frame ( id=0, onClick, setSettings ) {
     box.id                 = "frame" + self.id;
     messageBox             = document.createElement( "DIV" );
     messageBox.className   = "can message";
-    messageBox.style.width = boolWidth * dataSize;
-    for ( var i=0; i<( dataSize / 8 ); i++ ) {
-      let byte         = document.createElement( "DIV" );
-      byte.className   = "can byte-data";
-      byte.id          = "byte" + i;
-      byte.style.width = boolWidth * 8;
-      if ( i != ( dataSize / 8 - 1 ) ) {
-        byte.className += " common";
-      } else {
-        byte.className += " last";
-      }
-      bytes.push( byte );
-      messageBox.appendChild( byte );
+    messageBox.style.width = boolWidth * dataSize * 8;
+    for ( var i=0; i<dataSize; i++ ) {
+      bytes.push( new Byte( self.id ) );
+      messageBox.appendChild( bytes[i].getBox() );
     }
     messageBox.addEventListener( 'click', function () {
       self.setFocus();
@@ -343,12 +377,34 @@ function Frame ( id=0, onClick, setSettings ) {
     self.setFocus();
     return;
   };
+  this.isAdrFree    = function ( adr, type ) {
+    let res    = false;
+    let acc    = 0;
+    let length = getLengthByte( type );
+    if ( ( ( adr + length ) <= dataSize  ) ) {
+      for ( var i=0; i<length; i++ ) {
+        if ( bytes[adr + i].isFree() == true ) {
+          acc++;
+        }
+      }
+      if ( acc == length ) {
+        res = true;
+      }
+    }
+    return res;
+  }
   this.isSpace      = function ( type ) {
     let res = false;
     if ( getSpace( type ) != null ) {
       res = true;
     }
     return res;
+  }
+  this.setFocus     = function () {
+    onClick();
+    messageBox.classList.add( "focus" );
+    setSettings( self );
+    return;
   }
   this.resetFocus   = function () {
     messageBox.classList.remove( "focus" );
@@ -361,12 +417,6 @@ function Frame ( id=0, onClick, setSettings ) {
     }
     return res;
   }
-  this.setFocus     = function () {
-    onClick();
-    messageBox.classList.add( "focus" );
-    setSettings( self );
-    return;
-  }
   this.addData      = function ( id, type ) {
     let adr = getSpace( type );
     if ( adr != null ) {
@@ -374,22 +424,18 @@ function Frame ( id=0, onClick, setSettings ) {
     }
     return adr;
   }
-  this.isAdrFree    = function ( adr, type ) {
-    let length = getLength( type );
-    
-  }
   this.getSize      = function () {
-    return dataSize / 8;
+    return dataSize;
   }
   this.getBox       = function () {
     return box;
   }
   this.getCoords    = function ( adr, callback ) {
     setTimeout( function() {
-      callback( bytes[adr].offsetLeft, bytes[adr].offsetTop );
+      callback( bytes[adr].getBox().offsetLeft, bytes[adr].getBox().offsetTop );
       return;
     }, 500 );
-    return { "x" : bytes[adr].offsetLeft, "y" : bytes[adr].offsetTop };
+    return { "x" : bytes[adr].getBox().offsetLeft, "y" : bytes[adr].getBox().offsetTop };
   }
   this.getHeight    = function () {
     return parseInt( messageBox.offsetHeight );
@@ -401,8 +447,9 @@ function Frame ( id=0, onClick, setSettings ) {
   return;
 }
 /*----------------------------------------------------------------------------*/
-module.exports.Frame    = Frame;
-module.exports.Chunk    = Chunk;
-module.exports.Shadow   = Shadow;
-module.exports.Settings = Settings;
+module.exports.Frame     = Frame;
+module.exports.Chunk     = Chunk;
+module.exports.Shadow    = Shadow;
+module.exports.Settings  = Settings;
+module.exports.getLength = getLength;
 /*----------------------------------------------------------------------------*/
