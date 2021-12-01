@@ -73,10 +73,10 @@ function Settings () {
       return;
     }
     function drawAdress () {
-      adr   = document.createElement( "INPUT" );
-      adr.type  = "number";
-      adr.min   = "0";
-      adr.max   = "255";
+      adr      = document.createElement( "INPUT" );
+      adr.type = "number";
+      adr.min  = "0";
+      adr.max  = "255";
       return addElement( "адрес", adr );
     }
     function drawCheckerEnb () {
@@ -193,6 +193,7 @@ function Chunk ( id, type, onDrag, onDraging, onDrop ) {
   var onDrag    = onDrag;
   var onDraging = onDraging;
   var onDrop    = onDrop;
+
   this.id    = id;
   this.type  = type;
   this.frame = null;
@@ -224,7 +225,6 @@ function Chunk ( id, type, onDrag, onDraging, onDrop ) {
       cY = e.clientY;
       document.onmouseup   = dragFinish;
       document.onmousemove = dragProcess;
-      console.log(cX + " " + cY);
       onDrag( self.frame, self.adr, self.type );
       return;
     }
@@ -243,7 +243,9 @@ function Chunk ( id, type, onDrag, onDraging, onDrop ) {
     function dragFinish () {
       document.onmouseup   = null;
       document.onmousemove = null;
-      coords = onDrop();
+      coords     = onDrop();
+      self.adr   = coords.adr;
+      self.frame = coords.frame;
       self.move( coords.x, coords.y );
       return;
     }
@@ -323,7 +325,7 @@ function Frame ( id=0, onClick, setSettings ) {
   this.adr       = 0;
   this.subadr    = new Subadr();
   this.cheker    = new Checker();
-  this.pointers = [];
+  this.pointers  = [];
   function init () {
     clean();
     draw();
@@ -434,7 +436,7 @@ function Frame ( id=0, onClick, setSettings ) {
     setTimeout( function() {
       callback( bytes[adr].getBox().offsetLeft, bytes[adr].getBox().offsetTop );
       return;
-    }, 500 );
+    }, 500 );    
     return { "x" : bytes[adr].getBox().offsetLeft, "y" : bytes[adr].getBox().offsetTop };
   }
   this.getHeight    = function () {

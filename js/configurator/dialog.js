@@ -108,7 +108,7 @@ function CanDialog () {
     return;
   }
   function onChunkDrop () {
-    return { "x" : current.left, "y" : ( current.top + rowPadding ) };
+    return { "x" : current.left, "y" : ( current.top + rowPadding ), "frame" : current.frame, "adr" : current.byte };
   }
   function calcGlobalOffset () {
     offsetY = document.getElementById( "dialogModal-body" ).offsetTop +
@@ -127,7 +127,7 @@ function CanDialog () {
         if ( frame.isAdrFree( j, type ) == true ) {
           let coords = frame.getCoords( j, function ( x, y ) {});
           avalible.push({
-            "frmae"  : i,
+            "frame"  : i,
             "byte"   : j,
             "top"    : coords.y - rowPadding,
             "bottom" : coords.y + frame.getHeight() + rowPadding,
@@ -195,12 +195,12 @@ function CanDialog () {
       if ( adr == null ) {
         adr = addFrame();
       }
-      let chunk   = new can.Chunk( id, type, onChunkDragStart, onChunkDraging, onChunkDrop );
+      chunks.push( new can.Chunk( id, type, onChunkDragStart, onChunkDraging, onChunkDrop ) );
       let pointer = frames[adr].addData( id, type );
       frames[adr].getCoords( pointer, function( x, y ) {
-        chunk.place( adr, pointer );
-        chunk.move( x, y );
-        self.content.appendChild( chunk.getBox() );
+        chunks[chunks.length - 1].place( adr, pointer );
+        chunks[chunks.length - 1].move( x, y );
+        self.content.appendChild( chunks[chunks.length - 1].getBox() );
       });
     }
     return;
@@ -288,7 +288,6 @@ function Modal () {
     body.appendChild( dialog.content );
     return;
   }
-
   this.showExternal = function () {
     currant = "ext";
     draw( dialogs.external );
