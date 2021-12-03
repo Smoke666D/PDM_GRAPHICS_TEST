@@ -1,20 +1,24 @@
 /*----------------------------------------------------------------------------*/
-var Scheme  = require('./primitives.js').Scheme;
-var nodeLib = require('./nodeLib.js').nodeLib;
+var Scheme    = require( './primitives.js' ).Scheme;
+var nodeLib   = require( './nodeLib.js' ).nodeLib;
+var workspace = require( './workspace.js' ).workspace;
+var config    = require( './workspace.js' ).config;
 /*----------------------------------------------------------------------------*/
 function Configurator ( size ) {
-  var self = this;
-  var addButton       = document.getElementById( 'addNode-button'   );
+  var self            = this;
   var zoomInButton    = document.getElementById( 'zoomIn-button'    );
   var zoomResetButton = document.getElementById( 'zoomReset-button' );
   var zoomOutButton   = document.getElementById( 'zoomOut-button'   );
+  var saveButton      = document.getElementById( 'saveFile-button'  );
+  var loadButton      = document.getElementById( 'openFile-button'  );
+  let delButton       = document.getElementById( 'delete-button'    );
   var schemeBox       = document.getElementById( 'scheme'           );
   var schemeFrame     = document.getElementById( 'scheme-frame'     );
   var nodeLibrary     = document.getElementById( 'nodeLib-list'     );
   var content         = document.getElementById( 'content'          );
   var activeSch       = 0;
   /*----------------------------------------*/
-  this.scheme   = new Scheme( 0 );
+  this.scheme = new Scheme( 0 );
   /*----------------------------------------*/
   function redraw () {
     self.scheme.redraw();
@@ -81,6 +85,7 @@ function Configurator ( size ) {
     return;
   }
   function init( size ) {
+    workspace.init( function(){} );
     /*-------------------------------------------------*/
     schemeFrame.addEventListener( 'click', function () {
       if ( self.scheme.isMouseOnNode() == false ) {
@@ -91,19 +96,38 @@ function Configurator ( size ) {
     /*-------------------------------------------------*/
     schemeFrame.addEventListener( 'scroll', function() {
       self.scheme.redraw();
+      return;
     });
     content.addEventListener( 'scroll', function () {
       self.scheme.redraw();
+      return;
     });
     /*-------------------------------------------------*/
     zoomInButton.addEventListener( 'click', function () {
       self.scheme.zoomIn();
+      return;
     });
     zoomResetButton.addEventListener( 'click', function () {
       self.scheme.zoomReset();
+      return;
     });
     zoomOutButton.addEventListener( 'click', function () {
       self.scheme.zoomOut();
+      return;
+    });
+    /*-------------------------------------------------*/
+    delButton.addEventListener( 'click', function () {
+      self.scheme.removeInFocus();
+      return;
+    });
+    /*-------------------------------------------------*/
+    saveButton.addEventListener( 'click', function () {
+      workspace.save( self.scheme, 'test.json' );
+      return;
+    });
+    loadButton.addEventListener( 'click', function () {
+      self.scheme.load( workspace.load( 'test.json' ) );
+      return;
     });
     /*-------------------------------------------------*/
     drawLibMenu();
@@ -114,9 +138,6 @@ function Configurator ( size ) {
   this.addNode = function ( id ) {
     self.scheme.addNode( id );
     return;
-  }
-  this.save    = function () {
-
   }
   init( size );
   return;

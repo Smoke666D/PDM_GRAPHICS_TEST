@@ -1,0 +1,21 @@
+{
+  "device": {
+    "id": 0,
+    "speed": 500,
+    "leypad": "blink8"
+  },
+  "nodes": [
+    {
+      "id": 0,
+      "name": "node_varByte",
+      "options": [
+        {
+          "value": 0
+        }
+      ],
+      "x": 4,
+      "y": 1
+    }
+  ],
+  "links": []
+}

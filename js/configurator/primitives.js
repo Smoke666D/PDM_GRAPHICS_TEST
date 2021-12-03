@@ -53,6 +53,13 @@ function Device () {
   this.id     = 0;
   this.speed  = 500;
   this.keypad = "blink8"
+  this.save = function () {
+    return {
+      'id'     : self.id,
+      'speed'  : self.speed,
+      'leypad' : self.keypad
+    };
+  }
   return;
 }
 function Link ( from, to, start, end, type, id ) {
@@ -110,6 +117,13 @@ function Link ( from, to, start, end, type, id ) {
       line.remove();
     }
     return;
+  }
+  this.save    = function () {
+    return {
+      'id'   : self.id,
+      'from' : self.from,
+      'to'   : self.to
+    };
   }
   /*----------------------------------------*/
   init( from, to, start, end, type, id );
@@ -1089,6 +1103,20 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     this.obj.remove();
     return;
   }
+  this.save               = function () {
+    let opt = [];
+    self.options.forEach( function ( option, i ) {
+      opt.push( {"value" : option.value} );
+      return;
+    });
+    return {
+      'id'      : self.id,
+      'name'    : self.name,
+      'options' : opt,
+      'x'       : self.x,
+      'y'       : self.y
+    };
+  }
   /*----------------------------------------*/
   init ( type, id, box );
   return;
@@ -1285,6 +1313,7 @@ function Scheme ( id ) {
     return;
   }
   function onNodeFocus ( adr ) {
+    self.inFocus = adr;
     cleanOptionsFild();
     cleanHelpFild();
     self.nodes[adr].getOptions().forEach( function( option, i) {
@@ -1326,15 +1355,6 @@ function Scheme ( id ) {
     let currentID = 0;
     let start     = getPinObject( from );
     let end       = getPinObject( to   );
-    /*
-    if ( getPinExpand( to ) == true ) {
-      self.nodes[to.node].expand.counter++;
-      if ( self.nodes[to.node].expand.viewed == self.nodes[to.node].expand.counter ) {
-        self.nodes[to.node].pinExpand();
-        //self.redraw();
-      }
-    }
-    */
     if ( prevLink == null ) {
       currentID = linkID++;
       self.links.push( new Link( from, to, start, end, getPinData( from ), currentID ) );
@@ -1372,7 +1392,12 @@ function Scheme ( id ) {
     if ( adr <= self.nodes.length ) {
       removeLinksOfNode( adr );
       removeNode( adr );
+      self.resetFocus();
     }
+    return;
+  }
+  this.removeInFocus = function () {
+    self.removeNode( self.inFocus );
     return;
   }
   this.isMouseOnNode = function ( x, y ) {
@@ -1417,6 +1442,28 @@ function Scheme ( id ) {
     self.links.forEach( function( link, i ) {
       link.getData();
     });
+
+    return;
+  }
+  this.save          = function () {
+    function SaveData () {
+      this.device  = {};
+      this.nodes   = [];
+      this.links   = [];
+    }
+    let data    = new SaveData();    
+    data.device = self.device.save();
+    self.nodes.forEach( function ( node, i ) {
+      data.nodes.push( node.save() );
+      return;
+    });
+    self.links.forEach( function ( link, i ) {
+      data.links.push( link.save() );
+      return;
+    });
+    return data;
+  }
+  this.load          = function ( data ) {
 
     return;
   }
