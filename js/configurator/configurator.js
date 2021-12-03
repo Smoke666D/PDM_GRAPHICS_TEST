@@ -4,6 +4,45 @@ var nodeLib   = require( './nodeLib.js' ).nodeLib;
 var workspace = require( './workspace.js' ).workspace;
 var config    = require( './workspace.js' ).config;
 /*----------------------------------------------------------------------------*/
+function HotKey ( first, key, callback ) {
+  this.first    = first;
+  this.key      = key;
+  this.callback = callback;
+  return;
+}
+function Shortcut () {
+  var shortcuts = [];
+  this.add     = function ( first, key, callback ) {
+    if ( ( ( first == "altKey" ) || ( first == "shiftKey" ) || ( first == "ctrlKey" ) || ( first == null ) ) &&
+         ( typeof( callback ) == 'function' ) &&
+         ( ( ( key.length == 1 ) && ( typeof( key ) == 'string') ) || 
+             ( key == "Delete" )     ||
+             ( key == "ArrowUp" )    ||
+             ( key == "ArrowDown" )  ||
+             ( key == "ArrowLeft" )  ||
+             ( key == "ArrowRight" ) ) ) {
+      shortcuts.push( new HotKey( first, key, callback ) );  
+    } else {
+      console.log( "Wrong shortcut format");
+    }
+    return;
+  }
+  this.process = function ( event ) {
+    shortcuts.forEach( function( sch, i ) {
+      if ( ( ( ( sch.first == "altKey"   ) && ( event.altKey   == true  ) && ( event.shiftKey == false ) && ( event.ctrlKey == false ) ) ||
+             ( ( sch.first == "shiftKey" ) && ( event.altKey   == false ) && ( event.shiftKey == true  ) && ( event.ctrlKey == false ) ) ||
+             ( ( sch.first == "ctrlKey"  ) && ( event.altKey   == false ) && ( event.shiftKey == false ) && ( event.ctrlKey == true  ) ) ||
+             ( ( sch.first == null       ) && ( event.altKey   == false ) && ( event.shiftKey == false ) && ( event.ctrlKey == false ) ) ) &&
+           ( event.key == sch.key ) ) {
+        sch.callback();
+      }
+      
+    });
+    return;
+  }
+  return;
+}
+/*----------------------------------------------------------------------------*/
 function Configurator ( size ) {
   var self            = this;
   var zoomInButton    = document.getElementById( 'zoomIn-button'    );
@@ -17,6 +56,7 @@ function Configurator ( size ) {
   var nodeLibrary     = document.getElementById( 'nodeLib-list'     );
   var content         = document.getElementById( 'content'          );
   var activeSch       = 0;
+  var shortcuts       = new Shortcut();
   /*----------------------------------------*/
   this.scheme = new Scheme( 0 );
   /*----------------------------------------*/
@@ -84,8 +124,31 @@ function Configurator ( size ) {
     });
     return;
   }
+  function save () {
+    workspace.save( self.scheme, 'test.json' );
+    return;
+  }
+  function open () {
+    self.scheme.load( workspace.load( 'test.json' ) );
+    return;
+  }
+  function del () {
+    self.scheme.removeInFocus();
+    return;
+  }
   function init( size ) {
     workspace.init( function(){} );
+    /*-------------------------------------------------*/
+    shortcuts.add( "ctrlKey", "s",          function() { save() });
+    shortcuts.add( "ctrlKey", "o",          function() { open(); });
+    shortcuts.add( null,      "Delete",     function() { del(); });
+    shortcuts.add( "ctrlKey", "ArrowUp",    function() { console.log("move up");  });
+    shortcuts.add( "ctrlKey", "ArrowDown",  function() { console.log("move down"); });
+    shortcuts.add( "ctrlKey", "ArrowLeft",  function() { console.log("move left"); });
+    shortcuts.add( "ctrlKey", "ArrowRight", function() { console.log("move right"); });
+    
+    shortcuts.add( "ctrlKey", "a",      function() { console.log("select all"); });
+    
     /*-------------------------------------------------*/
     schemeFrame.addEventListener( 'click', function () {
       if ( self.scheme.isMouseOnNode() == false ) {
@@ -117,18 +180,22 @@ function Configurator ( size ) {
     });
     /*-------------------------------------------------*/
     delButton.addEventListener( 'click', function () {
-      self.scheme.removeInFocus();
+      del();
       return;
     });
     /*-------------------------------------------------*/
     saveButton.addEventListener( 'click', function () {
-      workspace.save( self.scheme, 'test.json' );
+      save();
       return;
     });
     loadButton.addEventListener( 'click', function () {
-      self.scheme.load( workspace.load( 'test.json' ) );
+      open();
       return;
     });
+    /*-------------------------------------------------*/
+    document.onkeyup = function ( event ) {
+      shortcuts.process( event );
+    }
     /*-------------------------------------------------*/
     drawLibMenu();
     /*-------------------------------------------------*/
