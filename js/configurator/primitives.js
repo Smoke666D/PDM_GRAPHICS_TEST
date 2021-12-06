@@ -271,8 +271,8 @@ function Menu ( box, object, items = [] ) {
 function Option ( data, param = null ) {
   var self    = this;
   var box     = null;
-  var pin     = null;
   var param   = param;
+  this.pin    = null;
   this.name   = data.name;
   this.text   = data.text;
   this.type   = data.type;
@@ -370,8 +370,8 @@ function Option ( data, param = null ) {
   }
   function makeSelectInput () {
     function onClick () {
-      if ( ( self.name == "type" ) && ( pin != null ) ) {
-        pin.setType( self.value );
+      if ( ( self.name == "type" ) && ( self.pin != null ) ) {
+        self.pin.setType( self.value );
       }
       return;
     }
@@ -403,10 +403,10 @@ function Option ( data, param = null ) {
           dialog.showExternal();
           break;
         case "canAdr":
-          dialog.showCan( param, pin.data );
+          dialog.showCan();
           break;
         case "mbAdr":
-          dialog.showMb( param, pin.data );
+          dialog.showMb( param, self.pin.data );
           break;
       }
       $("#dialogModal").modal('toggle');
@@ -486,7 +486,7 @@ function Option ( data, param = null ) {
   }
   this.getBox = function ( target=null ) {
     if ( target != null ) {
-      pin = target;
+      self.pin = target;
     }
     draw();
     return box;
@@ -660,7 +660,6 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
       self.options.push( new Option( option, self.id  ) );
       return;
     });
-
     return;
   }
   function setSize () {
@@ -839,16 +838,43 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     }
     return;
   }
+  function dialogInit () {
+    let res = null;
+    self.options.forEach( function ( option, i ) {
+      if ( option.name == "adr" ) {
+        switch ( option.select ) {
+          case "canAdr":
+            res = "can";
+            break;
+       } 
+      }
+    });
+    if ( res != null ) {
+      let type = "byte";
+      self.options.forEach( function ( option, i ) {
+        if ( option.name == "type" ) {
+          type = option.value;
+        }
+      });
+      switch ( res ) {
+        case "can" :
+          dialog.addCanChunk( self.id, type );
+          break;
+      }
+    } 
+    return;
+  }
   function init ( type, id, box ) {
-    makeNode( self.type );
-    draw();
-    setSize();
-    move();
-    dragInit();
-    pinsInit();
-    show();
-    clickInit();
-    contextInit();
+    makeNode( self.type ); /* Get data from library */
+    draw();                /* Draw UI of Node       */
+    setSize();             /* Set size of tje box   */
+    move();                /* Move node box in mesh */
+    dragInit();            /* Init drag and drop    */
+    pinsInit();            /* Draw pins PU          */
+    show();                /* Show UI readynode box */
+    clickInit();           /* Add clixk events      */
+    contextInit();         /* Add context menu      */
+    dialogInit();          /* Add chunks in dialogs */
     return;
   }
   /*----------------------------------------*/

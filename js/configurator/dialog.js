@@ -159,7 +159,6 @@ function CanDialog () {
     frames.forEach( function ( frame, i ) {
       if ( frame.isSpace( type ) == true ) {
         res = i;
-        break;
       }
     });
     return res;
@@ -202,7 +201,6 @@ function CanDialog () {
       chunks.forEach( function( chunk, i ) {
         if ( chunk.id == id ) {
           exist = true;
-          break;
         }
       });
       if ( exist == false ) {
@@ -313,10 +311,13 @@ function Modal () {
     draw( dialogs.external );
     return;
   }
-  this.showCan      = function ( id=null, type=null ) {
+  this.addCanChunk  = function ( id, type ) {
+    dialogs.can.addChunk( id, type );
+    return;
+  }
+  this.showCan      = function () {
     currant = "can";
     draw( dialogs.can );
-    dialogs.can.addChunk( id, type );
     return;
   }
   this.showMb       = function ( id=null, type=null ) {

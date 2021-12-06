@@ -350,12 +350,6 @@ function Frame ( id=0, onClick, setSettings ) {
     }
     return adr;
   }
-  function setSpace ( adr, type, id ) {
-    for ( var i=0; i<getLengthByte( type ); i++ ) {
-      bytes[i + adr].setFull( id );
-    }
-    return;
-  }
   function draw () {
     bytes                  = [];
     box                    = document.createElement( "DIV" );
@@ -379,6 +373,12 @@ function Frame ( id=0, onClick, setSettings ) {
     self.setFocus();
     return;
   };
+  function setSpace ( adr, type, id ) {
+    for ( var i=0; i<getLengthByte( type ); i++ ) {
+      bytes[i + adr].setFull( id );
+    }
+    return;
+  }
   this.isAdrFree    = function ( adr, type ) {
     let res    = false;
     let acc    = 0;
