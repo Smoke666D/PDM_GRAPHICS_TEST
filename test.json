@@ -7,14 +7,20 @@
   "nodes": [
     {
       "id": 0,
-      "name": "node_varByte",
+      "name": "node_inputCAN",
       "options": [
         {
-          "value": 0
+          "value": "byte"
+        },
+        {
+          "value": {
+            "frame": 1,
+            "chunck": 3
+          }
         }
       ],
-      "x": 4,
-      "y": 1
+      "x": 0,
+      "y": 0
     }
   ],
   "links": []

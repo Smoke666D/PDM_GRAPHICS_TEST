@@ -82,6 +82,7 @@ function CanDialog () {
   var offsetY  = 0;
   var offsetX  = 0;
   var current  = null;
+  var onChange = null;
   this.title   = "";
   this.content = document.createElement( "DIV" );
   this.action  = null;
@@ -107,7 +108,10 @@ function CanDialog () {
     });
     return;
   }
-  function onChunkDrop () {
+  function onChunkDrop ( adr ) {
+    if ( typeof( onChange ) == "function" ) {
+      onChange( adr, current.frame, current.byte );
+    }
     return { "x" : current.left, "y" : ( current.top + rowPadding ), "frame" : current.frame, "adr" : current.byte };
   }
   function calcGlobalOffset () {
@@ -168,6 +172,9 @@ function CanDialog () {
     frame.appendChild( frames[cur].getBox() );
     self.content.appendChild( frame );
     return frames.length - 1;
+  }
+  this.initOnChange = function ( callback ) {
+    onChange = callback;
   }
   this.make     = function () {
     self.title       = "CAN шина";
@@ -286,6 +293,10 @@ function Modal () {
     dialog.data     = data;
     title.innerHTML = dialog.title;
     body.appendChild( dialog.content );
+    return;
+  }
+  this.initOnChange = function ( callback ) {
+    dialogs.can.initOnChange( callback );
     return;
   }
   this.showExternal = function () {

@@ -268,7 +268,7 @@ function Menu ( box, object, items = [] ) {
   init( box, object, items );
   return;
 }
-function Option ( data, param=null ) {
+function Option ( data, param = null ) {
   var self    = this;
   var box     = null;
   var pin     = null;
@@ -278,7 +278,6 @@ function Option ( data, param=null ) {
   this.type   = data.type;
   this.value  = data.value;
   this.select = data.select;
-
   function numberInputCheck ( obj ) {
     if ( obj.value < obj.min ) {
       obj.value = obj.min;
@@ -623,7 +622,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     }
     /*----------------------------------------*/
     if ( body ) {
-      body.onmousedown = dragStart;
+      body.onmousedown     = dragStart;
     } else {
       self.obj.onmousedown = dragStart;
     }
@@ -1152,7 +1151,14 @@ function Scheme ( id ) {
     }, 10 );
     return;
   }
+  function onChangeInDialog ( id, frame, chunck ) {
+    console.log( self.nodes[id] );
+    self.nodes[id].options[1].value.frame  = frame;
+    self.nodes[id].options[1].value.chunck = chunck;
+    return;
+  }
   function init ( id ) {
+    dialog.initOnChange( onChangeInDialog );
     awaitReady( function () {
       self.id      = id;
       self.box     = document.getElementById( 'scheme' );
@@ -1388,10 +1394,10 @@ function Scheme ( id ) {
     */
     return;
   }
-  this.removeNode    = function ( adr ) {
-    if ( adr <= self.nodes.length ) {
-      removeLinksOfNode( adr );
-      removeNode( adr );
+  this.removeNode    = function ( id ) {
+    if ( id <= self.nodes.length ) {
+      removeLinksOfNode( id );
+      removeNode( id );
       self.resetFocus();
     }
     return;

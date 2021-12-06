@@ -243,7 +243,7 @@ function Chunk ( id, type, onDrag, onDraging, onDrop ) {
     function dragFinish () {
       document.onmouseup   = null;
       document.onmousemove = null;
-      coords     = onDrop();
+      coords     = onDrop( self.id );
       self.adr   = coords.adr;
       self.frame = coords.frame;
       self.move( coords.x, coords.y );
