@@ -156,12 +156,12 @@ function CanDialog () {
   }
   function isSpace ( type ) {
     let res = null;
-    for ( var i=0; i<frames.length; i++ ) {
-      if ( frames[i].isSpace( type ) == true ) {
+    frames.forEach( function ( frame, i ) {
+      if ( frame.isSpace( type ) == true ) {
         res = i;
         break;
       }
-    }
+    });
     return res;
   }
   function addFrame () {
@@ -198,17 +198,26 @@ function CanDialog () {
   }
   this.addChunk = function ( id, type ) {
     if ( ( id != null ) && ( type != null ) ) {
-      let adr = isSpace( type );
-      if ( adr == null ) {
-        adr = addFrame();
-      }
-      chunks.push( new can.Chunk( id, type, onChunkDragStart, onChunkDraging, onChunkDrop ) );
-      let pointer = frames[adr].addData( id, type );
-      frames[adr].getCoords( pointer, function( x, y ) {
-        chunks[chunks.length - 1].place( adr, pointer );
-        chunks[chunks.length - 1].move( x, y );
-        self.content.appendChild( chunks[chunks.length - 1].getBox() );
+      let exist = false;
+      chunks.forEach( function( chunk, i ) {
+        if ( chunk.id == id ) {
+          exist = true;
+          break;
+        }
       });
+      if ( exist == false ) {
+        let adr = isSpace( type );
+        if ( adr == null ) {
+          adr = addFrame();
+        }
+        chunks.push( new can.Chunk( id, type, onChunkDragStart, onChunkDraging, onChunkDrop ) );
+        let pointer = frames[adr].addData( id, type );
+        frames[adr].getCoords( pointer, function( x, y ) {
+          chunks[chunks.length - 1].place( adr, pointer );
+          chunks[chunks.length - 1].move( x, y );
+          self.content.appendChild( chunks[chunks.length - 1].getBox() );
+        });
+      }
     }
     return;
   }
