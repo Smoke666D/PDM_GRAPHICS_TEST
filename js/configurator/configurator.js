@@ -24,6 +24,19 @@ function Shortcut () {
          ( typeof( callback ) == 'function' ) &&
          ( ( ( key.length == 1 ) && ( typeof( key ) == 'string') ) || 
              ( key == "Delete" )     ||
+             ( key == "Escape" )     ||
+             ( key == "F1" )         ||
+             ( key == "F2" )         ||
+             ( key == "F3" )         ||
+             ( key == "F4" )         ||
+             ( key == "F5" )         ||
+             ( key == "F6" )         ||
+             ( key == "F7" )         ||
+             ( key == "F8" )         ||
+             ( key == "F9" )         ||
+             ( key == "F10" )        ||
+             ( key == "F11" )        ||
+             ( key == "F12" )        ||
              ( key == "ArrowUp" )    ||
              ( key == "ArrowDown" )  ||
              ( key == "ArrowLeft" )  ||
@@ -157,9 +170,9 @@ function Configurator ( size ) {
     shortcuts.add( "ctrlKey", "ArrowDown",  function() { console.log("move down"); });
     shortcuts.add( "ctrlKey", "ArrowLeft",  function() { console.log("move left"); });
     shortcuts.add( "ctrlKey", "ArrowRight", function() { console.log("move right"); });
-    
+    shortcuts.add( null,      "Escape",     function() { console.log("escape"); })
+    shortcuts.add( null,      "F1",         function() { console.log("get help"); })
     shortcuts.add( "ctrlKey", "a",          function() { console.log("select all"); });
-    
     /*-------------------------------------------------*/
     schemeFrame.addEventListener( 'click', function () {
       if ( self.scheme.isMouseOnNode() == false ) {
