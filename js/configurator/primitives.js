@@ -1152,7 +1152,6 @@ function Scheme ( id ) {
     return;
   }
   function onChangeInDialog ( id, frame, chunck ) {
-    console.log( self.nodes[id] );
     self.nodes[id].options[1].value.frame  = frame;
     self.nodes[id].options[1].value.chunck = chunck;
     return;

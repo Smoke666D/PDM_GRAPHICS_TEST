@@ -3,6 +3,13 @@ var Scheme    = require( './primitives.js' ).Scheme;
 var nodeLib   = require( './nodeLib.js' ).nodeLib;
 var workspace = require( './workspace.js' ).workspace;
 var config    = require( './workspace.js' ).config;
+var remote    = require('electron').remote;
+/*----------------------------------------------------------------------------*/
+const fileOptions = {
+  defaultPath : remote.app.getPath( 'documents' ) + "/sheme.json",
+  title       : "Сохранить схему как...",
+  filters     : [{ name : "Файл схемы, *.json", extensions : ["json"] }]
+};
 /*----------------------------------------------------------------------------*/
 function HotKey ( first, key, callback ) {
   this.first    = first;
@@ -125,7 +132,11 @@ function Configurator ( size ) {
     return;
   }
   function save () {
-    workspace.save( self.scheme, 'test.json' );
+    remote.dialog.showSaveDialog( remote.getCurrentWindow(), fileOptions ).then( function ( value ) {
+      if ( value.canceled == false ) {
+        workspace.save( self.scheme, value.filePath );
+      }
+    });
     return;
   }
   function open () {
@@ -147,7 +158,7 @@ function Configurator ( size ) {
     shortcuts.add( "ctrlKey", "ArrowLeft",  function() { console.log("move left"); });
     shortcuts.add( "ctrlKey", "ArrowRight", function() { console.log("move right"); });
     
-    shortcuts.add( "ctrlKey", "a",      function() { console.log("select all"); });
+    shortcuts.add( "ctrlKey", "a",          function() { console.log("select all"); });
     
     /*-------------------------------------------------*/
     schemeFrame.addEventListener( 'click', function () {
