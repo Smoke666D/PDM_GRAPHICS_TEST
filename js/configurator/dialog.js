@@ -200,12 +200,15 @@ function CanDialog () {
   }
   this.redraw       = function () {
     chunks.forEach( function( chunk, i ) {
+
+      chunk.restyle();
       frames[chunk.frame].getCoords( chunk.adr, function ( x, y ) {
         chunk.move( x, y );
       });
     });
   }
-  this.addChunk     = function ( id, type ) {
+  this.addChunk     = function ( id, getType ) {
+    let type = getType();
     if ( ( id != null ) && ( type != null ) ) {
       let exist = false;
       chunks.forEach( function( chunk, i ) {
@@ -218,7 +221,7 @@ function CanDialog () {
         if ( adr == null ) {
           adr = addFrame();
         }
-        chunks.push( new can.Chunk( id, type, onChunkDragStart, onChunkDraging, onChunkDrop ) );
+        chunks.push( new can.Chunk( id, type, onChunkDragStart, onChunkDraging, onChunkDrop, getType ) );
         let pointer = frames[adr].addData( id, type );
         frames[adr].getCoords( pointer, function( x, y ) {
           chunks[chunks.length - 1].place( adr, pointer );
@@ -323,8 +326,8 @@ function Modal () {
     draw( dialogs.external );
     return;
   }
-  this.addCanChunk  = function ( id, type ) {
-    dialogs.can.addChunk( id, type );
+  this.addCanChunk  = function ( id, typeCallback ) {
+    dialogs.can.addChunk( id, typeCallback );
     return;
   }
   this.showCan      = function () {

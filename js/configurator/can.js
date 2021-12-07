@@ -187,12 +187,13 @@ function Shadow () {
   init();
   return;
 }
-function Chunk ( id, type, onDrag, onDraging, onDrop ) {
+function Chunk ( id, type, onDrag, onDraging, onDrop, getType ) {
   var self      = this;
   var box       = null;
   var onDrag    = onDrag;
   var onDraging = onDraging;
   var onDrop    = onDrop;
+  var getType   = getType;
 
   this.id    = id;
   this.type  = type;
@@ -252,10 +253,10 @@ function Chunk ( id, type, onDrag, onDraging, onDrop ) {
   }
   this.restyle = function () {
     if ( box != null ) {
+      self.type       = getType();
       box.className   = "can chunk " + self.type;
       box.style.width = ( boolWidth * getLength( self.type ) ) + "px";
     }
-
     return;
   }
   this.place   = function ( frame, adr ) {

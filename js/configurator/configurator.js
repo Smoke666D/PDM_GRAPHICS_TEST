@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-var Scheme    = require( './primitives.js' ).Scheme;
+var Scheme    = require( './scheme.js' ).Scheme;
 var nodeLib   = require( './nodeLib.js' ).nodeLib;
 var workspace = require( './workspace.js' ).workspace;
 var config    = require( './workspace.js' ).config;
