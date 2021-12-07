@@ -359,7 +359,7 @@ function Frame ( id=0, onClick, setSettings ) {
     messageBox.className   = "can message";
     messageBox.style.width = boolWidth * dataSize * 8;
     for ( var i=0; i<dataSize; i++ ) {
-      bytes.push( new Byte( self.id ) );
+      bytes.push( new Byte( i ) );
       messageBox.appendChild( bytes[i].getBox() );
     }
     messageBox.addEventListener( 'click', function () {

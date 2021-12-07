@@ -175,7 +175,7 @@ function CanDialog () {
   this.initOnChange = function ( callback ) {
     onChange = callback;
   }
-  this.make     = function () {
+  this.make         = function () {
     self.title       = "CAN шина";
     self.content     = document.createElement( "DIV" );
     let bar          = document.createElement( "DIV" );
@@ -195,7 +195,14 @@ function CanDialog () {
     }
     return;
   }
-  this.addChunk = function ( id, type ) {
+  this.redraw       = function () {
+    chunks.forEach( function( chunk, i ) {
+      frames[chunk.frame].getCoords( chunk.adr, function ( x, y ) {
+        chunk.move( x, y );
+      });
+    });
+  }
+  this.addChunk     = function ( id, type ) {
     if ( ( id != null ) && ( type != null ) ) {
       let exist = false;
       chunks.forEach( function( chunk, i ) {
@@ -212,11 +219,13 @@ function CanDialog () {
         let pointer = frames[adr].addData( id, type );
         frames[adr].getCoords( pointer, function( x, y ) {
           chunks[chunks.length - 1].place( adr, pointer );
-          chunks[chunks.length - 1].move( x, y );
           self.content.appendChild( chunks[chunks.length - 1].getBox() );
         });
       }
     }
+    return;
+  }
+  this.removeChunk  = function ( id ) {
     return;
   }
 }
@@ -317,6 +326,7 @@ function Modal () {
   }
   this.showCan      = function () {
     currant = "can";
+    dialogs.can.redraw();
     draw( dialogs.can );
     return;
   }
