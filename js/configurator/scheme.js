@@ -8,10 +8,6 @@ var Device  = require('./primitives.js').Device;
 var Option  = require('./primitives.js').Option;
 var NodeAdr = require('./primitives.js').NodeAdr;
 /*----------------------------------------------------------------------------*/
-const scaleStep       = 0.1;
-const scaleMax        = 3;
-const scaleMin        = 0.5;
-/*----------------------------------------------------------------------------*/
 function Scheme ( id ) {
   var self     = this;
   var nodeID   = 0;             /* Counter for nodes          */
@@ -24,14 +20,56 @@ function Scheme ( id ) {
   var helpFild    = document.getElementById( "content-help" );
   var optionsFild = document.getElementById( "content-options" );
   /*----------------------------------------*/
-  this.id      = 0;    /* ID number of scheme     */
-  this.nodes   = [];   /* Nodes of scheme         */
-  this.links   = [];   /* Links of scheme         */
-  this.options = [];   /* Options of the scheme   */
-  this.help    = "";   /* Help string for options */
-  this.box     = null; /* Scheme element in DOM   */
-  this.inFocus = null; /* Array of focus elements */
-  this.device  = null; /* Data of the device      */
+  this.id      = 0;          /* ID number of scheme     */
+  this.nodes   = [];         /* Nodes of scheme         */
+  this.links   = [];         /* Links of scheme         */
+  this.options = [];         /* Options of the scheme   */
+  this.help    = "";         /* Help string for options */
+  this.box     = null;       /* Scheme element in DOM   */
+  this.inFocus = null;       /* Array of focus elements */
+  this.device  = null;       /* Data of the device      */
+  this.zoom    = new Zoom(); /* Zoom operations         */
+  /*----------------------------------------*/
+  function Zoom () {
+    const scaleStep = 0.1;
+    const scaleMax  = 3;
+    const scaleMin  = 0.5;
+    function calc () {
+      transformOrigin = [0, 0];
+      var p       = ["webkit", "moz", "ms", "o"];
+      var s       = "scale(" + scale + ")";
+      var oString = ( transformOrigin[0] * 100) + "% " + ( transformOrigin[1] * 100 ) + "%";
+      for ( var i=0; i<p.length; i++ ) {
+        self.box.style[p[i] + "Transform"]       = s;
+        self.box.style[p[i] + "TransformOrigin"] = oString;
+      }
+      self.box.style["transform"]       = s;
+      self.box.style["transformOrigin"] = oString;
+      for ( var i=0; i<self.links.length; i++ ) {
+        self.links[i].draw();
+      }
+      return;
+    }
+    this.in    = function () {
+      if ( scale < scaleMax ) {
+        scale += scaleStep;
+      }
+      calc();
+      return;
+    }
+    this.reset = function () {
+      scale = 1;
+      calc();
+      return;
+    }
+    this.out   = function () {
+      if ( scale > scaleMin ) {
+        scale -= scaleStep;
+      }
+      calc();
+      return;
+    }
+  }
   /*----------------------------------------*/
   function awaitReady ( callback ) {
     setTimeout( function() {
@@ -120,22 +158,6 @@ function Scheme ( id ) {
         removeLinksOfNode( adr );
         break;
       }
-    }
-    return;
-  }
-  function zoom () {
-    transformOrigin = [0, 0];
-    var p       = ["webkit", "moz", "ms", "o"];
-    var s       = "scale(" + scale + ")";
-    var oString = ( transformOrigin[0] * 100) + "% " + ( transformOrigin[1] * 100 ) + "%";
-    for ( var i=0; i<p.length; i++ ) {
-      self.box.style[p[i] + "Transform"]       = s;
-      self.box.style[p[i] + "TransformOrigin"] = oString;
-    }
-    self.box.style["transform"]       = s;
-    self.box.style["transformOrigin"] = oString;
-    for ( var i=0; i<self.links.length; i++ ) {
-      self.links[i].draw();
     }
     return;
   }
@@ -304,25 +326,6 @@ function Scheme ( id ) {
     for ( var i=0; i<self.nodes.length; i++ ) {
       self.nodes[i].focus.reset();
     }
-    return;
-  }
-  this.zoomIn        = function () {
-    if ( scale < scaleMax ) {
-      scale += scaleStep;
-    }
-    zoom();
-    return;
-  }
-  this.zoomReset     = function () {
-    scale = 1;
-    zoom();
-    return;
-  }
-  this.zoomOut       = function () {
-    if ( scale > scaleMin ) {
-      scale -= scaleStep;
-    }
-    zoom();
     return;
   }
   this.getData       = function () {

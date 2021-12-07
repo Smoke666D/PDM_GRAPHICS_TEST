@@ -191,15 +191,15 @@ function Configurator ( size ) {
     });
     /*-------------------------------------------------*/
     zoomInButton.addEventListener( 'click', function () {
-      self.scheme.zoomIn();
+      self.scheme.zoom.in();
       return;
     });
     zoomResetButton.addEventListener( 'click', function () {
-      self.scheme.zoomReset();
+      self.scheme.zoom.reset();
       return;
     });
     zoomOutButton.addEventListener( 'click', function () {
-      self.scheme.zoomOut();
+      self.scheme.zoom.out();
       return;
     });
     /*-------------------------------------------------*/
