@@ -195,10 +195,11 @@ function Chunk ( id, type, onDrag, onDraging, onDrop, getType ) {
   var onDrop    = onDrop;
   var getType   = getType;
 
-  this.id    = id;
-  this.type  = type;
-  this.frame = null;
-  this.adr   = null;
+  this.id     = id;
+  this.type   = type;
+  this.frame  = null;
+  this.adr    = null;
+  this.length = getLength( self.type );
 
   function init () {
     draw();
@@ -254,6 +255,7 @@ function Chunk ( id, type, onDrag, onDraging, onDrop, getType ) {
   this.restyle = function () {
     if ( box != null ) {
       self.type       = getType();
+      self.length     = getLength( self.type );
       box.className   = "can chunk " + self.type;
       box.style.width = ( boolWidth * getLength( self.type ) ) + "px";
     }
@@ -377,12 +379,6 @@ function Frame ( id=0, onClick, setSettings ) {
     self.setFocus();
     return;
   };
-  function setSpace ( adr, type, id ) {
-    for ( var i=0; i<getLengthByte( type ); i++ ) {
-      bytes[i + adr].setFull( id );
-    }
-    return;
-  }
   this.isAdrFree    = function ( adr, type ) {
     let res    = false;
     let acc    = 0;
@@ -406,14 +402,14 @@ function Frame ( id=0, onClick, setSettings ) {
     }
     return res;
   }
-  this.setFull   = function ( adr, type ) {
+  this.setFull      = function ( adr, type ) {
     let length = getLengthByte( type );
     for ( var i=0; i<length; i++ ) {
       bytes[adr + i].setFull();
     }
     return;
   }
-  this.setFree   = function ( adr, type ) {
+  this.setFree      = function ( adr, type ) {
     let length = getLengthByte( type );
     for ( var i=0; i<length; i++ ) {
       bytes[adr + i].setFree();
@@ -440,7 +436,7 @@ function Frame ( id=0, onClick, setSettings ) {
   this.addData      = function ( id, type ) {
     let adr = getSpace( type );
     if ( adr != null ) {
-      setSpace( adr, type, id );
+      self.setFull( adr, type );
     }
     return adr;
   }

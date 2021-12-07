@@ -90,8 +90,8 @@ function CanDialog () {
 
   function onChunkDragStart ( frame, adr, type ) {
     let coords = frames[frame].getCoords( adr, function ( x, y ) {});
-    getAvalibleZones( frame, adr, type );
     frames[frame].setFree( adr, type );
+    getAvalibleZones( frame, adr, type );
     current = null;
     shadow.setWidth( type );
     shadow.move( coords.x, coords.y );
@@ -175,6 +175,13 @@ function CanDialog () {
     self.content.appendChild( frame );
     return frames.length - 1;
   }
+  function searchFreeFrame ( type ) {
+    let adr = isSpace( type );
+    if ( adr == null ) {
+      adr = addFrame();
+    }
+    return adr;
+  }
   this.initOnChange = function ( callback ) {
     onChange = callback;
   }
@@ -200,8 +207,13 @@ function CanDialog () {
   }
   this.redraw       = function () {
     chunks.forEach( function( chunk, i ) {
-
+      let prevType = chunk.type;
       chunk.restyle();
+      if ( prevType != chunk.type ) {
+        frames[chunk.frame].setFree( chunk.adr, prevType );
+        chunk.frame = searchFreeFrame( chunk.type );
+        chunk.adr   = frames[chunk.frame].addData( chunk.id, chunk.type );
+      }
       frames[chunk.frame].getCoords( chunk.adr, function ( x, y ) {
         chunk.move( x, y );
       });
@@ -217,10 +229,7 @@ function CanDialog () {
         }
       });
       if ( exist == false ) {
-        let adr = isSpace( type );
-        if ( adr == null ) {
-          adr = addFrame();
-        }
+        let adr = searchFreeFrame( type );
         chunks.push( new can.Chunk( id, type, onChunkDragStart, onChunkDraging, onChunkDrop, getType ) );
         let pointer = frames[adr].addData( id, type );
         frames[adr].getCoords( pointer, function( x, y ) {
