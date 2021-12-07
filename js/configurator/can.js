@@ -243,7 +243,7 @@ function Chunk ( id, type, onDrag, onDraging, onDrop ) {
     function dragFinish () {
       document.onmouseup   = null;
       document.onmousemove = null;
-      coords     = onDrop( self.id );
+      coords     = onDrop( self.id, self.type );
       self.adr   = coords.adr;
       self.frame = coords.frame;
       self.move( coords.x, coords.y );
@@ -307,7 +307,10 @@ function Byte ( id ) {
   }
   this.setFull = function ( id ) {
     self.free = false;
-    id        = id;
+    return;
+  }
+  this.setFree = function () {
+    self.free = true;
     return;
   }
   this.getBox  = function () {
@@ -401,6 +404,20 @@ function Frame ( id=0, onClick, setSettings ) {
       res = true;
     }
     return res;
+  }
+  this.setFull   = function ( adr, type ) {
+    let length = getLengthByte( type );
+    for ( var i=0; i<length; i++ ) {
+      bytes[adr + i].setFull();
+    }
+    return;
+  }
+  this.setFree   = function ( adr, type ) {
+    let length = getLengthByte( type );
+    for ( var i=0; i<length; i++ ) {
+      bytes[adr + i].setFree();
+    }
+    return;
   }
   this.setFocus     = function () {
     onClick();

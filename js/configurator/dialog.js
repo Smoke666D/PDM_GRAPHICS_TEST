@@ -91,6 +91,7 @@ function CanDialog () {
   function onChunkDragStart ( frame, adr, type ) {
     let coords = frames[frame].getCoords( adr, function ( x, y ) {});
     getAvalibleZones( frame, adr, type );
+    frames[frame].setFree( adr, type );
     current = null;
     shadow.setWidth( type );
     shadow.move( coords.x, coords.y );
@@ -108,10 +109,11 @@ function CanDialog () {
     });
     return;
   }
-  function onChunkDrop ( adr ) {
+  function onChunkDrop ( adr, type ) {
     if ( typeof( onChange ) == "function" ) {
       onChange( adr, current.frame, current.byte );
     }
+    frames[current.frame].setFull( current.byte, type );
     return { "x" : current.left, "y" : ( current.top + rowPadding ), "frame" : current.frame, "adr" : current.byte };
   }
   function calcGlobalOffset () {
@@ -123,12 +125,13 @@ function CanDialog () {
               document.getElementById( "modalBox" ).offsetLeft;
     return;
   }
-  function getAvalibleZones ( frame, adr, type  ) {
+  function getAvalibleZones ( startFrame, startAdr, type  ) {
     avalible = [];
     calcGlobalOffset();
     frames.forEach( function( frame, i ) {
       for ( var j=0; j<frame.getSize(); j++ ) {
-        if ( frame.isAdrFree( j, type ) == true ) {
+        if ( ( frame.isAdrFree( j, type ) == true ) || 
+             ( ( i == startFrame ) && ( j == startAdr ) ) ) {
           let coords = frame.getCoords( j, function ( x, y ) {});
           avalible.push({
             "frame"  : i,
