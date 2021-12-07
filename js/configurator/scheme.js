@@ -84,17 +84,17 @@ function Scheme ( id ) {
     if ( type == "input" ) {
       for ( var i=0; i<self.nodes.length; i++ ) {
         if ( i == adr.node ) {
-          self.nodes[i].setPinsInProgress( adr.pin );
+          self.nodes[i].set.pinsInProgress( adr.pin );
         } else {
-          self.nodes[i].setPinsAvailable( "output", data );
+          self.nodes[i].set.pinsAvailable( "output", data );
         }
       }
     } else if ( type == "output" ) {
       for ( var i=0; i<self.nodes.length; i++ ) {
         if ( i == adr.node ) {
-          self.nodes[i].setPinsInProgress( adr.pin );
+          self.nodes[i].set.pinsInProgress( adr.pin );
         } else {
-          self.nodes[i].setPinsAvailable( "input", data );
+          self.nodes[i].set.pinsAvailable( "input", data );
         }
       }
     } else {
@@ -108,10 +108,10 @@ function Scheme ( id ) {
     return;
   }
   function getPinObject ( adr ) {
-    return self.nodes[adr.node].getPinObject( adr.pin );
+    return self.nodes[adr.node].get.pinObject( adr.pin );
   }
   function getPinData ( adr ) {
-    return self.nodes[adr.node].getPinData( adr.pin );
+    return self.nodes[adr.node].get.pinData( adr.pin );
   }
   function removeLinksOfNode ( adr ) {
     for ( var i=0; i<self.links.length; i++ ) {
@@ -163,9 +163,9 @@ function Scheme ( id ) {
   /* Callbacks */
   function linkStart ( adr ) {
     self.resetFocus();
-    let type = self.nodes[adr.node].getPinType( adr.pin );
-    let data = self.nodes[adr.node].getPinData( adr.pin );
-    let link = self.nodes[adr.node].getPinLink( adr.pin );
+    let type = self.nodes[adr.node].get.pinType( adr.pin );
+    let data = self.nodes[adr.node].get.pinData( adr.pin );
+    let link = self.nodes[adr.node].get.pinLink( adr.pin );
     switch ( state ) {
       case "idle":
         console.log();
@@ -183,7 +183,7 @@ function Scheme ( id ) {
           resetPinsAvailable();                                             /* Reset connection operation */
           state = "idle";
         } else {
-          if ( self.nodes[adr.node].getPinState( adr.pin ) == "available" ) {
+          if ( self.nodes[adr.node].get.pinState( adr.pin ) == "available" ) {
             if ( type == "input" ) {
               self.addLink( prevAdr, adr );
             } else {
@@ -211,14 +211,14 @@ function Scheme ( id ) {
     self.inFocus = adr;
     cleanOptionsFild();
     cleanHelpFild();
-    self.nodes[adr].getOptions().forEach( function( option, i) {
+    self.nodes[adr].get.options().forEach( function( option, i) {
       optionsFild.appendChild( option );
       return;
     });
-    helpFild.appendChild( self.nodes[adr].getHelp() );
+    helpFild.appendChild( self.nodes[adr].get.help() );
     self.nodes.forEach( function ( node, i ) {
       if ( i != adr ) {
-        node.resetFocus();
+        node.focus.reset();
       }
       return;
     });
@@ -243,7 +243,7 @@ function Scheme ( id ) {
   }
   this.addNode       = function ( type ) {
     self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrag, beforNodeRemove, beforContextMenu, onNodeFocus ) );
-    self.nodes[nodeID - 1].setFocus();
+    self.nodes[nodeID - 1].focus.set();
     return;
   }
   this.addLink       = function ( from, to ) {
@@ -257,8 +257,8 @@ function Scheme ( id ) {
       currentID = prevLink[0];
       self.links[currentID].setFrom( from, start );
     }
-    self.nodes[from.node].setPinConnected( from.pin, id );
-    self.nodes[to.node].setPinConnected( to.pin, id );
+    self.nodes[from.node].set.pinConnected( from.pin, id );
+    self.nodes[to.node].set.pinConnected( to.pin, id );
 
     return;
   }
@@ -273,14 +273,6 @@ function Scheme ( id ) {
     self.links[id].remove();
     self.links.splice( id, 1 );
     linkID--;
-    /*
-    if ( getPinExpand( to ) == true ) {
-      self.nodes[to.node].expand.counter--;
-      if ( self.nodes[to.node].expand.viewed == self.nodes[to.node].expand.counter ) {
-        self.nodes[to.node].pinExpand();
-      }
-    }
-    */
     return;
   }
   this.removeNode    = function ( id ) {
@@ -310,7 +302,7 @@ function Scheme ( id ) {
     showSchemeHelp();
     showSchemeOptions();
     for ( var i=0; i<self.nodes.length; i++ ) {
-      self.nodes[i].resetFocus();
+      self.nodes[i].focus.reset();
     }
     return;
   }

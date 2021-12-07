@@ -89,18 +89,21 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
   var body                = null;
   var dragFlag            = false;
   var help                = "";
+  var init                = new Init();
   /*----------------------------------------*/
-  this.id      = id;    /* ID number of node               */
-  this.name    = "";    /* Name of the node                */
-  this.type    = type;  /* Function type of node           */
-  this.inputs  = [];    /* Array of inputs pins            */
-  this.outputs = [];    /* Array of outputs pins           */
-  this.focus   = false; /* Is node in focus                */
-  this.x       = 0;     /* Left coordinate in mesh         */
-  this.y       = 0;     /* Top coordinate in mesh          */
-  this.obj     = null;  /* DOM object of node              */
-  this.shift   = 0;     /* Top shift in parent of node box */
-  this.options = [];    /* Options of the node             */
+  this.id      = id;          /* ID number of node               */
+  this.name    = "";          /* Name of the node                */
+  this.type    = type;        /* Function type of node           */
+  this.inputs  = [];          /* Array of inputs pins            */
+  this.outputs = [];          /* Array of outputs pins           */
+  this.x       = 0;           /* Left coordinate in mesh         */
+  this.y       = 0;           /* Top coordinate in mesh          */
+  this.obj     = null;        /* DOM object of node              */
+  this.shift   = 0;           /* Top shift in parent of node box */
+  this.options = [];          /* Options of the node             */
+  this.focus   = new Focus(); /* Is node in focus                */
+  this.get     = new Get();
+  this.set     = new Set();
   /*----------------------------------------*/
   function Drag () {
     var dX         = 0;
@@ -161,9 +164,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     function dragFinish () {
       document.onmouseup   = null;
       document.onmousemove = null;
-      self.x = shadowX;
-      self.y = shadowY;
-      move();
+      self.move( shadowX, shadowY );
       dragCallback( self.id );
       mesh.hideShadow();
       if ( ( cX != startX ) || ( cY != startY ) ) {
@@ -180,6 +181,334 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
       self.obj.onmousedown = dragStart;
     }
     return;
+  }
+  function Get () {
+    this.pinType   = function ( n ) {
+      let find = false;
+      let res  = null;
+      for ( var i=0; i<self.inputs.length; i++ ) {
+        if ( self.inputs[i].id == n ) {
+          res  = "input";
+          find = true;
+          break;
+        }
+      }
+      if ( find == false ) {
+        for ( var i=0; i<self.outputs.length; i++ ) {
+          if ( self.outputs[i].id == n ) {
+            res  = "output";
+            find = true;
+            break;
+          }
+        }
+      }
+      return res;
+    }
+    this.pinData   = function ( n ) {
+      let find = false;
+      let res  = null;
+      for ( var i=0; i<self.inputs.length; i++ ) {
+        if ( self.inputs[i].id == n ) {
+          res  = self.inputs[i].data;
+          find = true;
+          break;
+        }
+      }
+      if ( find == false ) {
+        for ( var i=0; i<self.outputs.length; i++ ) {
+          if ( self.outputs[i].id == n ) {
+            res  = self.outputs[i].data;
+            find = true;
+            break;
+          }
+        }
+      }
+      return res;
+    }
+    this.pinState  = function ( n ) {
+      let find = false;
+      let res  = null;
+      for ( var i=0; i<self.inputs.length; i++ ) {
+        if ( self.inputs[i].id == n ) {
+          res  = self.inputs[i].state;
+          find = true;
+          break;
+        }
+      }
+      if ( find == false ) {
+        for ( var i=0; i<self.outputs.length; i++ ) {
+          if ( self.outputs[i].id == n ) {
+            res  = self.outputs[i].state;
+            find = true;
+            break;
+          }
+        }
+      }
+      return res;
+    }
+    this.pinObject = function ( n ) {
+      let find = false;
+      let res  = null;
+      for ( var i=0; i<self.inputs.length; i++ ) {
+        if ( self.inputs[i].id == n ) {
+          res  = self.inputs[i].obj;
+          find = true;
+          break;
+        }
+      }
+      if ( find == false ) {
+        for ( var i=0; i<self.outputs.length; i++ ) {
+          if ( self.outputs[i].id == n ) {
+            res  = self.outputs[i].obj;
+            find = true;
+            break;
+          }
+        }
+      }
+      return res;
+    }
+    this.pinExpand = function ( n ) {
+      let find = false;
+      let res  = null;
+      for ( var i=0; i<self.inputs.length; i++ ) {
+        if ( self.inputs[i].id == n ) {
+          res  = self.inputs[i].expand;
+          find = true;
+          break;
+        }
+      }
+      if ( find == false ) {
+        for ( var i=0; i<self.outputs.length; i++ ) {
+          if ( self.outputs[i].id == n ) {
+            res  = self.outputs[i].expand;
+            find = true;
+            break;
+          }
+        }
+      }
+      return res;
+    }
+    this.pinLink   = function ( n ) {
+      let find = false;
+      let res  = null;
+      for ( var i=0; i<self.inputs.length; i++ ) {
+        if ( ( self.inputs[i].id == n ) && ( self.inputs[i].linked == true ) ) {
+          res  = self.inputs[i].linkedWith;
+          find = true;
+          break;
+        }
+      }
+      if ( find == false ) {
+        for ( var i=0; i<self.outputs.length; i++ ) {
+          if ( ( self.outputs[i].id == n ) && ( self.outputs[i].linked == true ) ) {
+            res  = self.outputs[i].linkedWith;
+            find = true;
+            break;
+          }
+        }
+      }
+      return res;
+    }
+    this.links     = function () {
+      let links = [];
+      for ( var i=0; i<self.inputs.length; i++ ) {
+        if ( self.inputs[i].linked == true ) {
+          for ( var j=0; j<self.inputs[i].linkedWith.length; j++ ) {
+            links.push( self.inputs[i].linkedWith[j] );
+          }
+        }
+      }
+      for ( var i=0; i<self.outputs.length; i++ ) {
+        if ( self.outputs[i].linked == true ) {
+          links.push( self.outputs[i].linkedWith[0] );
+        }
+      }
+      return links;
+    }
+    this.options   = function () {
+      let out = [];
+      self.options.forEach( function ( option, i ) {
+        let pin = null;
+        if ( self.outputs.length > 0 ) {
+          pin = self.outputs[0];
+        } else if ( self.inputs.length > 0 ) {
+          pin = self.inputs[0];
+        }
+        out.push( option.getBox( pin ) );
+      });
+      return out;
+    }
+    this.help      = function () {
+      let out       = document.createElement( "DIV" );
+      let txt       = document.createElement( "A" );
+      out.className = "pr-2 pl-2";
+      txt.innerHTML = help;
+      out.appendChild( txt );
+      return out;
+    }
+  }
+  function Set () {
+    this.pinsAvailable   = function ( type, data) {
+      for ( var i=0; i<self.inputs.length; i++ ) {
+        self.inputs[i].setAvailable( type, data );
+      }
+      for ( var i=0; i<self.outputs.length; i++ ) {
+        self.outputs[i].setAvailable( type, data );
+      }
+      return;
+    }
+    this.pinsInProgress  = function ( n ) {
+      self.inputs.forEach( function ( input, i ) {
+        if ( input.id == n ) {
+          input.setFrom();
+        }
+        return;
+      });
+      self.outputs.forEach( function ( output, i ) {
+        if ( output.id == n ) {
+          output.setFrom();
+        }
+      });
+      return;
+    }
+    this.pinConnected    = function ( n, link ) {
+      let find = false;
+      for ( var i=0; i<self.inputs.length; i++ ) {
+        if ( self.inputs[i].id == n ) {
+          self.inputs[i].setConnected( link );
+          find = true;
+          break;
+        }
+      }
+      if ( find == false ) {
+        for ( var i=0; i<self.outputs.length; i++ ) {
+          if ( self.outputs[i].id == n ) {
+            self.outputs[i].setConnected( link );
+            find = true;
+            break;
+          }
+        }
+      }
+      return;
+    }
+  }
+  function Focus () {
+    this.state = false;
+    this.set   = function () {
+      self.state = true;
+      body.classList.add( "focus" );
+      focusCallBack( self.id );
+      return;
+    }
+    this.reset = function () {
+      self.state = false;
+      body.classList.remove( "focus" );
+      return;
+    }
+  }
+  function Init () {
+    this.drag    = function () {
+      let drag = new Drag();
+      return;
+    }
+    this.pins    = function () {
+      let inPort  = null;
+      let outPort = null;
+      for ( var i=0; i<self.obj.children.length; i++ ) {
+        if ( self.obj.children[i].className.search( "input" ) > 0 ) {
+          inPort = self.obj.children[i];
+        }
+        if ( self.obj.children[i].className.search( "output" ) > 0 ) {
+          outPort = self.obj.children[i];
+        }
+      }
+      for ( var i=0; i<self.inputs.length; i++ ) {
+        self.inputs[i].setMount( inPort.children[i] );
+        self.inputs[i].setPin( inPort.children[i].children[0] );
+        inPort.children[i].children[0].addEventListener( 'click', ( function () {
+          var j = i;
+          return function () {
+            let adr = new NodeAdr( self.id, self.inputs[j].id );
+            pinCallback( adr );
+          }
+        })());
+      }
+      for ( var i=0; i<self.outputs.length; i++ ) {
+        self.outputs[i].setMount( outPort.children[i] );
+        self.outputs[i].setPin( outPort.children[i].children[0] );
+        outPort.children[i].addEventListener( 'click', ( function () {
+          var j = i;
+          return function () {
+            let adr = new NodeAdr( self.id, self.outputs[j].id );
+            pinCallback( adr );
+          }
+        })());
+      }
+      return;
+    }
+    this.click   = function () {
+      for ( var i=0; i<self.obj.children.length; i++ ) {
+        if ( self.obj.children[i].className == "body" ) {
+          self.obj.children[i].addEventListener( 'click', function () {
+            if ( dragFlag == false ) {
+              self.focus.status = !self.focus.status;
+              if ( self.focus == true ) {
+                self.focus.set();
+              } else {
+                self.focus.reset();
+              }
+            } else {
+              dragFlag   = false;
+              if ( self.focus.state == false ) {
+                self.focus.set();
+              }
+            }
+            return;
+          });
+        }
+      }
+      return;
+    }
+    this.context = function () {
+      for ( var i=0; i<self.obj.children.length; i++ ) {
+        if ( self.obj.children[i].className == "body" ) {
+          self.obj.children[i].addEventListener( 'contextmenu', function () {
+            contextMenuCallback( self.id );
+            menu = new Menu( box, self.obj, menuItems );
+          });
+        }
+      }
+      return;
+    }
+    this.dialog  = function () {
+      function getType () {
+        let type = "byte";
+        self.options.forEach( function ( option, i ) {
+          if ( option.name == "type" ) {
+            type = option.value;
+          }
+        });
+        return type;
+      }
+      let res = null;
+      self.options.forEach( function ( option, i ) {
+        if ( option.name == "adr" ) {
+          switch ( option.select ) {
+            case "canAdr":
+              res = "can";
+              break;
+         } 
+        }
+      });
+      if ( res != null ) {
+        switch ( res ) {
+          case "can" :
+            dialog.addCanChunk( self.id, getType );
+            break;
+        }
+      } 
+      return;
+    }
   }
   /*----------------------------------------*/
   function makeNode ( type ) {
@@ -226,12 +555,6 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
   }
   function show () {
     self.obj.classList.remove( "hide" );
-    return;
-  }
-  function move () {
-    pos = mesh.getPosition( self.x, self.y );
-    self.obj.style.left = pos.x + "px";
-    self.obj.style.top  = pos.y + "px";
     return;
   }
   function draw () {
@@ -317,141 +640,33 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     box.appendChild( self.obj );
     return;
   }
-  function dragInit () {
-    let drag = new Drag();
-    return;
-  }
-  function pinsInit () {
-    let inPort  = null;
-    let outPort = null;
-    for ( var i=0; i<self.obj.children.length; i++ ) {
-      if ( self.obj.children[i].className.search( "input" ) > 0 ) {
-        inPort = self.obj.children[i];
-      }
-      if ( self.obj.children[i].className.search( "output" ) > 0 ) {
-        outPort = self.obj.children[i];
-      }
-    }
-    for ( var i=0; i<self.inputs.length; i++ ) {
-      self.inputs[i].setMount( inPort.children[i] );
-      self.inputs[i].setPin( inPort.children[i].children[0] );
-      inPort.children[i].children[0].addEventListener( 'click', ( function () {
-        var j = i;
-        return function () {
-          let adr = new NodeAdr( self.id, self.inputs[j].id );
-          pinCallback( adr );
-        }
-      })());
-    }
-    for ( var i=0; i<self.outputs.length; i++ ) {
-      self.outputs[i].setMount( outPort.children[i] );
-      self.outputs[i].setPin( outPort.children[i].children[0] );
-      outPort.children[i].addEventListener( 'click', ( function () {
-        var j = i;
-        return function () {
-          let adr = new NodeAdr( self.id, self.outputs[j].id );
-          pinCallback( adr );
-        }
-      })());
-    }
-    return;
-  }
-  function clickInit () {
-    for ( var i=0; i<self.obj.children.length; i++ ) {
-      if ( self.obj.children[i].className == "body" ) {
-        self.obj.children[i].addEventListener( 'click', function () {
-          if ( dragFlag == false ) {
-            self.focus = !self.focus;
-            if ( self.focus == true ) {
-              self.setFocus();
-            } else {
-              self.resetFocus();
-            }
-          } else {
-            dragFlag   = false;
-            if ( self.focus == false ) {
-              self.setFocus();
-            }
-          }
-          return;
-        });
-      }
-    }
-    return;
-  }
-  function contextInit () {
-    for ( var i=0; i<self.obj.children.length; i++ ) {
-      if ( self.obj.children[i].className == "body" ) {
-        self.obj.children[i].addEventListener( 'contextmenu', function () {
-          contextMenuCallback( self.id );
-          menu = new Menu( box, self.obj, menuItems );
-        });
-      }
-    }
-    return;
-  }
-  function dialogInit () {
-    function getType () {
-      let type = "byte";
-      self.options.forEach( function ( option, i ) {
-        if ( option.name == "type" ) {
-          type = option.value;
-        }
-      });
-      return type;
-    }
-    let res = null;
-    self.options.forEach( function ( option, i ) {
-      if ( option.name == "adr" ) {
-        switch ( option.select ) {
-          case "canAdr":
-            res = "can";
-            break;
-       } 
-      }
-    });
-    if ( res != null ) {
-      switch ( res ) {
-        case "can" :
-          dialog.addCanChunk( self.id, getType );
-          break;
-      }
-    } 
-    return;
-  }
-  function init ( type, id, box ) {
+  function startInit ( type, id, box ) {
     makeNode( self.type ); /* Get data from library */
     draw();                /* Draw UI of Node       */
     setSize();             /* Set size of tje box   */
-    move();                /* Move node box in mesh */
-    dragInit();            /* Init drag and drop    */
-    pinsInit();            /* Draw pins PU          */
+    self.move();           /* Move node box in mesh */
+    init.drag();           /* Init drag and drop    */
+    init.pins();           /* Draw pins PU          */
     show();                /* Show UI readynode box */
-    clickInit();           /* Add clixk events      */
-    contextInit();         /* Add context menu      */
-    dialogInit();          /* Add chunks in dialogs */
+    init.click();          /* Add clixk events      */
+    init.context();        /* Add context menu      */
+    init.dialog();         /* Add chunks in dialogs */
     return;
   }
   /*----------------------------------------*/
   this.reInit             = function () {
-    dragInit();
+    init.drag();
   }
-  this.move               = function ( x, y ) {
-    console.log( self.obj.style.top + "/" + self.obj.style.left );
-    self.obj.style.top  = x + "px";
-    self.obj.style.left = y + "px";
-    self.x              = x;
-    self.y              = y;
-    console.log( self.obj.style.top + "/" + self.obj.style.left );
-    return;
-  }
-  this.setPinsAvailable   = function ( type, data) {
-    for ( var i=0; i<self.inputs.length; i++ ) {
-      self.inputs[i].setAvailable( type, data );
+  this.move               = function ( x=null, y=null ) {
+    if ( ( x != null ) && ( typeof( x ) == 'number' ) ) {
+      self.x = x;
     }
-    for ( var i=0; i<self.outputs.length; i++ ) {
-      self.outputs[i].setAvailable( type, data );
+    if ( ( y != null ) && ( typeof( y ) == 'number' ) ) {
+      self.y = y;
     }
+    pos = mesh.getPosition( self.x, self.y );
+    self.obj.style.left = pos.x + "px";
+    self.obj.style.top  = pos.y + "px";
     return;
   }
   this.resetPinsAvailable = function () {
@@ -462,215 +677,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
       self.outputs[i].resetAvailable();
     }
     return;
-  }
-  this.setPinsInProgress  = function ( n ) {
-    self.inputs.forEach( function ( input, i ) {
-      if ( input.id == n ) {
-        input.setFrom();
-      }
-      return;
-    });
-    self.outputs.forEach( function ( output, i ) {
-      if ( output.id == n ) {
-        output.setFrom();
-      }
-    });
-    return;
-  }
-  this.setPinConnected    = function ( n, link ) {
-    let find = false;
-    for ( var i=0; i<self.inputs.length; i++ ) {
-      if ( self.inputs[i].id == n ) {
-        self.inputs[i].setConnected( link );
-        find = true;
-        break;
-      }
-    }
-    if ( find == false ) {
-      for ( var i=0; i<self.outputs.length; i++ ) {
-        if ( self.outputs[i].id == n ) {
-          self.outputs[i].setConnected( link );
-          find = true;
-          break;
-        }
-      }
-    }
-    return;
-  }
-  this.getPinType         = function ( n ) {
-    let find = false;
-    let res  = null;
-    for ( var i=0; i<self.inputs.length; i++ ) {
-      if ( self.inputs[i].id == n ) {
-        res  = "input";
-        find = true;
-        break;
-      }
-    }
-    if ( find == false ) {
-      for ( var i=0; i<self.outputs.length; i++ ) {
-        if ( self.outputs[i].id == n ) {
-          res  = "output";
-          find = true;
-          break;
-        }
-      }
-    }
-    return res;
-  }
-  this.getPinData         = function ( n ) {
-    let find = false;
-    let res  = null;
-    for ( var i=0; i<self.inputs.length; i++ ) {
-      if ( self.inputs[i].id == n ) {
-        res  = self.inputs[i].data;
-        find = true;
-        break;
-      }
-    }
-    if ( find == false ) {
-      for ( var i=0; i<self.outputs.length; i++ ) {
-        if ( self.outputs[i].id == n ) {
-          res  = self.outputs[i].data;
-          find = true;
-          break;
-        }
-      }
-    }
-    return res;
-  }
-  this.getPinState        = function ( n ) {
-    let find = false;
-    let res  = null;
-    for ( var i=0; i<self.inputs.length; i++ ) {
-      if ( self.inputs[i].id == n ) {
-        res  = self.inputs[i].state;
-        find = true;
-        break;
-      }
-    }
-    if ( find == false ) {
-      for ( var i=0; i<self.outputs.length; i++ ) {
-        if ( self.outputs[i].id == n ) {
-          res  = self.outputs[i].state;
-          find = true;
-          break;
-        }
-      }
-    }
-    return res;
-  }
-  this.getPinObject       = function ( n ) {
-    let find = false;
-    let res  = null;
-    for ( var i=0; i<self.inputs.length; i++ ) {
-      if ( self.inputs[i].id == n ) {
-        res  = self.inputs[i].obj;
-        find = true;
-        break;
-      }
-    }
-    if ( find == false ) {
-      for ( var i=0; i<self.outputs.length; i++ ) {
-        if ( self.outputs[i].id == n ) {
-          res  = self.outputs[i].obj;
-          find = true;
-          break;
-        }
-      }
-    }
-    return res;
-  }
-  this.getPinExpand       = function ( n ) {
-    let find = false;
-    let res  = null;
-    for ( var i=0; i<self.inputs.length; i++ ) {
-      if ( self.inputs[i].id == n ) {
-        res  = self.inputs[i].expand;
-        find = true;
-        break;
-      }
-    }
-    if ( find == false ) {
-      for ( var i=0; i<self.outputs.length; i++ ) {
-        if ( self.outputs[i].id == n ) {
-          res  = self.outputs[i].expand;
-          find = true;
-          break;
-        }
-      }
-    }
-    return res;
-  }
-  this.getPinLink         = function ( n ) {
-    let find = false;
-    let res  = null;
-    for ( var i=0; i<self.inputs.length; i++ ) {
-      if ( ( self.inputs[i].id == n ) && ( self.inputs[i].linked == true ) ) {
-        res  = self.inputs[i].linkedWith;
-        find = true;
-        break;
-      }
-    }
-    if ( find == false ) {
-      for ( var i=0; i<self.outputs.length; i++ ) {
-        if ( ( self.outputs[i].id == n ) && ( self.outputs[i].linked == true ) ) {
-          res  = self.outputs[i].linkedWith;
-          find = true;
-          break;
-        }
-      }
-    }
-    return res;
-  }
-  this.getLinks           = function () {
-    let links = [];
-    for ( var i=0; i<self.inputs.length; i++ ) {
-      if ( self.inputs[i].linked == true ) {
-        for ( var j=0; j<self.inputs[i].linkedWith.length; j++ ) {
-          links.push( self.inputs[i].linkedWith[j] );
-        }
-      }
-    }
-    for ( var i=0; i<self.outputs.length; i++ ) {
-      if ( self.outputs[i].linked == true ) {
-        links.push( self.outputs[i].linkedWith[0] );
-      }
-    }
-    return links;
-  }
-  this.setFocus           = function () {
-    self.focus = true;
-    body.classList.add( "focus" );
-    focusCallBack( self.id );
-    return;
-  }
-  this.resetFocus         = function () {
-    self.focus = false;
-    body.classList.remove( "focus" );
-    return;
-  }
-  this.getOptions         = function () {
-    let out = [];
-    self.options.forEach( function ( option, i ) {
-      let pin = null;
-      if ( self.outputs.length > 0 ) {
-        pin = self.outputs[0];
-      } else if ( self.inputs.length > 0 ) {
-        pin = self.inputs[0];
-      }
-      out.push( option.getBox( pin ) );
-    });
-    return out;
-  }
-  this.getHelp            = function () {
-    let out       = document.createElement( "DIV" );
-    let txt       = document.createElement( "A" );
-    out.className = "pr-2 pl-2";
-    txt.innerHTML = help;
-    out.appendChild( txt );
-    return out;
-  }
+  } 
   this.closeMenu          = function () {
     if ( menu != null ) {
       if ( menu.exist == true ) {
@@ -698,7 +705,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     };
   }
   /*----------------------------------------*/
-  init ( type, id, box );
+  startInit ( type, id, box );
   return;
 }
 /*----------------------------------------------------------------------------*/
