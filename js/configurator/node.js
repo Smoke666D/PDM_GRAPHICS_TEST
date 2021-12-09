@@ -391,6 +391,16 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
       }
       return;
     }
+    this.option          = function ( n, value ) {
+      if ( typeof( n ) == 'number' ) {
+        if ( n <= self.options.length ) {
+          self.options.value = value;
+        }
+      } else {
+        console.log( "Wrong n type");
+      }
+      return;
+    }
   }
   function Focus () {
     this.state = false;

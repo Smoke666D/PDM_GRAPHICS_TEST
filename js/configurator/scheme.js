@@ -257,6 +257,20 @@ function Scheme ( id ) {
     return;
   }
   /*----------------------------------------*/
+  this.clean         = function () {
+    self.resetFocus();
+    self.links.forEach( function ( link ) {
+      link.remove();
+      return;
+    });
+    self.links = [];
+    self.nodes.forEach( function ( node ) {
+      node.remove();
+      return;
+    });
+    self.nodes = [];
+    return
+  }
   this.redraw        = function () {
     for ( var i=0; i<self.links.length; i++ ) {
       self.links[i].draw();
@@ -343,18 +357,79 @@ function Scheme ( id ) {
     }
     let data    = new SaveData();    
     data.device = self.device.save();
-    self.nodes.forEach( function ( node, i ) {
+    self.nodes.forEach( function ( node ) {
       data.nodes.push( node.save() );
       return;
     });
-    self.links.forEach( function ( link, i ) {
+    self.links.forEach( function ( link ) {
       data.links.push( link.save() );
       return;
     });
     return data;
   }
   this.load          = function ( data ) {
+    let checker = true;
+    const schemeKeys = ["device", "nodes", "links"];
+    const nodeKeys   = ["id", "name", "options", "x", "y"];
+    const linkKeys   = ["id", "from", "to"];
+    function check ( data0, data1 ) {
+      var res  = true;
+      data0.forEach( function ( key0 ) {
+        let checker = false;
+        data1.forEach( function ( nKey1 ) {
+          if ( nKey1 == key0 ) {
+            checker = true;
+          }
+        });
+        if ( checker == false ) {
+          res = false;
+        }
+      });
+      return res;
+    }
 
+    checker = check( Object.keys( data ), schemeKeys );
+    if ( checker == true ) {
+      checker = self.device.check( data.device );
+      if ( checker == true ) {
+        data.nodes.forEach( function ( node ) {
+          if ( check( Object.keys( node ), nodeKeys ) == false ) {
+            checker = false
+          }
+          return;
+        });
+        if ( checker == true ) {
+          data.links.forEach( function ( link ) {
+            if ( check( link, linkKeys ) == false ) {
+              checker = false;
+            }
+            return;
+          });
+          if ( checker == true ) {
+            self.clean();
+            self.device.load( data.device );
+            data.nodes.forEach( function ( node ) {
+              self.addNode( lib.getTypeByName( node.name ) );
+              self.nodes[nodeID - 1].move( node.x, node.y );
+              node.options.forEach( function ( option, i ) {
+                self.nodes[nodeID - 1].set.option( i, option.value );
+              });
+            });
+            data.links.forEach( function ( link ) {
+              self.addLink( link.from, link.to );
+            });
+          } else {
+            console.log( "Wrong file structure. Link section error" );  
+          }
+        } else {
+          console.log( "Wrong file structure. Node section error" );  
+        }
+      } else {
+        console.log( "Wrong file structure. Device section error" );  
+      }  
+    } else {
+      console.log( "Wrong file structure" );
+    }
     return;
   }
   /*----------------------------------------*/

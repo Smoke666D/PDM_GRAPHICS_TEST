@@ -156,6 +156,16 @@ function NodeLib () {
   this.getNodeRecord    = function ( id ) {
     return records[id];
   }
+  this.getTypeByName  = function ( name ) {
+    let res = null;
+    records.forEach( function ( record, i ) {
+      if ( record.name == name ) {
+        res = i;
+      }
+      return;
+    });
+    return res;
+  }
   this.getSection       = function ( id ) {
     return sections[id];
   }

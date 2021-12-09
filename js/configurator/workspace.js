@@ -16,36 +16,48 @@ function Config () {
     return data;
   }
   this.save = function ( path ) {
-    if ( busy == 0 ) {
-      busy = 1;
-      let text = JSON.stringify( data, null, '  ' );
-      fs.writeFile( path, text, {encoding: "utf8"}, function ( error ) {
-        if ( error ) {
-          console.log( "Error on configuration saving!");
-        }
-        busy = 0;
-        return;
-      });
+    if ( typeof( path ) == 'string' ) {
+      if ( busy == 0 ) {
+        busy = 1;
+        let text = JSON.stringify( data, null, '  ' );
+        fs.writeFile( path, text, {encoding: "utf8"}, function ( error ) {
+          if ( error ) {
+            console.log( "Error on configuration saving!");
+          }
+          busy = 0;
+          return;
+        });
+      } else {
+        console.log( "Save/load operation is busy!");
+      }
     } else {
-      console.log( "Save/load operation is busy!");
+      console.log( "Error on path type! It isn't string" );
     }
     return;
   }
-  this.load = function ( path ) {
-    if ( busy == 0 ) {
-      busy = 1;
-      fs.readFile( path, {encoding: "utf8"}, function ( error, text ) {
-        if ( error ) {
-          console.log( "Error on configuration loading!");
-          busy = 0;
+  this.load = function ( path, callback ) {
+    if ( typeof( path ) == 'string' ) {
+      if ( typeof( callback ) == 'function' ) {
+        if ( busy == 0 ) {
+          busy = 1;
+          fs.readFile( path, {encoding: "utf8"}, function ( error, text ) {
+            if ( error ) {
+              console.log( "Error on configuration loading!");
+              busy = 0;
+            } else {
+              data = JSON.parse( text );
+              callback();
+              busy = 0;
+            }
+          });
         } else {
-          //data.scheme = 
-          //data.can = 
-          busy = 0;
+          console.log( "Save/load operation is busy!");
         }
-      });
+      } else {
+        console.log( "Error on callback type! Iy isn't function" );
+      }
     } else {
-      console.log( "Save/load operation is busy!");
+      console.log( "Error on path type! It isn't string" );
     }
     return;
   }
@@ -82,20 +94,33 @@ function Workspace () {
     });
   }
   this.save = function ( scheme, path ) {
-    config.set( scheme );
-    config.save( path );
+    if ( typeof( path ) == 'string' ) {
+      if ( typeof( sheme ) == 'object' ) {
+        config.set( scheme );
+        config.save( path );
+      } else {
+        console.log( "Error on sheme type! It isn't object" );
+      }
+    } else {
+      console.log( "Error on path type! It isn't string" );
+    }
     return;
   }
-  this.load = function ( path ) {
-    config.load( path );
-    return  config.get();
+  this.load = function ( path, callback ) {
+    if ( typeof( path ) == 'string' ) {
+      if ( typeof( callback ) == 'function' ) {
+        config.load( path, function () {
+          callback( config.get() );
+          return;
+        });
+      } else {
+        console.log( "Error on callback type! Iy isn't function" );
+      }
+    } else {
+      console.log( "Error on path type! It isn't string" );
+    }
+    return;
   }
-
-
-
-  
-
-
   return;
 }
 /*----------------------------------------------------------------------------*/

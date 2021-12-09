@@ -153,7 +153,13 @@ function Configurator ( size ) {
     return;
   }
   function open () {
-    self.scheme.load( workspace.load( 'test.json' ) );
+    remote.dialog.showOpenDialog( remote.getCurrentWindow(), fileOptions ).then( function ( value ) {
+      if ( value.canceled == false ) {
+        workspace.load( value.filePaths[0], function (data) {
+          self.scheme.load( data );
+        });
+      }
+    });
     return;
   }
   function del () {

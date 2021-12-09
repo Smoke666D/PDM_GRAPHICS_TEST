@@ -44,15 +44,39 @@ function NodeAdr ( node = 0, pin = 0 ) {
 }
 function Device () {
   var self    = this;
+  const keys  = [ "id", "speed", "keypad" ];
   this.id     = 0;
   this.speed  = 500;
   this.keypad = "blink8"
-  this.save = function () {
+  this.save  = function () {
     return {
       'id'     : self.id,
       'speed'  : self.speed,
-      'leypad' : self.keypad
+      'keypad' : self.keypad
     };
+  }
+  this.check = function ( data ) {
+    let res = true;
+    keys.forEach( function ( key, i ) {
+      let cheker = false;
+      Object.keys( data ).forEach( function ( dkey, j ) {
+        if ( key == dkey ) {
+          cheker = true;
+        }
+      });
+      if ( cheker == false ) {
+        console.log( key );
+        res = false;
+      }
+      return;
+    });
+    return res;
+  }
+  this.load  = function ( data ) {
+    self.id     = data.id;
+    self.speed  = data.speed;
+    self.keypad = data.keypad;
+    return;
   }
   return;
 }
