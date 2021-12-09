@@ -166,16 +166,48 @@ function Configurator ( size ) {
     self.scheme.removeInFocus();
     return;
   }
+  function moveLeft () {
+    if ( self.scheme.inFocus != null ) {
+      if ( self.scheme.nodes[self.scheme.inFocus].x > 0 ) {
+        self.scheme.nodes[self.scheme.inFocus].move( self.scheme.nodes[self.scheme.inFocus].x - 1, self.scheme.nodes[self.scheme.inFocus].y );
+      }
+    }
+    return;
+  }
+  function moveRight () {
+    if ( self.scheme.inFocus != null ) {
+      if ( self.scheme.nodes[self.scheme.inFocus].x < xSize ) {
+        self.scheme.nodes[self.scheme.inFocus].move( self.scheme.nodes[self.scheme.inFocus].x + 1, self.scheme.nodes[self.scheme.inFocus].y );
+      }
+    }
+    return;
+  }
+  function moveDown () {
+    if ( self.scheme.inFocus != null ) {
+      if ( self.scheme.nodes[self.scheme.inFocus].y < ySize ) {
+        self.scheme.nodes[self.scheme.inFocus].move( self.scheme.nodes[self.scheme.inFocus].x, self.scheme.nodes[self.scheme.inFocus].y + 1 );
+      }
+    }
+    return;
+  }
+  function moveUp () {
+    if ( self.scheme.inFocus != null ) {
+      if ( self.scheme.nodes[self.scheme.inFocus].y > 0 ) {
+        self.scheme.nodes[self.scheme.inFocus].move( self.scheme.nodes[self.scheme.inFocus].x, self.scheme.nodes[self.scheme.inFocus].y - 1 );
+      }
+    }
+    return;
+  }
   function init( size ) {
     workspace.init( function(){} );
     /*-------------------------------------------------*/
     shortcuts.add( "ctrlKey", "s",          function() { save() });
     shortcuts.add( "ctrlKey", "o",          function() { open(); });
     shortcuts.add( null,      "Delete",     function() { del(); });
-    shortcuts.add( "ctrlKey", "ArrowUp",    function() { console.log("move up");  });
-    shortcuts.add( "ctrlKey", "ArrowDown",  function() { console.log("move down"); });
-    shortcuts.add( "ctrlKey", "ArrowLeft",  function() { console.log("move left"); });
-    shortcuts.add( "ctrlKey", "ArrowRight", function() { console.log("move right"); });
+    shortcuts.add( "ctrlKey", "ArrowUp",    function() { moveUp();  });
+    shortcuts.add( "ctrlKey", "ArrowDown",  function() { moveDown(); });
+    shortcuts.add( "ctrlKey", "ArrowLeft",  function() { moveLeft()  });
+    shortcuts.add( "ctrlKey", "ArrowRight", function() { moveRight() });
     shortcuts.add( null,      "Escape",     function() { console.log("escape"); })
     shortcuts.add( null,      "F1",         function() { console.log("get help"); })
     shortcuts.add( "ctrlKey", "a",          function() { console.log("select all"); });
