@@ -170,6 +170,7 @@ function Configurator ( size ) {
     if ( self.scheme.inFocus != null ) {
       if ( self.scheme.nodes[self.scheme.inFocus].x > 0 ) {
         self.scheme.nodes[self.scheme.inFocus].move( self.scheme.nodes[self.scheme.inFocus].x - 1, self.scheme.nodes[self.scheme.inFocus].y );
+        self.scheme.redraw();
       }
     }
     return;
@@ -178,6 +179,7 @@ function Configurator ( size ) {
     if ( self.scheme.inFocus != null ) {
       if ( self.scheme.nodes[self.scheme.inFocus].x < xSize ) {
         self.scheme.nodes[self.scheme.inFocus].move( self.scheme.nodes[self.scheme.inFocus].x + 1, self.scheme.nodes[self.scheme.inFocus].y );
+        self.scheme.redraw();
       }
     }
     return;
@@ -186,6 +188,7 @@ function Configurator ( size ) {
     if ( self.scheme.inFocus != null ) {
       if ( self.scheme.nodes[self.scheme.inFocus].y < ySize ) {
         self.scheme.nodes[self.scheme.inFocus].move( self.scheme.nodes[self.scheme.inFocus].x, self.scheme.nodes[self.scheme.inFocus].y + 1 );
+        self.scheme.redraw();
       }
     }
     return;
@@ -194,6 +197,7 @@ function Configurator ( size ) {
     if ( self.scheme.inFocus != null ) {
       if ( self.scheme.nodes[self.scheme.inFocus].y > 0 ) {
         self.scheme.nodes[self.scheme.inFocus].move( self.scheme.nodes[self.scheme.inFocus].x, self.scheme.nodes[self.scheme.inFocus].y - 1 );
+        self.scheme.redraw();
       }
     }
     return;
