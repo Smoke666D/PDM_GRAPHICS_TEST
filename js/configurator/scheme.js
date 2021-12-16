@@ -140,9 +140,10 @@ function Scheme ( id ) {
     }
   }
   function resetPinsAvailable () {
-    for ( var i=0; i<self.nodes.length; i++ ) {
-      self.nodes[i].resetPinsAvailable();
-    }
+    self.nodes.forEach( function ( node ) {
+      node.resetPinsAvailable();
+      return;
+    });
     return;
   }
   function getPinObject ( adr ) {
@@ -188,9 +189,9 @@ function Scheme ( id ) {
     let type = self.nodes[adr.node].get.pinType( adr.pin );
     let data = self.nodes[adr.node].get.pinData( adr.pin );
     let link = self.nodes[adr.node].get.pinLink( adr.pin );
+    console.log( type + " " + data + " " + link + " " + state);
     switch ( state ) {
       case "idle":
-        console.log();
         if ( type == "output" ) {             /* If output - use previus link */
           prevLink = null;
         } else {
@@ -201,22 +202,35 @@ function Scheme ( id ) {
         state   = "connect";                  /* Set new state                      */
         break;
       case "connect":
-        if ( ( adr.node == prevAdr.node ) && ( adr.pin == prevAdr.pin ) ) { /* Click to same pin */
+        if ( ( ( self.nodes[adr.node].get.pinType( adr.pin ) == self.nodes[prevAdr.node].get.pinType( prevAdr.pin ) ) ) ||
+             ( adr.node == prevAdr.node ) ) {
           resetPinsAvailable();                                             /* Reset connection operation */
-          state = "idle";
+          prevAdr = adr;
+          if ( type == "output" ) {             /* If output - use previus link */
+            prevLink = null;
+          } else {
+            prevLink = self.nodes[adr.node].get.pinLink( adr.pin );
+          }
+          setPinsAvailable( adr, type, data );  /* Show available for connection pins */
         } else {
-          if ( self.nodes[adr.node].get.pinState( adr.pin ) == "available" ) {
-            if ( type == "input" ) {
-              self.addLink( prevAdr, adr );
-            } else {
-              self.addLink( adr, prevAdr );
-            }
-            resetPinsAvailable();
+          if ( ( adr.node == prevAdr.node ) && ( adr.pin == prevAdr.pin ) ) { /* Click to same pin */
+            resetPinsAvailable();                                             /* Reset connection operation */
             state = "idle";
           } else {
-            setPinsAvailable( adr, type, data );
-            prevAdr = adr;
-            state   = "connect";
+            
+            if ( self.nodes[adr.node].get.pinState( adr.pin ) == "available" ) {
+              if ( type == "input" ) {
+                self.addLink( prevAdr, adr );
+              } else {
+                self.addLink( adr, prevAdr );
+              }
+              resetPinsAvailable();
+              state = "idle";
+            } else {
+              setPinsAvailable( adr, type, data );
+              prevAdr = adr;
+              state   = "connect";
+            }
           }
         }
         break;

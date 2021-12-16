@@ -93,6 +93,19 @@ function Link ( from, to, start, end, type, id ) {
   this.from  = new NodeAdr(); /* Coordinates of from pin */
   this.to    = new NodeAdr(); /* Coordinates of to pin   */
   /*----------------------------------------*/
+  function Focus () {
+    var self = this;
+    this.state = false;
+    this.set   = function () {
+      self.state = true;
+      return;
+    }
+    this.reset = function () {
+      self.state = false;
+      return;
+    }
+    return;
+  }
   function init ( from, to, start, end, type, id ) {
     self.id    = id;
     self.from  = from;
@@ -110,6 +123,8 @@ function Link ( from, to, start, end, type, id ) {
       obj              = document.querySelector('.leader-line:last-of-type');
       obj.id           = "link" + self.id;
       obj.style.zIndex = '8';
+      console.log( line );
+      console.log( obj );
     } else {
       line.position();
     }

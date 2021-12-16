@@ -156,7 +156,7 @@ function NodeLib () {
   this.getNodeRecord    = function ( id ) {
     return records[id];
   }
-  this.getTypeByName  = function ( name ) {
+  this.getTypeByName    = function ( name ) {
     let res = null;
     records.forEach( function ( record, i ) {
       if ( record.name == name ) {

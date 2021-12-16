@@ -680,12 +680,12 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     return;
   }
   this.resetPinsAvailable = function () {
-    for ( var i=0; i<self.inputs.length; i++ ) {
-      self.inputs[i].resetAvailable();
-    }
-    for ( var i=0; i<self.outputs.length; i++ ) {
-      self.outputs[i].resetAvailable();
-    }
+    self.inputs.forEach( function ( input ) {
+      input.resetAvailable();
+    });
+    self.outputs.forEach( function ( output ) {
+      output.resetAvailable();
+    });
     return;
   } 
   this.closeMenu          = function () {
