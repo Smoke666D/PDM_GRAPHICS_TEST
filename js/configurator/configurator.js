@@ -72,6 +72,8 @@ function Configurator ( size ) {
   var loadButton      = document.getElementById( 'openFile-button'  );
   let delButton       = document.getElementById( 'delete-button'    );
   let cancelButton    = document.getElementById( 'cancel-button'    );
+  let undoButton      = document.getElementById( 'undo-button'      );
+  let redoButton      = document.getElementById( 'redo-button'      );
   var schemeBox       = document.getElementById( 'scheme'           );
   var schemeFrame     = document.getElementById( 'scheme-frame'     );
   var nodeLibrary     = document.getElementById( 'nodeLib-list'     );
@@ -171,6 +173,12 @@ function Configurator ( size ) {
     self.scheme.cancel();
     return;
   }
+  function undo () {
+    return;
+  }
+  function redo () {
+    return;
+  }
   function moveLeft () {
     if ( self.scheme.inFocus != null ) {
       if ( self.scheme.nodes[self.scheme.inFocus].x > 0 ) {
@@ -248,6 +256,8 @@ function Configurator ( size ) {
     /*-------------------------------------------------*/
     shortcuts.add( "ctrlKey", "s",          function() { save()       });
     shortcuts.add( "ctrlKey", "o",          function() { open();      });
+    shortcuts.add( "ctrlKey", "z",          function() { undo()       });
+    shortcuts.add( "ctrlKey", "y",          function() { redo()       });
     shortcuts.add( null,      "Delete",     function() { del();       });
     shortcuts.add( "ctrlKey", "ArrowUp",    function() { moveUp();    });
     shortcuts.add( "ctrlKey", "ArrowDown",  function() { moveDown();  });
@@ -258,6 +268,7 @@ function Configurator ( size ) {
     shortcuts.add( null,      "Escape",     function() { cancel();    })
     shortcuts.add( null,      "F1",         function() { console.log("get help"); })
     shortcuts.add( "ctrlKey", "a",          function() { console.log("select all"); });
+    
     /*-------------------------------------------------*/
     schemeFrame.addEventListener( 'click', function () {
       if ( self.scheme.isMouseOnNode() == false ) {
@@ -294,6 +305,14 @@ function Configurator ( size ) {
     });
     cancelButton.addEventListener( 'click', function () {
       cancel();
+      return;
+    });
+    undoButton.addEventListener( 'click', function () {
+      undo();
+      return;
+    })
+    redoButton.addEventListener( 'click', function () {
+      redo();
       return;
     });
     /*-------------------------------------------------*/
