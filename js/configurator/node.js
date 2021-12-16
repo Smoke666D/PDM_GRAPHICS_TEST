@@ -5,9 +5,23 @@ var lib     = require('./nodeLib.js').nodeLib;
 var Pin     = require('./primitives.js').Pin;
 var dialog  = require('./dialog.js').dialog;
 /*----------------------------------------------------------------------------*/
+var shiftKey = new ShiftKey();
+/*----------------------------------------------------------------------------*/
 const pinSize      = 10; /*px*/
 const pinMountSize = 16; /*px*/
 /*----------------------------------------------------------------------------*/
+function ShiftKey () {
+  var state = false;
+  this.set = function () {
+    state = true;
+  }
+  this.reset = function () {
+    state = false;
+  }
+  this.get = function () {
+    return state;
+  }
+}
 function Menu ( box, object, items = [] ) {
   var self = this;
   /*----------------------------------------*/
@@ -411,10 +425,10 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
   }
   function Focus () {
     this.state = false;
-    this.set   = function () {
+    this.set   = function ( add = false ) {
       self.state = true;
       body.classList.add( "focus" );
-      focusCallBack( self.id );
+      focusCallBack( self.id, add );
       return;
     }
     this.reset = function () {
@@ -469,12 +483,12 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
           self.obj.children[i].addEventListener( 'click', function () {
             if ( dragFlag == false ) {
               if ( self.focus.status == false ) {
-                self.focus.set();
+                self.focus.set( shiftKey.get() );
               }
             } else {
               dragFlag   = false;
               if ( self.focus.state == false ) {
-                self.focus.set();
+                self.focus.set( false );
               }
             }
             return;
@@ -724,5 +738,6 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
   return;
 }
 /*----------------------------------------------------------------------------*/
-module.exports.Node = Node;
+module.exports.Node     = Node;
+module.exports.shiftKey = shiftKey;
 /*----------------------------------------------------------------------------*/

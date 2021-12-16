@@ -220,7 +220,6 @@ function Scheme ( id ) {
     for ( var i=0; i<self.links.length; i++ ) {
       if ( ( self.links[i].from.node == adr ) || ( self.links[i].to.node == adr ) ) {
         self.removeLink( self.links[i].id );
-        removeLinksOfNode( adr );
         break;
       }
     }
@@ -306,8 +305,12 @@ function Scheme ( id ) {
     }
     return;
   }
-  function onNodeFocus ( adr ) {
-    self.focus.set( adr );
+  function onNodeFocus ( adr, add=false ) {
+    if ( add == false ) {
+      self.focus.set( adr );
+    } else {
+      self.focus.add( adr );
+    }
     cleanOptionsFild();
     cleanHelpFild();
     self.nodes[adr].get.options().forEach( function( option, i) {
@@ -315,12 +318,14 @@ function Scheme ( id ) {
       return;
     });
     helpFild.appendChild( self.nodes[adr].get.help() );
-    self.nodes.forEach( function ( node, i ) {
-      if ( i != adr ) {
-        node.focus.reset();
-      }
-      return;
-    });
+    if ( add == false ) {
+      self.nodes.forEach( function ( node, i ) {
+        if ( i != adr ) {
+          node.focus.reset();
+        }
+        return;
+      });
+    }
     return;
   }
   function beforNodeRemove ( adr ) {
@@ -397,7 +402,11 @@ function Scheme ( id ) {
       removeLinksOfNode( id );
       removeNode( id );
       self.focus.remove( id );
-      self.resetFocus();
+      if ( self.focus.last() != null ) {
+        onNodeFocus( self.focus.last() );
+      } else {
+        self.resetFocus();
+      }
     }
     return;
   }
@@ -435,9 +444,15 @@ function Scheme ( id ) {
     return;
   }
   this.unlink        = function () {
-    self.focus.do( function ( id ) {
-      removeLinksOfNode( id );
-    });
+    if ( self.focus.last() == null ) {
+      self.nodes.forEach( function ( node ) {
+        removeLinksOfNode( node.id );
+      });
+    } else {
+      self.focus.do( function ( id ) {
+        removeLinksOfNode( id );
+      });
+    }
     return;
   }
   this.cancel        = function () {

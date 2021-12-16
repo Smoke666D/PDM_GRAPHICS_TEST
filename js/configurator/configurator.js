@@ -4,6 +4,7 @@ var nodeLib   = require( './nodeLib.js' ).nodeLib;
 var workspace = require( './workspace.js' ).workspace;
 var config    = require( './workspace.js' ).config;
 var remote    = require('electron').remote;
+var shiftKey  = require('./node.js').shiftKey;
 /*----------------------------------------------------------------------------*/
 const fileOptions = {
   defaultPath : remote.app.getPath( 'documents' ) + "/sheme.json",
@@ -389,8 +390,22 @@ function Configurator ( size ) {
       return;
     });
     /*-------------------------------------------------*/
-    document.onkeyup = function ( event ) {
+    document.onkeydown = function ( event ) {
+      if ( shiftKey.get() == false ) {
+        if ( ( event.key == "Shift" ) && 
+           ( event.ctrlKey == false ) &&
+           ( event.altKey  == false ) ) {
+        shiftKey.set();
+      }
+      }
+      return;
+    }
+    document.onkeyup   = function ( event ) {
       shortcuts.process( event );
+      if ( event.shiftKey == false ) {
+        shiftKey.reset();
+      }
+      return;
     }
     /*-------------------------------------------------*/
     drawLibMenu();
