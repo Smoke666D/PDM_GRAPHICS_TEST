@@ -312,7 +312,7 @@ function Configurator ( size ) {
     return;
   }
   function init( size ) {
-    workspace.init( function(){} );
+    workspace.init( function () {} );
     /*-------------------------------------------------*/
     shortcuts.add( "ctrlKey", "s",          "Сохранить схему",                      function() { save()       });
     shortcuts.add( "ctrlKey", "o",          "Загрузить схему",                      function() { open();      });
