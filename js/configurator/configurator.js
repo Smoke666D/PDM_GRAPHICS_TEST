@@ -236,74 +236,74 @@ function Configurator ( size ) {
     return;
   }
   function moveLeft () {
-    if ( self.scheme.inFocus != null ) {
-      if ( self.scheme.nodes[self.scheme.inFocus].x > 0 ) {
-        self.scheme.nodes[self.scheme.inFocus].move( self.scheme.nodes[self.scheme.inFocus].x - 1, self.scheme.nodes[self.scheme.inFocus].y );
+    self.scheme.focus.do( function ( id ) {
+      if ( self.scheme.nodes[id].x > 0 ) {
+        self.scheme.nodes[id].move( self.scheme.nodes[id].x - 1, self.scheme.nodes[id].y );
         self.scheme.redraw();
       }
-    }
+    });
     return;
   }
   function moveRight () {
-    if ( self.scheme.inFocus != null ) {
-      if ( self.scheme.nodes[self.scheme.inFocus].x < xSize ) {
-        self.scheme.nodes[self.scheme.inFocus].move( self.scheme.nodes[self.scheme.inFocus].x + 1, self.scheme.nodes[self.scheme.inFocus].y );
+    self.scheme.focus.do( function ( id ) {
+      if ( self.scheme.nodes[id].x < xSize ) {
+        self.scheme.nodes[id].move( self.scheme.nodes[id].x + 1, self.scheme.nodes[id].y );
         self.scheme.redraw();
       }
-    }
+    });
     return;
   }
   function moveDown () {
-    if ( self.scheme.inFocus != null ) {
-      if ( self.scheme.nodes[self.scheme.inFocus].y < ySize ) {
-        self.scheme.nodes[self.scheme.inFocus].move( self.scheme.nodes[self.scheme.inFocus].x, self.scheme.nodes[self.scheme.inFocus].y + 1 );
+    self.scheme.focus.do( function ( id ) {
+      if ( self.scheme.nodes[id].y < ySize ) {
+        self.scheme.nodes[id].move( self.scheme.nodes[id].x, self.scheme.nodes[id].y + 1 );
         self.scheme.redraw();
       }
-    }
+    });
     return;
   }
   function moveUp () {
-    if ( self.scheme.inFocus != null ) {
-      if ( self.scheme.nodes[self.scheme.inFocus].y > 0 ) {
-        self.scheme.nodes[self.scheme.inFocus].move( self.scheme.nodes[self.scheme.inFocus].x, self.scheme.nodes[self.scheme.inFocus].y - 1 );
+    self.scheme.focus.do( function ( id ) {
+      if ( self.scheme.nodes[id].y > 0 ) {
+        self.scheme.nodes[id].move( self.scheme.nodes[id].x, self.scheme.nodes[id].y - 1 );
         self.scheme.redraw();
       }
-    }
+    });
     return;
   }
   function focusNext () {
     if ( self.scheme.nodes.length > 0 ) {
-      if ( self.scheme.inFocus == null ) {
+      if ( self.scheme.focus.elements.length == 0 ) {
         self.scheme.nodes[0].focus.set();
-      } else {
-        if ( self.scheme.inFocus == ( self.scheme.nodes.length - 1 ) ) {
-          self.scheme.nodes[self.scheme.inFocus].focus.reset();
+      } else if ( self.scheme.focus.elements.length == 1 ) {
+        if ( self.scheme.focus.is( self.scheme.nodes.length - 1 ) == true ) {
+          self.scheme.nodes[self.scheme.focus.last()].focus.reset();
           self.scheme.nodes[0].focus.set();
-          self.scheme.inFocus = 0;
+          self.scheme.focus.elements[0] = 0;
         } else {
-          self.scheme.nodes[self.scheme.inFocus].focus.reset();
-          self.scheme.inFocus++;
-          self.scheme.nodes[self.scheme.inFocus].focus.set();
+          self.scheme.nodes[self.scheme.focus.last()].focus.reset();
+          self.scheme.focus.elements[0]++;
+          self.scheme.nodes[self.scheme.focus.last()].focus.set();
         }
-      }
+      } else {}
     }
     return;
   }
   function focusPrev () {
     if ( self.scheme.nodes.length > 0 ) {
-      if ( self.scheme.inFocus == null ) {
+      if ( self.scheme.focus.elements.length == 0 ) {
         self.scheme.nodes[0].focus.set();
-      } else {
-        if ( self.scheme.inFocus == 0 ) {
-          self.scheme.nodes[self.scheme.inFocus].focus.reset();
+      } else if ( self.scheme.focus.elements.length == 1 ) {
+        if ( self.scheme.focus.is( 0 ) == true ) {
+          self.scheme.nodes[self.scheme.focus.last()].focus.reset();
           self.scheme.nodes[self.scheme.nodes.length-1].focus.set();
-          self.scheme.inFocus = self.scheme.nodes.length - 1;
+          self.scheme.focus.elements[0] = self.scheme.nodes.length - 1;
         } else {
-          self.scheme.nodes[self.scheme.inFocus].focus.reset();
-          self.scheme.inFocus--;
-          self.scheme.nodes[self.scheme.inFocus].focus.set();
+          self.scheme.nodes[self.scheme.focus.last()].focus.reset();
+          self.scheme.focus.elements[0]--;
+          self.scheme.nodes[self.scheme.focus.last()].focus.set();
         }
-      }
+      } else {}
     }
     return;
   }

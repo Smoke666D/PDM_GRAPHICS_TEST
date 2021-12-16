@@ -20,15 +20,15 @@ function Scheme ( id ) {
   var helpFild    = document.getElementById( "content-help" );
   var optionsFild = document.getElementById( "content-options" );
   /*----------------------------------------*/
-  this.id      = 0;          /* ID number of scheme     */
-  this.nodes   = [];         /* Nodes of scheme         */
-  this.links   = [];         /* Links of scheme         */
-  this.options = [];         /* Options of the scheme   */
-  this.help    = "";         /* Help string for options */
-  this.box     = null;       /* Scheme element in DOM   */
-  this.inFocus = null;       /* Array of focus elements */
-  this.device  = null;       /* Data of the device      */
-  this.zoom    = new Zoom(); /* Zoom operations         */
+  this.id      = 0;           /* ID number of scheme      */
+  this.nodes   = [];          /* Nodes of scheme          */
+  this.links   = [];          /* Links of scheme          */
+  this.options = [];          /* Options of the scheme    */
+  this.help    = "";          /* Help string for options  */
+  this.box     = null;        /* Scheme element in DOM    */
+  this.device  = null;        /* Data of the device       */
+  this.zoom    = new Zoom();  /* Zoom operations          */
+  this.focus   = new Focus(); /* Focus elements structure */
   /*----------------------------------------*/
   function Zoom () {
     const scaleStep = 0.1;
@@ -69,6 +69,70 @@ function Scheme ( id ) {
       calc();
       return;
     }
+  }
+  function Focus () {
+    var self      = this;
+    this.elements = [];
+    this.add      = function ( id ) {
+      var exist = false;
+      self.elements.forEach( function ( element ) {
+        if ( element == id ) {
+          exist = true;
+        }
+        return;
+      });
+      if ( exist == false ) {
+        self.elements.push( id );
+      }
+      return;
+    }
+    this.set      = function ( id ) {
+      self.elements.length = 0;
+      self.elements.push( id );
+      return;
+    }
+    this.remove   = function ( id ) {
+      let mark = null;
+      self.elements.forEach( function ( element, i ) {
+        if ( element == id ) {
+          mark = i;
+        }
+      });
+      if ( mark != null ) {
+        for ( i=mark; i<(self.elements.length - 1); i++ ) {
+          self.elements[i] = self.elements[i + 1];
+        }
+        self.elements.length--;
+      }
+      return;
+    }
+    this.reset    = function () {
+      self.elements.length = 0;
+      return;
+    }
+    this.is       = function ( id ) {
+      let res = false;
+      self.elements.forEach( function ( element ) {
+        if ( element == id ) {
+          res = true;
+        }
+      });
+      return res;
+    }
+    this.do       = function ( callback ) {
+      self.elements.forEach( function ( element ) {
+        callback( element );
+      });
+      return;
+    }
+    this.last     = function () {
+      let res = null;
+      if ( self.elements.length > 0 ) {
+        res = self.elements[self.elements.length - 1];
+      }
+      return res;
+    }
+    return;
   }
   /*----------------------------------------*/
   function awaitReady ( callback ) {
@@ -243,7 +307,7 @@ function Scheme ( id ) {
     return;
   }
   function onNodeFocus ( adr ) {
-    self.inFocus = adr;
+    self.focus.set( adr );
     cleanOptionsFild();
     cleanHelpFild();
     self.nodes[adr].get.options().forEach( function( option, i) {
@@ -332,12 +396,16 @@ function Scheme ( id ) {
     if ( id <= self.nodes.length ) {
       removeLinksOfNode( id );
       removeNode( id );
+      self.focus.remove( id );
       self.resetFocus();
     }
     return;
   }
   this.removeInFocus = function () {
-    self.removeNode( self.inFocus );
+    self.focus.do( function ( adr ) {
+      self.removeNode( adr );
+      return;
+    });
     return;
   }
   this.isMouseOnNode = function ( x, y ) {
@@ -351,7 +419,7 @@ function Scheme ( id ) {
     return res;
   }
   this.resetFocus    = function () {
-    self.inFocus = null;
+    self.focus.reset();
     showSchemeHelp();
     showSchemeOptions();
     for ( var i=0; i<self.nodes.length; i++ ) {
@@ -367,9 +435,9 @@ function Scheme ( id ) {
     return;
   }
   this.unlink        = function () {
-    if ( self.inFocus != null ) {
-      removeLinksOfNode( self.inFocus );
-    }
+    self.focus.do( function ( id ) {
+      removeLinksOfNode( id );
+    });
     return;
   }
   this.cancel        = function () {
