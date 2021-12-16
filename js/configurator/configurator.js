@@ -268,7 +268,6 @@ function Configurator ( size ) {
     shortcuts.add( null,      "Escape",     function() { cancel();    })
     shortcuts.add( null,      "F1",         function() { console.log("get help"); })
     shortcuts.add( "ctrlKey", "a",          function() { console.log("select all"); });
-    
     /*-------------------------------------------------*/
     schemeFrame.addEventListener( 'click', function () {
       if ( self.scheme.isMouseOnNode() == false ) {

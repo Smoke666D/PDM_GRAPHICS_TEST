@@ -461,11 +461,8 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
         if ( self.obj.children[i].className == "body" ) {
           self.obj.children[i].addEventListener( 'click', function () {
             if ( dragFlag == false ) {
-              self.focus.status = !self.focus.status;
-              if ( self.focus == true ) {
+              if ( self.focus.status == false ) {
                 self.focus.set();
-              } else {
-                self.focus.reset();
               }
             } else {
               dragFlag   = false;
@@ -651,6 +648,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, contex
     return;
   }
   function startInit ( type, id, box ) {
+    self.focus.status = false;
     makeNode( self.type ); /* Get data from library */
     draw();                /* Draw UI of Node       */
     setSize();             /* Set size of tje box   */
