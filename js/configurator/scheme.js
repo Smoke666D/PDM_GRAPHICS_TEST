@@ -189,7 +189,6 @@ function Scheme ( id ) {
     let type = self.nodes[adr.node].get.pinType( adr.pin );
     let data = self.nodes[adr.node].get.pinData( adr.pin );
     let link = self.nodes[adr.node].get.pinLink( adr.pin );
-    console.log( type + " " + data + " " + link + " " + state);
     switch ( state ) {
       case "idle":
         if ( type == "output" ) {             /* If output - use previus link */
@@ -264,6 +263,10 @@ function Scheme ( id ) {
     self.removeNode( adr );
     return;
   }
+  function onNodeUnlink ( adr ) {
+    removeLinksOfNode( adr );
+    return;
+  }
   function beforContextMenu ( adr ) {
     for ( var i=0; i<self.nodes.length; i++ ) {
       self.nodes[i].closeMenu();
@@ -292,7 +295,7 @@ function Scheme ( id ) {
     return;
   }
   this.addNode       = function ( type ) {
-    self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrag, beforNodeRemove, beforContextMenu, onNodeFocus ) );
+    self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrag, beforNodeRemove, onNodeUnlink, beforContextMenu, onNodeFocus ) );
     self.nodes[nodeID - 1].focus.set();
     return;
   }
@@ -361,6 +364,12 @@ function Scheme ( id ) {
       link.getData();
     });
 
+    return;
+  }
+  this.unlink        = function () {
+    if ( self.inFocus != null ) {
+      removeLinksOfNode( self.inFocus );
+    }
     return;
   }
   this.cancel        = function () {

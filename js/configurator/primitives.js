@@ -15,8 +15,38 @@ const lineTypes       = {
     startSocket : 'bottom',
     endSocket   : 'top'
   },
+  "byte"   : {
+    color       : '#f2333c',
+    animation   : true,
+    size        : 3,
+    startPlug   : 'behind',
+    endPlug     : 'behind',
+    path        : 'straight',
+    startSocket : 'bottom',
+    endSocket   : 'top'
+  },
+  "short"  : {
+    color       : '#33f2e9',
+    animation   : true,
+    size        : 3,
+    startPlug   : 'behind',
+    endPlug     : 'behind',
+    path        : 'straight',
+    startSocket : 'bottom',
+    endSocket   : 'top'
+  },
   "float"  : {
     color       : '#b824bd',
+    animation   : true,
+    size        : 3,
+    startPlug   : 'behind',
+    endPlug     : 'behind',
+    path        : 'straight',
+    startSocket : 'bottom',
+    endSocket   : 'top'
+  },
+  "date"   : {
+    color       : '#f28a33',
     animation   : true,
     size        : 3,
     startPlug   : 'behind',
@@ -119,12 +149,10 @@ function Link ( from, to, start, end, type, id ) {
   /*----------------------------------------*/
   this.draw    = function () {
     if ( line == null ) {
-      line             = new LeaderLine( start, end, lineTypes[type] );
-      obj              = document.querySelector('.leader-line:last-of-type');
-      obj.id           = "link" + self.id;
-      obj.style.zIndex = '8';
-      console.log( line );
-      console.log( obj );
+      line   = new LeaderLine( start, end, lineTypes[type] );
+      obj    = document.querySelector('.leader-line:last-of-type');
+      obj.id = "link" + self.id;
+      obj.classList.add( "link" );
     } else {
       line.position();
     }

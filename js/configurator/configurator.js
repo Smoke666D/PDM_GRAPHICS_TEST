@@ -19,7 +19,57 @@ function HotKey ( first, key, callback ) {
 }
 function Shortcut () {
   var shortcuts = [];
-  this.add     = function ( first, key, callback ) {
+  var helpBox   = document.getElementById( 'shortcutHelp' );
+
+  function addHelpString ( first, key, help ) {
+    let preambola = " ";
+    let keyStr    = " ";
+    switch ( key ) {
+      case "ArrowUp":
+        keyStr = "🠕";
+        break;
+      case "ArrowDown":
+        keyStr = "🠗";
+        break;
+      case "ArrowLeft":
+        keyStr = "🠔";
+        break;
+      case "ArrowRight":
+        keyStr = "🠖";
+        break;
+      default:
+        keyStr = key;
+    }
+    let row  = document.createElement( "DIV" );
+    row.className = "row";
+    let col1 = document.createElement( "DIV" );
+    col1.className = "col-3";
+    if ( first != null ) {
+      switch ( first ) {
+        case "altKey":
+          preambola = "Alt";
+          break;
+        case "shiftKey":
+          preambola = "Shift";
+          break;
+        case "ctrlKey":
+          preambola = "Ctrl";
+          break;
+      }
+      col1.innerHTML = preambola + " + " + keyStr;
+    } else {
+      col1.innerHTML = keyStr;
+    }
+    col2 = document.createElement( "DIV" );
+    col2.className = "col";
+    col2.innerHTML = help;
+    row.appendChild( col1 );
+    row.appendChild( col2 );
+    helpBox.appendChild( row );
+    return;
+  }
+
+  this.add     = function ( first, key, help, callback ) {
     if ( ( ( first == "altKey" ) || ( first == "shiftKey" ) || ( first == "ctrlKey" ) || ( first == null ) ) &&
          ( typeof( callback ) == 'function' ) &&
          ( ( ( key.length == 1 ) && ( typeof( key ) == 'string') ) || 
@@ -42,6 +92,7 @@ function Shortcut () {
              ( key == "ArrowLeft" )  ||
              ( key == "ArrowRight" ) ) ) {
       shortcuts.push( new HotKey( first, key, callback ) );  
+      addHelpString( first, key, help );
     } else {
       console.log( "Wrong shortcut format");
     }
@@ -70,6 +121,7 @@ function Configurator ( size ) {
   var zoomOutButton   = document.getElementById( 'zoomOut-button'   );
   var saveButton      = document.getElementById( 'saveFile-button'  );
   var loadButton      = document.getElementById( 'openFile-button'  );
+  var unlinkButton    = document.getElementById( 'unlink-button'    );
   let delButton       = document.getElementById( 'delete-button'    );
   let cancelButton    = document.getElementById( 'cancel-button'    );
   let undoButton      = document.getElementById( 'undo-button'      );
@@ -165,6 +217,10 @@ function Configurator ( size ) {
     });
     return;
   }
+  function unlink () {
+    self.scheme.unlink();
+    return;
+  }
   function del () {
     self.scheme.removeInFocus();
     return;
@@ -251,23 +307,28 @@ function Configurator ( size ) {
     }
     return;
   }
+  function showHelp () {
+    $("#helpModal").modal('toggle');
+    return;
+  }
   function init( size ) {
     workspace.init( function(){} );
     /*-------------------------------------------------*/
-    shortcuts.add( "ctrlKey", "s",          function() { save()       });
-    shortcuts.add( "ctrlKey", "o",          function() { open();      });
-    shortcuts.add( "ctrlKey", "z",          function() { undo()       });
-    shortcuts.add( "ctrlKey", "y",          function() { redo()       });
-    shortcuts.add( null,      "Delete",     function() { del();       });
-    shortcuts.add( "ctrlKey", "ArrowUp",    function() { moveUp();    });
-    shortcuts.add( "ctrlKey", "ArrowDown",  function() { moveDown();  });
-    shortcuts.add( "ctrlKey", "ArrowLeft",  function() { moveLeft()   });
-    shortcuts.add( "ctrlKey", "ArrowRight", function() { moveRight()  });
-    shortcuts.add( "altKey",  "ArrowUp",    function() { focusNext(); });
-    shortcuts.add( "altKey",  "ArrowDown",  function() { focusPrev(); });
-    shortcuts.add( null,      "Escape",     function() { cancel();    })
-    shortcuts.add( null,      "F1",         function() { console.log("get help"); })
-    shortcuts.add( "ctrlKey", "a",          function() { console.log("select all"); });
+    shortcuts.add( "ctrlKey", "s",          "Сохранить схему",                      function() { save()       });
+    shortcuts.add( "ctrlKey", "o",          "Загрузить схему",                      function() { open();      });
+    shortcuts.add( "ctrlKey", "z",          "Отменить действие",                    function() { undo()       });
+    shortcuts.add( "ctrlKey", "y",          "Повторить действие",                   function() { redo()       });
+    shortcuts.add( "ctrlKey", "u",          "Удалить связи выделенного объекта",    function() { unlink()     });
+    shortcuts.add( "ctrlKey", "a",          "Выделить все объекты",                 function() { console.log("select all"); });
+    shortcuts.add( null,      "F1",         "Показать помощ",                       function() { showHelp();  });
+    shortcuts.add( null,      "Delete",     "Удалить выделенный объект",            function() { del();       });
+    shortcuts.add( null,      "Escape",     "Отменить действие",                    function() { cancel();    });
+    shortcuts.add( "ctrlKey", "ArrowUp",    "Переместить выделенный объект вверх",  function() { moveUp();    });
+    shortcuts.add( "ctrlKey", "ArrowDown",  "Переместить выделенный объект вниз",   function() { moveDown();  });
+    shortcuts.add( "ctrlKey", "ArrowLeft",  "Переместить выделенный объект влево",  function() { moveLeft()   });
+    shortcuts.add( "ctrlKey", "ArrowRight", "Переместить выделенный объект вправо", function() { moveRight()  });
+    shortcuts.add( "altKey",  "ArrowUp",    "Выделить следующий объект",            function() { focusNext(); });
+    shortcuts.add( "altKey",  "ArrowDown",  "Выделить предыдущий объект",           function() { focusPrev(); });
     /*-------------------------------------------------*/
     schemeFrame.addEventListener( 'click', function () {
       if ( self.scheme.isMouseOnNode() == false ) {
@@ -298,6 +359,10 @@ function Configurator ( size ) {
       return;
     });
     /*-------------------------------------------------*/
+    unlinkButton.addEventListener( 'click', function () {
+      unlink();
+      return;
+    });
     delButton.addEventListener( 'click', function () {
       del();
       return;
