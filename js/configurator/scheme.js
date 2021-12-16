@@ -12,7 +12,7 @@ function Scheme ( id ) {
   var self     = this;
   var nodeID   = 0;             /* Counter for nodes          */
   var linkID   = 0;             /* Counter for links          */
-  var state    = "idle";        /* State of scheme            */
+  var state    = "idle";        /* State of scheme ( idle, connect ) */
   var prevAdr  = new NodeAdr(); /* Previus pin for connecting */
   var prevLink = null;          /* Link number for changing   */
   var scale    = 1;             /* Scale of zooming           */
@@ -361,6 +361,15 @@ function Scheme ( id ) {
       link.getData();
     });
 
+    return;
+  }
+  this.cancel        = function () {
+    if ( state == "connect" ) {
+      resetPinsAvailable();
+      state = "idle";
+    } else {
+      self.resetFocus();
+    }
     return;
   }
   this.save          = function () {

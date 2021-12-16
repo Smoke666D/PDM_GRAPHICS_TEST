@@ -71,6 +71,7 @@ function Configurator ( size ) {
   var saveButton      = document.getElementById( 'saveFile-button'  );
   var loadButton      = document.getElementById( 'openFile-button'  );
   let delButton       = document.getElementById( 'delete-button'    );
+  let cancelButton    = document.getElementById( 'cancel-button'    );
   var schemeBox       = document.getElementById( 'scheme'           );
   var schemeFrame     = document.getElementById( 'scheme-frame'     );
   var nodeLibrary     = document.getElementById( 'nodeLib-list'     );
@@ -166,6 +167,10 @@ function Configurator ( size ) {
     self.scheme.removeInFocus();
     return;
   }
+  function cancel () {
+    self.scheme.cancel();
+    return;
+  }
   function moveLeft () {
     if ( self.scheme.inFocus != null ) {
       if ( self.scheme.nodes[self.scheme.inFocus].x > 0 ) {
@@ -250,7 +255,7 @@ function Configurator ( size ) {
     shortcuts.add( "ctrlKey", "ArrowRight", function() { moveRight()  });
     shortcuts.add( "altKey",  "ArrowUp",    function() { focusNext(); });
     shortcuts.add( "altKey",  "ArrowDown",  function() { focusPrev(); });
-    shortcuts.add( null,      "Escape",     function() { console.log("escape"); })
+    shortcuts.add( null,      "Escape",     function() { cancel();    })
     shortcuts.add( null,      "F1",         function() { console.log("get help"); })
     shortcuts.add( "ctrlKey", "a",          function() { console.log("select all"); });
     /*-------------------------------------------------*/
@@ -285,6 +290,10 @@ function Configurator ( size ) {
     /*-------------------------------------------------*/
     delButton.addEventListener( 'click', function () {
       del();
+      return;
+    });
+    cancelButton.addEventListener( 'click', function () {
+      cancel();
       return;
     });
     /*-------------------------------------------------*/
