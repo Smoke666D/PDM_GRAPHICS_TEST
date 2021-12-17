@@ -320,7 +320,6 @@ function Configurator ( size ) {
     shortcuts.add( "ctrlKey", "z",          "Отменить действие",                    function() { undo()       });
     shortcuts.add( "ctrlKey", "y",          "Повторить действие",                   function() { redo()       });
     shortcuts.add( "ctrlKey", "u",          "Удалить связи выделенного объекта",    function() { unlink()     });
-    shortcuts.add( "ctrlKey", "a",          "Выделить все объекты",                 function() { console.log("select all"); });
     shortcuts.add( null,      "F1",         "Показать помощ",                       function() { showHelp();  });
     shortcuts.add( null,      "Delete",     "Удалить выделенный объект",            function() { del();       });
     shortcuts.add( null,      "Escape",     "Отменить действие",                    function() { cancel();    });

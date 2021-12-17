@@ -10,12 +10,11 @@ var NodeAdr = require('./primitives.js').NodeAdr;
 /*----------------------------------------------------------------------------*/
 function Scheme ( id ) {
   var self     = this;
-  var nodeID   = 0;             /* Counter for nodes          */
-  var linkID   = 0;             /* Counter for links          */
+  var nodeID   = 0;             /* Counter for nodes                 */
+  var linkID   = 0;             /* Counter for links                 */
   var state    = "idle";        /* State of scheme ( idle, connect ) */
-  var prevAdr  = new NodeAdr(); /* Previus pin for connecting */
-  var prevLink = null;          /* Link number for changing   */
-  var scale    = 1;             /* Scale of zooming           */
+  var prevAdr  = new NodeAdr(); /* Previus pin for connecting        */
+  var prevLink = null;          /* Link number for changing          */
   /*----------------------------------------*/
   var helpFild    = document.getElementById( "content-help" );
   var optionsFild = document.getElementById( "content-options" );
@@ -31,23 +30,26 @@ function Scheme ( id ) {
   this.focus   = new Focus(); /* Focus elements structure */
   /*----------------------------------------*/
   function Zoom () {
+    var   scale     = 1;   /* Scale of zooming */
     const scaleStep = 0.1;
     const scaleMax  = 3;
     const scaleMin  = 0.5;
     function calc () {
       transformOrigin = [0, 0];
-      var p       = ["webkit", "moz", "ms", "o"];
-      var s       = "scale(" + scale + ")";
-      var oString = ( transformOrigin[0] * 100) + "% " + ( transformOrigin[1] * 100 ) + "%";
-      for ( var i=0; i<p.length; i++ ) {
-        self.box.style[p[i] + "Transform"]       = s;
-        self.box.style[p[i] + "TransformOrigin"] = oString;
-      }
+      const p       = ["webkit", "moz", "ms", "o"];
+      var   s       = "scale(" + scale + ")";
+      var   oString = ( transformOrigin[0] * 100) + "% " + ( transformOrigin[1] * 100 ) + "%";
+      p.forEach( function ( pp ) {
+        self.box.style[pp + "Transform"]       = s;
+        self.box.style[pp + "TransformOrigin"] = oString;
+        return;
+      });
       self.box.style["transform"]       = s;
       self.box.style["transformOrigin"] = oString;
-      for ( var i=0; i<self.links.length; i++ ) {
-        self.links[i].draw();
-      }
+      self.links.forEach( function ( link ) {
+        link.draw();
+        return;
+      });
       return;
     }
     this.in    = function () {
@@ -387,8 +389,8 @@ function Scheme ( id ) {
   this.removeLink    = function ( id ) {
     let to   = self.links[id].to;
     let from = self.links[id].from;
-    self.nodes[to.node].inputs[to.pin].setDisconnected();
-    self.nodes[from.node].outputs[to.pin].setDisconnected();
+    self.nodes[to.node].inputs[to.pin].set.disconnected();
+    self.nodes[from.node].outputs[to.pin].set.disconnected();
     for ( var i=id+1; i<self.links.length; i++ ) {
       self.links[i].id--;
     }

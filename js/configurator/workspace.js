@@ -95,7 +95,7 @@ function Workspace () {
   }
   this.save = function ( scheme, path ) {
     if ( typeof( path ) == 'string' ) {
-      if ( typeof( sheme ) == 'object' ) {
+      if ( typeof( scheme ) == 'object' ) {
         config.set( scheme );
         config.save( path );
       } else {

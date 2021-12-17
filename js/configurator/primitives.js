@@ -194,15 +194,77 @@ function Pin ( id, type, data ) {
   var self  = this;
   var mount = null;
   /*----------------------------------------*/
-  this.id         = 0;          /* ID number, unique in same node    */
-  this.type       = "none";     /* Input or Output or None           */
-  this.data       = "none";     /* Bool or self.start.xoat or String */
-  this.help       = "none";     /* Help tooltip for the pin          */
-  this.table      = false;      /* Data of the pin from table        */
-  this.linked     = false;      /* Is Pin connected to outher pin    */
-  this.linkedWith = [];         /* ID of the Link                    */
-  this.state      = "reserved"; /**/
-  this.obj        = null;       /* Object in DOM                     */
+  this.id         = 0;           /* ID number, unique in same node    */
+  this.type       = "none";      /* Input or Output or None           */
+  this.data       = "none";      /* Bool or self.start.xoat or String */
+  this.help       = "none";      /* Help tooltip for the pin          */
+  this.table      = false;       /* Data of the pin from table        */
+  this.linked     = false;       /* Is Pin connected to outher pin    */
+  this.linkedWith = [];          /* ID of the Link                    */
+  this.state      = "reserved";  /**/
+  this.obj        = null;        /* Object in DOM                     */
+  this.set        = new Set();   /**/
+  this.reset      = new Reset(); /**/
+  /*----------------------------------------*/
+  function Set () {
+    this.connected    = function () {
+      self.linked     = true;
+      self.linkedWith.push( id );
+      self.obj.classList.add( "connected" );
+      self.obj.classList.remove( "disconnected" );
+      this.state = "connected";
+      return;
+    }
+    this.disconnected = function () {
+      self.linked     = false;
+      self.linkedWith = [];
+      self.obj.classList.add( "disconnected" );
+      self.obj.classList.remove( "connected" );
+      this.state = "disconnected";
+      return;
+    }
+    this.from         = function () {
+      mount.classList.add( "from" );
+      return;
+    }
+    this.available    = function ( type, data ) {
+      mount.classList.remove( "available" );
+      if ( ( self.type == type ) && ( ( type == "output" ) || ( self.linked == false ) ) ) {
+        if ( ( self.data == data ) || 
+             ( self.data == "any" ) || 
+             ( data == "any" ) || 
+             ( ( data == "number" ) && ( isNumber( self.data ) == true ) ) ||
+             ( ( self.data == "number" ) && ( isNumber( data ) == true ) ) ) {
+          mount.classList.add( "available" );
+          self.state = "available";       
+        }
+      }
+      return;
+    }
+    this.type         = function ( newType ) {
+      if ( self.data != newType ) {
+        self.obj.classList.remove( self.data );
+        self.data = newType;
+        self.obj.classList.add( self.data );
+      }
+      return;
+    }
+    this.pin          = function ( obj ) {
+      self.obj = obj;
+      return;
+    }
+    this.mount        = function ( obj ) {
+      mount = obj;
+      return;
+    }
+  }
+  function Reset () {
+    this.available = function () {
+      mount.classList.remove( "from" );
+      mount.classList.remove( "available" );
+      return;
+    }
+  }
   /*----------------------------------------*/
   function init ( id, type, data ) {
     self.id         = id;
@@ -214,55 +276,12 @@ function Pin ( id, type, data ) {
     self.linkedWith = [];
     return;
   }
-  /*----------------------------------------*/
-  this.setConnected    = function ( id ) {
-    self.linked     = true;
-    self.linkedWith.push( id );
-    self.obj.classList.add( "connected" );
-    self.obj.classList.remove( "disconnected" );
-    this.state = "connected";
-    return;
-  }
-  this.setDisconnected = function () {
-    self.linked     = false;
-    self.linkedWith = [];
-    self.obj.classList.add( "disconnected" );
-    self.obj.classList.remove( "connected" );
-    this.state = "disconnected";
-    return;
-  }
-  this.setFrom         = function () {
-    mount.classList.add( "from" );
-    return;
-  }
-  this.setAvailable    = function ( type, data ) {
-    mount.classList.remove( "available" );
-    if ( ( self.data == data ) && ( self.type == type ) && ( ( type == "output" ) || ( self.linked == false ) ) ) {
-      mount.classList.add( "available" );
-      self.state = "available";
+  function isNumber ( data ) {
+    let res = false;
+    if ( ( data == "byte"  ) || ( data == "float" ) || ( data == "short" ) ) {
+      res = true;
     }
-    return;
-  }
-  this.resetAvailable  = function () {
-    mount.classList.remove( "from" );
-    mount.classList.remove( "available" );
-    return;
-  }
-  this.setType         = function ( newType ) {
-    if ( self.data != newType ) {
-      self.obj.classList.remove( self.data );
-      self.data = newType;
-      self.obj.classList.add( self.data );
-    }
-    return;
-  }
-  this.setPin          = function ( obj ) {
-    self.obj = obj;
-    return;
-  }
-  this.setMount        = function ( obj ) {
-    mount = obj;
-    return;
+    return res;
   }
   /*----------------------------------------*/
   init( id, type, data );

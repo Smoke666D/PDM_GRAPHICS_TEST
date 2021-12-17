@@ -372,25 +372,25 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
     }
   }
   function Set () {
-    this.pinsAvailable   = function ( type, data) {
+    this.pinsAvailable   = function ( type, data ) {
       for ( var i=0; i<self.inputs.length; i++ ) {
-        self.inputs[i].setAvailable( type, data );
+        self.inputs[i].set.available( type, data );
       }
       for ( var i=0; i<self.outputs.length; i++ ) {
-        self.outputs[i].setAvailable( type, data );
+        self.outputs[i].set.available( type, data );
       }
       return;
     }
     this.pinsInProgress  = function ( n ) {
       self.inputs.forEach( function ( input, i ) {
         if ( input.id == n ) {
-          input.setFrom();
+          input.set.from();
         }
         return;
       });
       self.outputs.forEach( function ( output, i ) {
         if ( output.id == n ) {
-          output.setFrom();
+          output.set.from();
         }
       });
       return;
@@ -399,7 +399,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
       let find = false;
       for ( var i=0; i<self.inputs.length; i++ ) {
         if ( self.inputs[i].id == n ) {
-          self.inputs[i].setConnected( link );
+          self.inputs[i].set.connected( link );
           find = true;
           break;
         }
@@ -407,7 +407,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
       if ( find == false ) {
         for ( var i=0; i<self.outputs.length; i++ ) {
           if ( self.outputs[i].id == n ) {
-            self.outputs[i].setConnected( link );
+            self.outputs[i].set.connected( link );
             find = true;
             break;
           }
@@ -457,8 +457,8 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
         }
       }
       for ( var i=0; i<self.inputs.length; i++ ) {
-        self.inputs[i].setMount( inPort.children[i] );
-        self.inputs[i].setPin( inPort.children[i].children[0] );
+        self.inputs[i].set.mount( inPort.children[i] );
+        self.inputs[i].set.pin( inPort.children[i].children[0] );
         inPort.children[i].children[0].addEventListener( 'click', ( function () {
           var j = i;
           return function () {
@@ -468,8 +468,8 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
         })());
       }
       for ( var i=0; i<self.outputs.length; i++ ) {
-        self.outputs[i].setMount( outPort.children[i] );
-        self.outputs[i].setPin( outPort.children[i].children[0] );
+        self.outputs[i].set.mount( outPort.children[i] );
+        self.outputs[i].set.pin( outPort.children[i].children[0] );
         outPort.children[i].addEventListener( 'click', ( function () {
           var j = i;
           return function () {
@@ -703,10 +703,10 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
   }
   this.resetPinsAvailable = function () {
     self.inputs.forEach( function ( input ) {
-      input.resetAvailable();
+      input.reset.available();
     });
     self.outputs.forEach( function ( output ) {
-      output.resetAvailable();
+      output.reset.available();
     });
     return;
   } 
