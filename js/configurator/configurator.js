@@ -239,7 +239,7 @@ function Configurator ( size ) {
   function moveLeft () {
     self.scheme.focus.do( function ( id ) {
       if ( self.scheme.nodes[id].x > 0 ) {
-        self.scheme.nodes[id].move( self.scheme.nodes[id].x - 1, self.scheme.nodes[id].y );
+        self.scheme.nodes[id].move( ( self.scheme.nodes[id].x - 1 ), self.scheme.nodes[id].y );
         self.scheme.redraw();
       }
     });
@@ -248,7 +248,7 @@ function Configurator ( size ) {
   function moveRight () {
     self.scheme.focus.do( function ( id ) {
       if ( self.scheme.nodes[id].x < xSize ) {
-        self.scheme.nodes[id].move( self.scheme.nodes[id].x + 1, self.scheme.nodes[id].y );
+        self.scheme.nodes[id].move( ( self.scheme.nodes[id].x + 1 ), self.scheme.nodes[id].y );
         self.scheme.redraw();
       }
     });
@@ -257,7 +257,7 @@ function Configurator ( size ) {
   function moveDown () {
     self.scheme.focus.do( function ( id ) {
       if ( self.scheme.nodes[id].y < ySize ) {
-        self.scheme.nodes[id].move( self.scheme.nodes[id].x, self.scheme.nodes[id].y + 1 );
+        self.scheme.nodes[id].move( self.scheme.nodes[id].x, ( self.scheme.nodes[id].y + 1 ) );
         self.scheme.redraw();
       }
     });
@@ -266,7 +266,7 @@ function Configurator ( size ) {
   function moveUp () {
     self.scheme.focus.do( function ( id ) {
       if ( self.scheme.nodes[id].y > 0 ) {
-        self.scheme.nodes[id].move( self.scheme.nodes[id].x, self.scheme.nodes[id].y - 1 );
+        self.scheme.nodes[id].move( self.scheme.nodes[id].x, ( self.scheme.nodes[id].y - 1 ) );
         self.scheme.redraw();
       }
     });

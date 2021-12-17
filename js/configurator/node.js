@@ -139,11 +139,14 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
     function dragStart ( e ) {
       e = e || window.event;
       e.preventDefault();
-      cX = e.clientX;
-      cY = e.clientY;
-      startX = cX;
-      startY = cY;
-      mesh.moveShadow( shadowX, shadowY );
+      cX         = e.clientX;
+      cY         = e.clientY;
+      startX     = cX;
+      startY     = cY;
+      shadowX    = self.x;
+      shadowY    = self.y;
+      meshBorder = mesh.getBorders( shadowX, shadowY );
+      mesh.moveShadow( self.x, self.y );
       mesh.setShadow( parseInt( self.obj.style.height ), parseInt( self.obj.style.width ) );
       document.onmouseup   = dragFinish;
       document.onmousemove = dragProcess;

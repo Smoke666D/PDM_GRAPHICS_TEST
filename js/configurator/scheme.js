@@ -401,10 +401,7 @@ function Scheme ( id ) {
     if ( id <= self.nodes.length ) {
       removeLinksOfNode( id );
       removeNode( id );
-      self.focus.remove( id );
-      if ( self.focus.last() != null ) {
-        onNodeFocus( self.focus.last() );
-      } else {
+      if ( self.focus.elements.length == 0 ) {
         self.resetFocus();
       }
     }
@@ -415,6 +412,8 @@ function Scheme ( id ) {
       self.removeNode( adr );
       return;
     });
+    self.focus.reset();
+    self.resetFocus();
     return;
   }
   this.isMouseOnNode = function ( x, y ) {
