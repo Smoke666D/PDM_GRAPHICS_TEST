@@ -38,7 +38,7 @@ function Scheme ( id ) {
       transformOrigin = [0, 0];
       const p       = ["webkit", "moz", "ms", "o"];
       var   s       = "scale(" + scale + ")";
-      var   oString = ( transformOrigin[0] * 100) + "% " + ( transformOrigin[1] * 100 ) + "%";
+      var   oString = ( transfoyarnrmOrigin[0] * 100) + "% " + ( transformOrigin[1] * 100 ) + "%";
       p.forEach( function ( pp ) {
         self.box.style[pp + "Transform"]       = s;
         self.box.style[pp + "TransformOrigin"] = oString;

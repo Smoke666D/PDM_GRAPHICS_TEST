@@ -89,8 +89,8 @@ function CanDialog () {
   this.data    = null;
 
   function onChunkDragStart ( frame, adr, type ) {
-    let coords = frames[frame].getCoords( adr, function ( x, y ) {});
-    frames[frame].setFree( adr, type );
+    let coords = frames[frame].get.coords( adr, function ( x, y ) {});
+    frames[frame].set.free( adr, type );
     getAvalibleZones( frame, adr, type );
     current = null;
     shadow.setWidth( type );
@@ -113,7 +113,7 @@ function CanDialog () {
     if ( typeof( onChange ) == "function" ) {
       onChange( adr, current.frame, current.byte );
     }
-    frames[current.frame].setFull( current.byte, type );
+    frames[current.frame].set.full( current.byte, type );
     return { "x" : current.left, "y" : ( current.top + rowPadding ), "frame" : current.frame, "adr" : current.byte };
   }
   function calcGlobalOffset () {
@@ -129,17 +129,17 @@ function CanDialog () {
     avalible = [];
     calcGlobalOffset();
     frames.forEach( function( frame, i ) {
-      for ( var j=0; j<frame.getSize(); j++ ) {
-        if ( ( frame.isAdrFree( j, type ) == true ) || 
+      for ( var j=0; j<frame.get.size(); j++ ) {
+        if ( ( frame.is.adrFree( j, type ) == true ) || 
              ( ( i == startFrame ) && ( j == startAdr ) ) ) {
-          let coords = frame.getCoords( j, function ( x, y ) {});
+          let coords = frame.get.coords( j, function ( x, y ) {});
           avalible.push({
             "frame"  : i,
             "byte"   : j,
             "top"    : coords.y - rowPadding,
-            "bottom" : coords.y + frame.getHeight() + rowPadding,
+            "bottom" : coords.y + frame.get.height() + rowPadding,
             "left"   : coords.x,
-            "right"  : coords.x + frame.getByteWidth()
+            "right"  : coords.x + frame.get.byteWidth()
           });
         }
       }
@@ -149,9 +149,9 @@ function CanDialog () {
   }
   function resetSectionsFocus () {
     frames.forEach( function ( frame, i ) {
-      if ( frame.isFocus() == true ) {
+      if ( frame.focus.is() == true ) {
         settings.get( frame )
-        frame.resetFocus();
+        frame.focus.reset();
       }
       return;
     });
@@ -160,7 +160,7 @@ function CanDialog () {
   function isSpace ( type ) {
     let res = null;
     frames.forEach( function ( frame, i ) {
-      if ( frame.isSpace( type ) == true ) {
+      if ( frame.is.space( type ) == true ) {
         res = i;
       }
     });
@@ -171,7 +171,7 @@ function CanDialog () {
     frame.className = "row";
     let cur = frames.length;
     frames.push( new can.Frame( cur, resetSectionsFocus, settings.set ) );
-    frame.appendChild( frames[cur].getBox() );
+    frame.appendChild( frames[cur].get.box() );
     self.content.appendChild( frame );
     return frames.length - 1;
   }
@@ -214,7 +214,7 @@ function CanDialog () {
         chunk.frame = searchFreeFrame( chunk.type );
         chunk.adr   = frames[chunk.frame].addData( chunk.id, chunk.type );
       }
-      frames[chunk.frame].getCoords( chunk.adr, function ( x, y ) {
+      frames[chunk.frame].get.coords( chunk.adr, function ( x, y ) {
         chunk.move( x, y );
       });
     });
@@ -231,8 +231,8 @@ function CanDialog () {
       if ( exist == false ) {
         let adr = searchFreeFrame( type );
         chunks.push( new can.Chunk( id, type, onChunkDragStart, onChunkDraging, onChunkDrop, getType ) );
-        let pointer = frames[adr].addData( id, type );
-        frames[adr].getCoords( pointer, function( x, y ) {
+        let pointer = frames[adr].add.data( id, type );
+        frames[adr].get.coords( pointer, function( x, y ) {
           chunks[chunks.length - 1].place( adr, pointer );
           self.content.appendChild( chunks[chunks.length - 1].getBox() );
         });

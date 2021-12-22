@@ -328,33 +328,128 @@ function Frame ( id=0, onClick, setSettings ) {
   var bytes      = [];
   var onClick    = onClick;
   this.id        = id;
-  this.adr       = 0;
+  this.adr       = id;
   this.subadr    = new Subadr();
   this.cheker    = new Checker();
   this.pointers  = [];
+  this.set       = new Set();
+  this.get       = new Get();
+  this.add       = new Add();
+  this.focus     = new Focus();
+  this.is        = new Is();
+  function Set () {
+    this.full = function ( adr, type ) {
+      let length = getLengthByte( type );
+      for ( var i=0; i<length; i++ ) {
+        bytes[adr + i].setFull();
+      }
+      return;
+    }
+    this.free = function ( adr, type ) {
+      let length = getLengthByte( type );
+      for ( var i=0; i<length; i++ ) {
+        bytes[adr + i].setFree();
+      }
+      return;
+    }
+  }
+  function Get () {
+    this.size = function () {
+      return dataSize;
+    }
+    this.box  = function () {
+      return box;
+    }
+    this.coords = function ( adr, callback ) {
+      setTimeout( function() {
+        callback( bytes[adr].getBox().offsetLeft, bytes[adr].getBox().offsetTop );
+        return;
+      }, 500 );    
+      return { "x" : bytes[adr].getBox().offsetLeft, "y" : bytes[adr].getBox().offsetTop };
+    }
+    this.height = function () {
+      return parseInt( messageBox.offsetHeight );
+    }
+    this.byteWidth = function () {
+      return ( boolWidth * 8 );
+    }
+    this.space = function ( type ) {
+      let adr = null;
+      if ( type != "bool") {
+        for ( var i=0; i<dataSize; i++ ) {
+          if ( self.is.adrFree( i, type ) == true ) {
+            adr = i;
+            break;
+          }
+        }
+      }
+      return adr;
+    }
+  }
+  function Add () {
+    this.data = function ( id, type ) {
+      let adr = self.get.space( type );
+      if ( adr != null ) {
+        self.set.full( adr, type );
+      }
+      return adr;
+    }
+  }
+  function Focus () {
+    this.is = function () {
+      let res = false;
+      if ( messageBox.classList.contains( "focus" ) ) {
+        res = true;
+      }
+      return res;
+    }
+    this.set   = function () {
+      onClick();
+      messageBox.classList.add( "focus" );
+      setSettings( self );
+      return;
+    }
+    this.reset = function () {
+      messageBox.classList.remove( "focus" );
+      return;
+    }
+  }
+  function Is () {
+    this.adrFree = function ( adr, type ) {
+      let res    = false;
+      let acc    = 0;
+      let length = getLengthByte( type );
+      if ( ( ( adr + length ) <= dataSize  ) ) {
+        for ( var i=0; i<length; i++ ) {
+          if ( bytes[adr + i].isFree() == true ) {
+            acc++;
+          }
+        }
+        if ( acc == length ) {
+          res = true;
+        }
+      }
+      return res;
+    }
+    this.space = function ( type ) {
+      let res = false;
+      if ( getSpace( type ) != null ) {
+        res = true;
+      }
+      return res;
+    }
+  }
   function init () {
     clean();
     draw();
     return;
   }
   function clean () {
-    bytes.forEach( function ( byte, i ) {
+    bytes.forEach( function ( byte ) {
       byte.reset();
       return;
     });
     return;
-  }
-  function getSpace ( type ) {
-    let adr = null;
-    if ( type != "bool") {
-      for ( var i=0; i<dataSize; i++ ) {
-        if ( self.isAdrFree( i, type ) == true ) {
-          adr = i;
-          break;
-        }
-      }
-    }
-    return adr;
   }
   function draw () {
     bytes                  = [];
@@ -369,96 +464,16 @@ function Frame ( id=0, onClick, setSettings ) {
       messageBox.appendChild( bytes[i].getBox() );
     }
     messageBox.addEventListener( 'click', function () {
-      self.setFocus();
+      self.focus.set();
     });
     let label       = document.createElement( "H4" );
     label.className = "can";
     label.innerHTML = self.id;
     box.appendChild( label );
     box.appendChild( messageBox );
-    self.setFocus();
+    self.focus.set();
     return;
   };
-  this.isAdrFree    = function ( adr, type ) {
-    let res    = false;
-    let acc    = 0;
-    let length = getLengthByte( type );
-    if ( ( ( adr + length ) <= dataSize  ) ) {
-      for ( var i=0; i<length; i++ ) {
-        if ( bytes[adr + i].isFree() == true ) {
-          acc++;
-        }
-      }
-      if ( acc == length ) {
-        res = true;
-      }
-    }
-    return res;
-  }
-  this.isSpace      = function ( type ) {
-    let res = false;
-    if ( getSpace( type ) != null ) {
-      res = true;
-    }
-    return res;
-  }
-  this.setFull      = function ( adr, type ) {
-    let length = getLengthByte( type );
-    for ( var i=0; i<length; i++ ) {
-      bytes[adr + i].setFull();
-    }
-    return;
-  }
-  this.setFree      = function ( adr, type ) {
-    let length = getLengthByte( type );
-    for ( var i=0; i<length; i++ ) {
-      bytes[adr + i].setFree();
-    }
-    return;
-  }
-  this.setFocus     = function () {
-    onClick();
-    messageBox.classList.add( "focus" );
-    setSettings( self );
-    return;
-  }
-  this.resetFocus   = function () {
-    messageBox.classList.remove( "focus" );
-    return;
-  }
-  this.isFocus      = function () {
-    let res = false;
-    if ( messageBox.classList.contains( "focus" ) ) {
-      res = true;
-    }
-    return res;
-  }
-  this.addData      = function ( id, type ) {
-    let adr = getSpace( type );
-    if ( adr != null ) {
-      self.setFull( adr, type );
-    }
-    return adr;
-  }
-  this.getSize      = function () {
-    return dataSize;
-  }
-  this.getBox       = function () {
-    return box;
-  }
-  this.getCoords    = function ( adr, callback ) {
-    setTimeout( function() {
-      callback( bytes[adr].getBox().offsetLeft, bytes[adr].getBox().offsetTop );
-      return;
-    }, 500 );    
-    return { "x" : bytes[adr].getBox().offsetLeft, "y" : bytes[adr].getBox().offsetTop };
-  }
-  this.getHeight    = function () {
-    return parseInt( messageBox.offsetHeight );
-  }
-  this.getByteWidth = function () {
-    return boolWidth * 8;
-  }
   init();
   return;
 }
