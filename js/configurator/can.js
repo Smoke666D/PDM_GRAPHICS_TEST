@@ -277,10 +277,36 @@ function Chunk ( id, type, onDrag, onDraging, onDrop, getType ) {
   init();
 }
 function Byte ( id ) {
-  var self = this;
-  var box  = null;
-  var id   = id;
+  var self  = this;
+  var box   = null;
+  var id    = id;
   this.free = true;
+  this.get  = new Get();
+  this.set  = new Set();
+  this.is   = new Is();
+  function Get () {
+    this.box = function () {
+      return box;
+    }
+    return;
+  }
+  function Set () {
+    this.full = function ( id ) {
+      self.free = false;
+      return;
+    }
+    this.free = function () {
+      self.free = true;
+      return;
+    }
+    return;
+  }
+  function Is () {
+    this.free = function () {
+      return self.free;
+    }
+    return;
+  }
   function draw () {
     box            = document.createElement( "DIV" );
     box.className   = "can byte-data";
@@ -305,20 +331,6 @@ function Byte ( id ) {
     }
     return;
   }
-  this.isFree  = function () {
-    return self.free;
-  }
-  this.setFull = function ( id ) {
-    self.free = false;
-    return;
-  }
-  this.setFree = function () {
-    self.free = true;
-    return;
-  }
-  this.getBox  = function () {
-    return box;
-  }
   init();
 }
 function Frame ( id=0, onClick, setSettings ) {
@@ -341,14 +353,14 @@ function Frame ( id=0, onClick, setSettings ) {
     this.full = function ( adr, type ) {
       let length = getLengthByte( type );
       for ( var i=0; i<length; i++ ) {
-        bytes[adr + i].setFull();
+        bytes[adr + i].set.full();
       }
       return;
     }
     this.free = function ( adr, type ) {
       let length = getLengthByte( type );
       for ( var i=0; i<length; i++ ) {
-        bytes[adr + i].setFree();
+        bytes[adr + i].set.free();
       }
       return;
     }
@@ -362,10 +374,10 @@ function Frame ( id=0, onClick, setSettings ) {
     }
     this.coords = function ( adr, callback ) {
       setTimeout( function() {
-        callback( bytes[adr].getBox().offsetLeft, bytes[adr].getBox().offsetTop );
+        callback( bytes[adr].get.box().offsetLeft, bytes[adr].get.box().offsetTop );
         return;
       }, 500 );    
-      return { "x" : bytes[adr].getBox().offsetLeft, "y" : bytes[adr].getBox().offsetTop };
+      return { "x" : bytes[adr].get.box().offsetLeft, "y" : bytes[adr].get.box().offsetTop };
     }
     this.height = function () {
       return parseInt( messageBox.offsetHeight );
@@ -421,7 +433,7 @@ function Frame ( id=0, onClick, setSettings ) {
       let length = getLengthByte( type );
       if ( ( ( adr + length ) <= dataSize  ) ) {
         for ( var i=0; i<length; i++ ) {
-          if ( bytes[adr + i].isFree() == true ) {
+          if ( bytes[adr + i].is.free() == true ) {
             acc++;
           }
         }
@@ -461,7 +473,7 @@ function Frame ( id=0, onClick, setSettings ) {
     messageBox.style.width = boolWidth * dataSize * 8;
     for ( var i=0; i<dataSize; i++ ) {
       bytes.push( new Byte( i ) );
-      messageBox.appendChild( bytes[i].getBox() );
+      messageBox.appendChild( bytes[i].get.box() );
     }
     messageBox.addEventListener( 'click', function () {
       self.focus.set();
