@@ -391,7 +391,7 @@ function Option ( data, param = null ) {
   function makeSelectInput () {
     function onClick () {
       if ( ( self.name == "type" ) && ( self.pin != null ) ) {
-        self.pin.setType( self.value );
+        self.pin.set.type( self.value );
       }
       return;
     }
