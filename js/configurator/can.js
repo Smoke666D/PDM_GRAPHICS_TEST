@@ -276,14 +276,19 @@ function Chunk ( id, type, onDrag, onDraging, onDrop, getType ) {
   }
   init();
 }
-function Bit ( id ) {
-  var self = this;
-  var box  = null;
-  var id   = id;
+function Bit ( id, parrent ) {
+  var self    = this;
+  var box     = null;
+  var parrent = parrent;
+  var id      = id;
 
   this.free = true;
   function draw () {
-
+    box             = document.createElement( "DIV" );
+    box.className   = "can bit";
+    box.id          = "bit" + id;
+    box.style.width = boolWidth;
+    parrent.appendChild( box );
     return;
   }
   function init () {
@@ -330,9 +335,9 @@ function Byte ( id ) {
     box             = document.createElement( "DIV" );
     box.className   = "can byte-data";
     box.id          = "byte" + id;
-    box.style.width = boolWidth * 8;
+    box.style.width = ( boolWidth * 8 ) + "px";
     for ( var i=0; i<8; i++ ) {
-      self.bits.push( new Bit( i ) );
+      //self.bits.push( new Bit( i, box ) );
     } 
     if ( i != ( dataSize - 1 ) ) {
       box.className += " common";
@@ -341,8 +346,20 @@ function Byte ( id ) {
     }
     return;
   }
+  function expand () {
+    box.style.width = ( boolWidth * 16 ) + "px";
+  }
+  function shrink () {
+    box.style.width = ( boolWidth * 8 ) + "px";
+  }
   function init () {
     draw();
+    box.addEventListener( "mouseover", function () {
+      //expand();
+    });
+    box.addEventListener( "mouseleave", function () {
+      //shrink();
+    });
     return;
   }
   this.reset   = function () {
@@ -468,7 +485,7 @@ function Frame ( id=0, onClick, setSettings ) {
     }
     this.space = function ( type ) {
       let res = false;
-      if ( getSpace( type ) != null ) {
+      if ( self.get.space( type ) != null ) {
         res = true;
       }
       return res;

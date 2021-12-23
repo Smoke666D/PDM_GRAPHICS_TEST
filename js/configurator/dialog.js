@@ -169,8 +169,9 @@ function CanDialog () {
   function addFrame () {
     let frame       = document.createElement( "DIV" );
     frame.className = "row";
-    let cur = frames.length;
+    let cur         = frames.length;    
     frames.push( new can.Frame( cur, resetSectionsFocus, settings.set ) );
+    frames.forEach( function ( frame ) { frame.adr = parseInt( frame.adr ) });
     frame.appendChild( frames[cur].get.box() );
     self.content.appendChild( frame );
     return frames.length - 1;
@@ -210,9 +211,9 @@ function CanDialog () {
       let prevType = chunk.type;
       chunk.restyle();
       if ( prevType != chunk.type ) {
-        frames[chunk.frame].setFree( chunk.adr, prevType );
+        frames[chunk.frame].set.free( chunk.adr, prevType );
         chunk.frame = searchFreeFrame( chunk.type );
-        chunk.adr   = frames[chunk.frame].addData( chunk.id, chunk.type );
+        chunk.adr   = frames[chunk.frame].add.data( chunk.id, chunk.type );
       }
       frames[chunk.frame].get.coords( chunk.adr, function ( x, y ) {
         chunk.move( x, y );
@@ -242,6 +243,9 @@ function CanDialog () {
   }
   this.removeChunk  = function ( id ) {
     return;
+  }
+  this.getFrames    = function () {
+    return frames;
   }
 }
 function MbDialog () {
@@ -341,6 +345,7 @@ function Modal () {
   }
   this.showCan      = function () {
     currant = "can";
+    console.log( dialogs.can.getFrames() );
     dialogs.can.redraw();
     draw( dialogs.can );
     return;
