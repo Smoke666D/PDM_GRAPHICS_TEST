@@ -276,11 +276,30 @@ function Chunk ( id, type, onDrag, onDraging, onDrop, getType ) {
   }
   init();
 }
+function Bit ( id ) {
+  var self = this;
+  var box  = null;
+  var id   = id;
+
+  this.free = true;
+  function draw () {
+
+    return;
+  }
+  function init () {
+    draw();
+    return;
+  }
+  init();
+  return;
+}
 function Byte ( id ) {
   var self  = this;
   var box   = null;
   var id    = id;
+  
   this.free = true;
+  this.bits = [];
   this.get  = new Get();
   this.set  = new Set();
   this.is   = new Is();
@@ -308,10 +327,13 @@ function Byte ( id ) {
     return;
   }
   function draw () {
-    box            = document.createElement( "DIV" );
+    box             = document.createElement( "DIV" );
     box.className   = "can byte-data";
     box.id          = "byte" + id;
     box.style.width = boolWidth * 8;
+    for ( var i=0; i<8; i++ ) {
+      self.bits.push( new Bit( i ) );
+    } 
     if ( i != ( dataSize - 1 ) ) {
       box.className += " common";
     } else {
@@ -332,6 +354,7 @@ function Byte ( id ) {
     return;
   }
   init();
+  return;
 }
 function Frame ( id=0, onClick, setSettings ) {
   var self       = this;
