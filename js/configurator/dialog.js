@@ -73,7 +73,6 @@ function ExternalDialog () {
 }
 function CanDialog () {
   var self     = this;
-  var names    = [];
   var frames   = [];
   var chunks   = [];
   var avalible = [];
@@ -88,10 +87,10 @@ function CanDialog () {
   this.action  = null;
   this.data    = null;
 
-  function onChunkDragStart ( frame, adr, type ) {
-    let coords = frames[frame].get.coords( adr, function ( x, y ) {});
-    frames[frame].set.free( adr, type );
-    getAvalibleZones( frame, adr, type );
+  function onChunkDragStart ( frame, byte, bit, type ) {
+    let coords = frames[frame].get.coords( byte, bit, function ( x, y ) {});
+    frames[frame].set.free( byte, type );
+    getAvalibleZones( frame, byte, 0, type );
     current = null;
     shadow.setWidth( type );
     shadow.move( coords.x, coords.y );
@@ -113,6 +112,7 @@ function CanDialog () {
     if ( typeof( onChange ) == "function" ) {
       onChange( adr, current.frame, current.byte );
     }
+    shadow.hide();
     frames[current.frame].set.full( current.byte, type );
     return { "x" : current.left, "y" : ( current.top + rowPadding ), "frame" : current.frame, "adr" : current.byte };
   }
@@ -125,22 +125,42 @@ function CanDialog () {
               document.getElementById( "modalBox" ).offsetLeft;
     return;
   }
-  function getAvalibleZones ( startFrame, startAdr, type  ) {
+  function checkZone () {
+    
+  }
+  function getAvalibleZones ( startFrame, startAdr, startBit, type  ) {
     avalible = [];
     calcGlobalOffset();
     frames.forEach( function( frame, i ) {
       for ( var j=0; j<frame.get.size(); j++ ) {
-        if ( ( frame.is.adrFree( j, type ) == true ) || 
-             ( ( i == startFrame ) && ( j == startAdr ) ) ) {
-          let coords = frame.get.coords( j, function ( x, y ) {});
-          avalible.push({
-            "frame"  : i,
-            "byte"   : j,
-            "top"    : coords.y - rowPadding,
-            "bottom" : coords.y + frame.get.height() + rowPadding,
-            "left"   : coords.x,
-            "right"  : coords.x + frame.get.byteWidth()
-          });
+        if ( type == "bool" ) {
+          for ( var k=0; k<8; k++ ) {
+            if ( ( frame.is.adrFree( j, k, type ) == true ) || ( ( k == startBit ) && ( i == startFrame ) && ( j == startAdr ) ) ) {
+              let coords = frame.get.coords( j, k, function ( x, y ) {});
+              avalible.push({
+                "frame"  : i,
+                "byte"   : j,
+                "bit"    : k,
+                "top"    : coords.y - rowPadding,
+                "bottom" : coords.y + frame.get.height() + rowPadding,
+                "left"   : coords.x,
+                "right"  : coords.x + frame.get.byteWidth()
+              });
+            }  
+          }
+        } else {
+          if ( ( frame.is.adrFree( j, 0, type ) == true ) || ( ( i == startFrame ) && ( j == startAdr ) ) ) {
+            let coords = frame.get.coords( j, 0, function ( x, y ) {});
+            avalible.push({
+              "frame"  : i,
+              "byte"   : j,
+              "bit"    : 0,
+              "top"    : coords.y - rowPadding,                      /* from frame */
+              "bottom" : coords.y + frame.get.height() + rowPadding, /* from frame */
+              "left"   : coords.x,                                   /* frome byte and bit */
+              "right"  : coords.x + frame.get.byteWidth()            /* frome byte and bit */
+            });
+          }
         }
       }
       return;
@@ -169,8 +189,9 @@ function CanDialog () {
   function addFrame () {
     let frame       = document.createElement( "DIV" );
     frame.className = "row";
-    let cur = frames.length;
+    let cur         = frames.length;    
     frames.push( new can.Frame( cur, resetSectionsFocus, settings.set ) );
+    frames.forEach( function ( frame ) { frame.adr = parseInt( frame.adr ) });
     frame.appendChild( frames[cur].get.box() );
     self.content.appendChild( frame );
     return frames.length - 1;
@@ -210,11 +231,13 @@ function CanDialog () {
       let prevType = chunk.type;
       chunk.restyle();
       if ( prevType != chunk.type ) {
-        frames[chunk.frame].setFree( chunk.adr, prevType );
+        frames[chunk.frame].set.free( chunk.byte, prevType );
         chunk.frame = searchFreeFrame( chunk.type );
-        chunk.adr   = frames[chunk.frame].addData( chunk.id, chunk.type );
+        let address = frames[chunk.frame].add.data( chunk.id, chunk.type );
+        chunk.byte  = address.byte;
+        chunk.bit   = address.bit;
       }
-      frames[chunk.frame].get.coords( chunk.adr, function ( x, y ) {
+      frames[chunk.frame].get.coords( chunk.byte, chunk.bit, function ( x, y ) {
         chunk.move( x, y );
       });
     });
@@ -229,11 +252,14 @@ function CanDialog () {
         }
       });
       if ( exist == false ) {
-        let adr = searchFreeFrame( type );
+        let adr     = searchFreeFrame( type );
+        let address = frames[adr].add.data( id, type );
+        let byte    = address.byte;
+        let bit     = address.bit;
         chunks.push( new can.Chunk( id, type, onChunkDragStart, onChunkDraging, onChunkDrop, getType ) );
-        let pointer = frames[adr].add.data( id, type );
-        frames[adr].get.coords( pointer, function( x, y ) {
-          chunks[chunks.length - 1].place( adr, pointer );
+        frames[adr].get.coords( byte, bit, function( x, y ) {
+          chunks[chunks.length - 1].place( adr, byte, bit );
+          chunks[chunks.length - 1].move( x, y );
           self.content.appendChild( chunks[chunks.length - 1].getBox() );
         });
       }
@@ -242,6 +268,9 @@ function CanDialog () {
   }
   this.removeChunk  = function ( id ) {
     return;
+  }
+  this.getFrames    = function () {
+    return frames;
   }
 }
 function MbDialog () {

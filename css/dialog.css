@@ -37,6 +37,7 @@
     align-items: center;
     cursor: move;
     opacity: 0.9;
+    z-index: 10;
     border: 1px solid rgba(127, 129, 131, 1);
     border-radius: 0.25rem;
     transition: border 0.5s ease;
@@ -54,6 +55,7 @@
     position: absolute;
     height: 48px;
     width: 80px;
+    z-index: 9;
     background-color: rgba(51, 242, 233, 0.3);
     border-radius: 0.25rem; }
       .can.shadow.hide {
@@ -70,10 +72,13 @@
     padding-top: 6px;
   }
   .can.message {
+    z-index: 8;
     display: flex;
     width: 640px;
     height: 50px;
     border: 1px solid #4c5058;
+    padding-left: 0px;
+    padding-right: 0px;
     border-radius: 0.25rem;
     transition: all 0.5s ease;
     margin-left: 10px; }
@@ -83,20 +88,24 @@
       border-color: rgb(78,213,237); }
   .can.byte-data {
     height: auto;
-    width: 81px;
     display: flex;
-    padding-left: 5px;
-    padding-right: 5px;
+    z-index: 7;
+    transition: all 0.5s ease;
     background-color: #373a40; }
     .can.byte-data.common {
-      border-right: 1px solid #4c5058; }
+      border-right: 2px solid #4c5058; }
     .can.byte-data.last {
-      border-radius: 0.25rem; }
+      border-radius: 0.5rem; }
   .can.bit {
-    width: 10px;
-    border: 1px solid #4c5058;
-    height: 100%;
-  }
+    z-index: 6;
+    height: 100%; }
+    .can.bit.bordered {
+      border-right: 1px solid #4c5058;}
+    .can.bit.last {
+      border-radius: 0.5rem; }
+    .can.bit:hover {
+      //border-color: #4c5058;
+    }
   .can input {
     height: 30px;
     background-color: #373a40;

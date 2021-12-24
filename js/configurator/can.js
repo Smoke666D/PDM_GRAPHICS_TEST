@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------------*/
-const dataSize     = 8;
-const boolWidth    = 10;
+const dataSize  = 8;  /* pc */
+const boolWidth = 10; /* px */
 /*----------------------------------------------------------------------------*/
 function getLength ( type ) {
   let out = 0;
@@ -20,6 +20,9 @@ function getLength ( type ) {
 function getLengthByte ( type ) {
   let out = null;
   switch ( type ) {
+    case 'bool':
+      out = 1;
+      break;
     case 'byte':
       out = 1;
       break;
@@ -31,13 +34,11 @@ function getLengthByte ( type ) {
 }
 /*----------------------------------------------------------------------------*/
 function Subadr () {
-  var self    = this;
   this.enb    = false;
   this.adr    = 0;
   this.length = 1;
 }
 function Checker () {
-  var self     = this;
   this.enb     = false;
   this.timeout = 10;
 }
@@ -48,7 +49,6 @@ function Pointer ( adr, length, id ) {
   this.length = length; /* Length of the data  */
 }
 function Settings () {
-  var self        = this;
   var adr         = null;
   var chekerEnb   = null;
   var checkerTime = null;
@@ -181,7 +181,7 @@ function Shadow () {
     box.style.left = x + "px";
   }
   this.setWidth = function ( type ) {
-    box.style.width = getLength( type ) * boolWidth;
+    box.style.width = ( getLength( type ) * boolWidth ) + "px";
     return;
   }
   init();
@@ -190,6 +190,7 @@ function Shadow () {
 function Chunk ( id, type, onDrag, onDraging, onDrop, getType ) {
   var self      = this;
   var box       = null;
+  var drag      = null;
   var onDrag    = onDrag;
   var onDraging = onDraging;
   var onDrop    = onDrop;
@@ -198,12 +199,13 @@ function Chunk ( id, type, onDrag, onDraging, onDrop, getType ) {
   this.id     = id;
   this.type   = type;
   this.frame  = null;
-  this.adr    = null;
+  this.byte   = null;
+  this.bit    = null;
   this.length = getLength( self.type );
 
   function init () {
     draw();
-    let drag = new Drag();
+    drag = new Drag();
     return;
   }
   function draw () {
@@ -227,7 +229,7 @@ function Chunk ( id, type, onDrag, onDraging, onDrop, getType ) {
       cY = e.clientY;
       document.onmouseup   = dragFinish;
       document.onmousemove = dragProcess;
-      onDrag( self.frame, self.adr, self.type );
+      onDrag( self.frame, self.byte, self.bit, self.type );
       return;
     }
     function dragProcess ( e ) {
@@ -246,7 +248,7 @@ function Chunk ( id, type, onDrag, onDraging, onDrop, getType ) {
       document.onmouseup   = null;
       document.onmousemove = null;
       coords     = onDrop( self.id, self.type );
-      self.adr   = coords.adr;
+      self.byte  = coords.adr;
       self.frame = coords.frame;
       self.move( coords.x, coords.y );
       return;
@@ -261,9 +263,10 @@ function Chunk ( id, type, onDrag, onDraging, onDrop, getType ) {
     }
     return;
   }
-  this.place   = function ( frame, adr ) {
+  this.place   = function ( frame, byte, bit = 0 ) {
     self.frame = frame;
-    self.adr   = adr;
+    self.byte  = byte;
+    self.bit   = bit;
     return;
   }
   this.move    = function ( x, y ) {
@@ -276,25 +279,93 @@ function Chunk ( id, type, onDrag, onDraging, onDrop, getType ) {
   }
   init();
 }
-function Byte ( id ) {
-  var self = this;
-  var box  = null;
-  var id   = id;
-  this.free = true;
+function Bit ( id, parrent ) {
+  var self    = this;
+  var box     = null;
+  var parrent = parrent;
+  var id      = id;
+  this.free   = true;
+  this.get    = new Get();
+  function Get () {
+    this.box = function () {
+      return box;
+    }
+  }
   function draw () {
-    box            = document.createElement( "DIV" );
+    box             = document.createElement( "DIV" );
+    box.className   = "can bit";
+    if ( id != 7 ) {
+      box.className += " bordered";
+    } else {
+      box.className += " last";
+    }
+    box.id          = "bit" + id;
+    box.style.width = boolWidth + "px";
+    parrent.appendChild( box );
+    return;
+  }
+  function init () {
+    draw();
+    return;
+  }
+  init();
+  return;
+}
+function Byte ( id ) {
+  var self  = this;
+  var box   = null;
+  var id    = id;
+  
+  this.free = true;
+  this.bits = [];
+  this.get  = new Get();
+  this.set  = new Set();
+  function Get () {
+    this.box = function () {
+      return box;
+    }
+    return;
+  }
+  function Set () {
+    this.full = function ( id ) {
+      self.free = false;
+      return;
+    }
+    this.free = function () {
+      self.free = true;
+      return;
+    }
+    return;
+  }
+  function draw () {
+    box             = document.createElement( "DIV" );
     box.className   = "can byte-data";
     box.id          = "byte" + id;
-    box.style.width = boolWidth * 8;
-    if ( i != ( dataSize - 1 ) ) {
+    box.style.width = ( boolWidth * 8 ) + "px";
+    for ( var i=0; i<8; i++ ) {
+      self.bits.push( new Bit( i, box ) );
+    }
+    if ( id != ( dataSize - 1 ) ) {
       box.className += " common";
     } else {
       box.className += " last";
     }
     return;
   }
+  function expand () {
+    box.style.width = ( boolWidth * 16 ) + "px";
+  }
+  function shrink () {
+    box.style.width = ( boolWidth * 8 ) + "px";
+  }
   function init () {
     draw();
+    box.addEventListener( "mouseover", function () {
+      //expand();
+    });
+    box.addEventListener( "mouseleave", function () {
+      //shrink();
+    });
     return;
   }
   this.reset   = function () {
@@ -305,21 +376,8 @@ function Byte ( id ) {
     }
     return;
   }
-  this.isFree  = function () {
-    return self.free;
-  }
-  this.setFull = function ( id ) {
-    self.free = false;
-    return;
-  }
-  this.setFree = function () {
-    self.free = true;
-    return;
-  }
-  this.getBox  = function () {
-    return box;
-  }
   init();
+  return;
 }
 function Frame ( id=0, onClick, setSettings ) {
   var self       = this;
@@ -341,14 +399,14 @@ function Frame ( id=0, onClick, setSettings ) {
     this.full = function ( adr, type ) {
       let length = getLengthByte( type );
       for ( var i=0; i<length; i++ ) {
-        bytes[adr + i].setFull();
+        bytes[adr + i].set.full();
       }
       return;
     }
     this.free = function ( adr, type ) {
       let length = getLengthByte( type );
       for ( var i=0; i<length; i++ ) {
-        bytes[adr + i].setFree();
+        bytes[adr + i].set.free();
       }
       return;
     }
@@ -360,12 +418,12 @@ function Frame ( id=0, onClick, setSettings ) {
     this.box  = function () {
       return box;
     }
-    this.coords = function ( adr, callback ) {
+    this.coords = function ( byte, bit, callback ) {
       setTimeout( function() {
-        callback( bytes[adr].getBox().offsetLeft, bytes[adr].getBox().offsetTop );
+        callback( bytes[byte].bits[bit].get.box().offsetLeft, bytes[byte].bits[bit].get.box().offsetTop );
         return;
       }, 500 );    
-      return { "x" : bytes[adr].getBox().offsetLeft, "y" : bytes[adr].getBox().offsetTop };
+      return { "x" : bytes[byte].bits[bit].get.box().offsetLeft, "y" : bytes[byte].bits[bit].get.box().offsetTop };
     }
     this.height = function () {
       return parseInt( messageBox.offsetHeight );
@@ -375,12 +433,15 @@ function Frame ( id=0, onClick, setSettings ) {
     }
     this.space = function ( type ) {
       let adr = null;
-      if ( type != "bool") {
-        for ( var i=0; i<dataSize; i++ ) {
-          if ( self.is.adrFree( i, type ) == true ) {
-            adr = i;
+      for ( var byte=0; byte<dataSize; byte++ ) {
+        for ( var bit=0; bit<8; bit++ ) {
+          if ( self.is.adrFree( byte, bit, type ) == true ) {
+            adr = { "byte" : byte, "bit" : bit };
             break;
           }
+        }
+        if ( adr != null ) {
+          break;
         }
       }
       return adr;
@@ -388,9 +449,9 @@ function Frame ( id=0, onClick, setSettings ) {
   }
   function Add () {
     this.data = function ( id, type ) {
-      let adr = self.get.space( type );
+      let adr  = self.get.space( type );
       if ( adr != null ) {
-        self.set.full( adr, type );
+        self.set.full( adr.byte, type );
       }
       return adr;
     }
@@ -415,17 +476,22 @@ function Frame ( id=0, onClick, setSettings ) {
     }
   }
   function Is () {
-    this.adrFree = function ( adr, type ) {
-      let res    = false;
-      let acc    = 0;
-      let length = getLengthByte( type );
-      if ( ( ( adr + length ) <= dataSize  ) ) {
+    this.adrFree = function ( byte, bit, type ) {
+      let res     = false;
+      let acc     = 0;
+      let length  = getLengthByte( type );
+      let fullLen = getLength( type );
+      let start   = bit;
+      if ( ( ( byte + length ) <= dataSize ) ) {
         for ( var i=0; i<length; i++ ) {
-          if ( bytes[adr + i].isFree() == true ) {
-            acc++;
+          for ( var j=start; j<8; j++ ) {
+            if ( bytes[byte + i].bits[j].free == true ) {
+              acc++;
+            } 
           }
+          start = 0;
         }
-        if ( acc == length ) {
+        if ( acc >= fullLen ) {
           res = true;
         }
       }
@@ -433,7 +499,7 @@ function Frame ( id=0, onClick, setSettings ) {
     }
     this.space = function ( type ) {
       let res = false;
-      if ( getSpace( type ) != null ) {
+      if ( self.get.space( type ) != null ) {
         res = true;
       }
       return res;
@@ -458,10 +524,10 @@ function Frame ( id=0, onClick, setSettings ) {
     box.id                 = "frame" + self.id;
     messageBox             = document.createElement( "DIV" );
     messageBox.className   = "can message";
-    messageBox.style.width = boolWidth * dataSize * 8;
+    messageBox.style.width = ( boolWidth * dataSize * 8 + 2 ) + "px";
     for ( var i=0; i<dataSize; i++ ) {
       bytes.push( new Byte( i ) );
-      messageBox.appendChild( bytes[i].getBox() );
+      messageBox.appendChild( bytes[i].get.box() );
     }
     messageBox.addEventListener( 'click', function () {
       self.focus.set();
