@@ -2,19 +2,35 @@
   "name"    : "node_header",
   "type"    : "inputs",
   "table"   : 0,
-  "width"   : 5,
   "heading" : "Заголовок",
   "short"   : "Header",
   "help"    : "Пользовательский заголовок",
   "options" : [
     {
       "name"   : "label",
-      "text"   : "Коммент",
+      "text"   : "Заголовок",
       "type"   : "string",
       "select" : [],
-      "value"  : ""
+      "value"  : "Header"
     }
   ],
-  "inputs"  : [],
+  "inputs"  : [
+    {
+      "type"   : "null",
+      "help"   : ""
+    },{
+      "type"   : "null",
+      "help"   : ""
+    },{
+      "type"   : "null",
+      "help"   : ""
+    },{
+      "type"   : "null",
+      "help"   : ""
+    },{
+      "type"   : "null",
+      "help"   : ""
+    }
+  ],
   "outputs" : []
 }

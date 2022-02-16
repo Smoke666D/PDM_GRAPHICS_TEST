@@ -633,6 +633,10 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
       } else {
         pin.className += " disconnected";
       }
+      if ( self.inputs[i].data == "null" ) {
+        mount.style.visibility='hidden';
+        pin.style.visibility='hidden';        
+      }
       mount.appendChild( pin );
       inputPort.appendChild( mount );
       $( pin ).tooltip( {
@@ -706,7 +710,9 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
           self.obj.title = option.value;
           break;
         case "pointer":
-          self.header.innerHTML = "P" + option.value; 
+          self.header.innerHTML = "P" + option.value;  
+        case "label":
+          self.header.innerHTML = option.value;  
       }
       return;
     });
