@@ -288,16 +288,17 @@ function Pin ( id, type, data ) {
   /*----------------------------------------*/
   return;
 }
-function Option ( data, param = null ) {
-  var self    = this;
-  var box     = null;
-  var param   = param;
-  this.pin    = null;
-  this.name   = data.name;
-  this.text   = data.text;
-  this.type   = data.type;
-  this.value  = data.value;
-  this.select = data.select;
+function Option ( data, param = null, callback = null ) {
+  var self     = this;
+  var box      = null;
+  var param    = param;
+  var callback = callback;
+  this.pin     = null;
+  this.name    = data.name;
+  this.text    = data.text;
+  this.type    = data.type;
+  this.value   = data.value;
+  this.select  = data.select;
   function numberInputCheck ( obj ) {
     if ( obj.value < obj.min ) {
       obj.value = obj.min;
@@ -337,6 +338,7 @@ function Option ( data, param = null ) {
       } else {
         self.value = false;
       }
+      callback();
       return;
     });
     return out;
@@ -350,6 +352,7 @@ function Option ( data, param = null ) {
     out.addEventListener( 'change', function () {
       numberInputCheck( out );
       self.value = out.value;
+      callback();
       return;
     });
     return out;
@@ -363,6 +366,7 @@ function Option ( data, param = null ) {
     out.addEventListener( 'change', function () {
       numberInputCheck( out );
       self.value = out.value;
+      callback();
       return;
     });
     return out;
@@ -373,6 +377,7 @@ function Option ( data, param = null ) {
     out.value = self.value;
     out.addEventListener( 'change', function () {
       self.value = out.value;
+      callback();
       return;
     });
     return out;
@@ -384,6 +389,7 @@ function Option ( data, param = null ) {
     out.addEventListener( 'change', function () {
       stringInputCheck( out );
       self.value = out.value;
+      callback();
       return;
     });
     return out;

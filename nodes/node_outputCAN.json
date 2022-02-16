@@ -21,6 +21,12 @@
         "frame"  : 0, 
         "chunck" : 0 
       }
+    },{
+      "name"   : "userString",
+      "text"   : "Коммент",
+      "type"   : "string",
+      "select" : [],
+      "value"  : ""
     }
   ],
   "inputs"  : [

@@ -75,6 +75,8 @@
     "node_mathArcctg"     : false,
     "node_mathProc"       : false,
 
+
+    "node_header"         : false,
     "node_inputDIN"       : true,
     "node_inputSW"        : true,
     "node_inputAIN"       : false,

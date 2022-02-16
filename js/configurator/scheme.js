@@ -530,6 +530,7 @@ function Scheme ( id ) {
                 self.nodes[nodeID - 1].set.option( i, option.value );
                 self.nodes[nodeID - 1].options[i].update();
               });
+              self.nodes[nodeID - 1].update();
             });
             data.links.forEach( function ( link ) {
               self.addLink( link.from, link.to );

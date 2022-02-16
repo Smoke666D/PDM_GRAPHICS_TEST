@@ -42,6 +42,12 @@
       "type"   : "string",
       "select" : [],
       "value"  : ""
+    },{
+      "name"   : "userString",
+      "text"   : "Коммент",
+      "type"   : "string",
+      "select" : [],
+      "value"  : ""
     }
   ],
   "inputs"  : [

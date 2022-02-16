@@ -5,7 +5,21 @@
   "heading" : "Указатель",
   "short"   : "P",
   "help"    : "Указатель на переменную",
-  "options" : [],
+  "options" : [
+    {
+      "name"   : "pointer",
+      "text"   : "Цепь",
+      "type"   : "short",
+      "select" : [],
+      "value"  : 0
+    },{
+      "name"   : "userString",
+      "text"   : "Коммент",
+      "type"   : "string",
+      "select" : [],
+      "value"  : ""
+    }
+  ],
   "inputs"  : [],
   "outputs" : [{
     "type"   : "bool",

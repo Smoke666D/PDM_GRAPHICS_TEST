@@ -120,6 +120,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
   this.x       = 0;           /* Left coordinate in mesh         */
   this.y       = 0;           /* Top coordinate in mesh          */
   this.obj     = null;        /* DOM object of node              */
+  this.header  = null;        /* DOM of header in Node body      */
   this.shift   = 0;           /* Top shift in parent of node box */
   this.options = [];          /* Options of the node             */
   this.focus   = new Focus(); /* Is node in focus                */
@@ -542,6 +543,16 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
       } 
       return;
     }
+    this.tooltip = function () {
+      self.options.forEach( function ( option, i ) {
+        if ( option.name == "userString" ) {
+          self.obj.setAttribute( 'data-toggle', 'tooltip' );
+          self.obj.title = option.value;
+        }
+        return;
+      });
+      return;
+    }
   }
   /*----------------------------------------*/
   function makeNode ( type ) {
@@ -572,7 +583,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
       return;
     });
     data.options.forEach( function ( option, i) {
-      self.options.push( new Option( option, self.id  ) );
+      self.options.push( new Option( option, self.id, function() {self.update()} ) );
       return;
     });
     return;
@@ -597,7 +608,6 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
     self.obj.id         = 'node' + self.id;
     self.obj.className  = 'node';
     /*------------ INPUT PORT ------------*/
-    //expandGroupSize
     let inputPort       = document.createElement("DIV");
     inputPort.className = 'port input';
     for ( var i=0; i<self.inputs.length; i++ ) {
@@ -631,11 +641,11 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
       });
     }
     /*--------------- BODY ---------------*/
-    body               = document.createElement("DIV");
-    body.className     = 'body';
-    let bodyText       = document.createElement("A");
-    bodyText.innerHTML = short;
-    body.appendChild( bodyText );
+    body                  = document.createElement("DIV");
+    body.className        = 'body';
+    self.header           = document.createElement("A");
+    self.header.innerHTML = short;
+    body.appendChild( self.header );
     /*----------- OUTPUT PORT ------------*/
     let outputPort       = document.createElement("DIV");
     outputPort.className = 'port output';
@@ -685,9 +695,23 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
     init.click();          /* Add clixk events      */
     init.context();        /* Add context menu      */
     init.dialog();         /* Add chunks in dialogs */
+    init.tooltip();        /* Add tooltip of Node   */
     return;
   }
   /*----------------------------------------*/
+  this.update             = function () {
+    self.options.forEach( function ( option, i ) {
+      switch( option.name ) {
+        case "userString":
+          self.obj.title = option.value;
+          break;
+        case "pointer":
+          self.header.innerHTML = "P" + option.value; 
+      }
+      return;
+    });
+    return;
+  }
   this.reInit             = function () {
     init.drag();
   }
