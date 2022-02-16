@@ -418,7 +418,9 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
     this.option          = function ( n, value ) {
       if ( typeof( n ) == 'number' ) {
         if ( n <= self.options.length ) {
-          self.options.value = value;
+          self.options[n].value = value;
+        } else {
+          console.log( "Wrong option address" );
         }
       } else {
         console.log( "Wrong n type");

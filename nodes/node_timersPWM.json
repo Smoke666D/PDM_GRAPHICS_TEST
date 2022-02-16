@@ -1,0 +1,35 @@
+{
+  "name"    : "node_timersPWM",
+  "type"    : "timers",
+  "table"   : 0,
+  "heading" : "ШИМ",
+  "short"   : "tim",
+  "help"    : "Генератор ШИМ сигнала",
+  "options" : [
+    {
+      "name"   : "delayHight",
+      "text"   : "задержка высокого уровня",
+      "type"   : "short",
+      "select" : [],
+      "value"  : 0
+    },{
+      "name"   : "delayLow",
+      "text"   : "задержка низкого уровня",
+      "type"   : "short",
+      "select" : [],
+      "value"  : 0
+    }
+  ],
+  "inputs"  : [
+    {
+      "type"   : "bool",
+      "help"   : "Запуcк"
+    }
+  ],
+  "outputs" : [
+    {
+      "type"   : "bool",
+      "help"   : "Выходной сигнал ШИМ"
+    }
+  ]
+}

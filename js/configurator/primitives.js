@@ -504,6 +504,14 @@ function Option ( data, param = null ) {
     box.appendChild( col2 );
     return;
   }
+  this.update = function () {
+    if ( self.type == "select" ) {
+      if ( ( self.name == "type" ) && ( self.pin != null ) ) {
+        self.pin.set.type( self.value );
+      }
+    }
+    return;
+  }
   this.getBox = function ( target=null ) {
     if ( target != null ) {
       self.pin = target;

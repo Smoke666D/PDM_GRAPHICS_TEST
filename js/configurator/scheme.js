@@ -484,7 +484,7 @@ function Scheme ( id ) {
     return data;
   }
   this.load          = function ( data ) {
-    let checker = true;
+    let checker      = true;
     const schemeKeys = ["device", "nodes", "links"];
     const nodeKeys   = ["id", "name", "options", "x", "y"];
     const linkKeys   = ["id", "from", "to"];
@@ -503,7 +503,6 @@ function Scheme ( id ) {
       });
       return res;
     }
-
     checker = check( Object.keys( data ), schemeKeys );
     if ( checker == true ) {
       checker = self.device.check( data.device );
@@ -516,7 +515,7 @@ function Scheme ( id ) {
         });
         if ( checker == true ) {
           data.links.forEach( function ( link ) {
-            if ( check( link, linkKeys ) == false ) {
+            if ( check( Object.keys( link ), linkKeys ) == false ) {
               checker = false;
             }
             return;
@@ -529,6 +528,7 @@ function Scheme ( id ) {
               self.nodes[nodeID - 1].move( node.x, node.y );
               node.options.forEach( function ( option, i ) {
                 self.nodes[nodeID - 1].set.option( i, option.value );
+                self.nodes[nodeID - 1].options[i].update();
               });
             });
             data.links.forEach( function ( link ) {

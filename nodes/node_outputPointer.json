@@ -1,0 +1,14 @@
+{
+  "name"    : "node_outputPointer",
+  "type"    : "outputs",
+  "table"   : 0,
+  "heading" : "Указатель",
+  "short"   : "P",
+  "help"    : "Указатель на переменную",
+  "options" : [],
+  "inputs"  : [],
+  "outputs" : [{
+    "type"   : "bool",
+    "help"   : "Данные"
+  }]
+}

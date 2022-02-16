@@ -8,10 +8,10 @@
   "options" : [],
   "inputs"  : [
     {
-      "type"   : "any",
+      "type"   : "short",
       "help"   : "Большее"
     },{
-      "type"   : "any",
+      "type"   : "short",
       "help"   : "Меньшее"
     }
   ],

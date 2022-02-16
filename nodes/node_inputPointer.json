@@ -1,0 +1,16 @@
+{
+  "name"    : "node_inputPointer",
+  "type"    : "inputs",
+  "table"   : 0,
+  "heading" : "Указатель",
+  "short"   : "P",
+  "help"    : "Указатель на переменную",
+  "options" : [],
+  "inputs"  : [
+    {
+      "type"   : "bool",
+      "help"   : "Данные"
+    }
+  ],
+  "outputs" : []
+}

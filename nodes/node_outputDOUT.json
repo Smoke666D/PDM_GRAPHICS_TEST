@@ -50,5 +50,10 @@
       "help"   : "Данные"
     }
   ],
-  "outputs" : []
+  "outputs" : [
+    {
+      "type"   : "short",
+      "help"   : "Ток"
+    }
+  ]
 }

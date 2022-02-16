@@ -1,0 +1,30 @@
+{
+  "name"    : "node_logicOr3",
+  "type"    : "logic",
+  "table"   : 0,
+  "heading" : "Булева ИЛИ 3",
+  "short"   : "or",
+  "help"    : "Булева операция ИЛИ 3",
+  "options" : [],
+  "inputs"  : [
+    {
+      "type"   : "bool",
+      "help"   : "Условие 1"
+    },{
+      "type"   : "bool",
+      "help"   : "Условие 2"
+    },{
+      "type"   : "bool",
+      "help"   : "Условие 3"
+    }
+  ],
+  "outputs" : [
+    {
+      "type"   : "bool",
+      "help"   : "Результат операции"
+    }
+  ],
+  "script" : {
+    "command" : "Or"
+  }
+}
