@@ -10,31 +10,43 @@
       "name"   : "adr",
       "text"   : "канал",
       "type"   : "dout",
+      "select" : [],
       "value"  : 0
     },{
       "name"   : "current nominal",
       "text"   : "ток номинальный",
       "type"   : "byte",
+      "select" : [],
       "value"  : 0
     },{
       "name"   : "current startup",
       "text"   : "ток пусковой",
       "type"   : "byte",
+      "select" : [],
       "value"  : 0
     },{
       "name"   : "delay",
       "text"   : "задержка",
       "type"   : "byte",
+      "select" : [],
       "value"  : 0
     },{
       "name"   : "curve",
       "text"   : "кривая",
       "type"   : "bool",
+      "select" : [],
       "value"  : 0
     },{
       "name"   : "name",
       "text"   : "имя",
       "type"   : "string",
+      "select" : [],
+      "value"  : ""
+    },{
+      "name"   : "userString",
+      "text"   : "Коммент",
+      "type"   : "string",
+      "select" : [],
       "value"  : ""
     }
   ],
@@ -44,5 +56,10 @@
       "help"   : "Данные"
     }
   ],
-  "outputs" : []
+  "outputs" : [
+    {
+      "type"   : "short",
+      "help"   : "Ток"
+    }
+  ]
 }

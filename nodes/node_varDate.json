@@ -7,10 +7,11 @@
   "help"    : "Чтение и запись переменной времени и даты. Можно использовать, как буфер или константу.",
   "options" : [
     {
-      "name"  : "default",
-      "text"  : "значение",
-      "type"  : "date",
-      "value" : 0
+      "name"   : "default",
+      "text"   : "значение",
+      "type"   : "date",
+      "select" : [],
+      "value"  : 0
     }
   ],
   "inputs"  : [

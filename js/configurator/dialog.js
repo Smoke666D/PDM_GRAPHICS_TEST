@@ -2,15 +2,20 @@
 var lib = require('./nodeLib.js').nodeLib;
 var can = require('./can.js');
 /*----------------------------------------------------------------------------*/
-function Dialog () {
+const rowPadding = 5;
+/*----------------------------------------------------------------------------*/
+function ChunkShadow () {
+  var self = this;
+  var box  = null;
+}
+function ExternalDialog () {
   var self     = this;
-  var names    = [];
-  var sections = [];
   this.title   = "";
   this.content = document.createElement( "DIV" );
-  this.action  = null;
+  var names    = [];
+  var sections = [];
 
-  this.makeExternal = function ()  {
+  this.make = function () {
     self.title             = "Переферийные устройства";
     self.content           = document.createElement( "DIV" );
     lib.getExternal().forEach( function ( device, i ) {
@@ -65,7 +70,143 @@ function Dialog () {
     }
     return;
   }
-  this.makeCAN      = function () {
+}
+function CanDialog () {
+  var self     = this;
+  var frames   = [];
+  var chunks   = [];
+  var avalible = [];
+  var settings = new can.Settings();
+  var shadow   = new can.Shadow();
+  var offsetY  = 0;
+  var offsetX  = 0;
+  var current  = null;
+  var onChange = null;
+  this.title   = "";
+  this.content = document.createElement( "DIV" );
+  this.action  = null;
+  this.data    = null;
+
+  function onChunkDragStart ( frame, byte, bit, type ) {
+    let coords = frames[frame].get.coords( byte, bit, function ( x, y ) {});
+    frames[frame].set.free( byte, type );
+    getAvalibleZones( frame, byte, 0, type );
+    current = null;
+    shadow.setWidth( type );
+    shadow.move( coords.x, coords.y );
+    shadow.show();
+    return;
+  }
+  function onChunkDraging ( x, y ) {
+    avalible.forEach( function ( zone, i ) {
+      if ( ( x > ( zone.left + offsetX ) ) && ( x < ( zone.right + offsetX ) ) ) {
+        if ( ( y > ( zone.top + offsetY ) ) && ( y < ( zone.bottom + offsetY ) ) ) {
+          shadow.move( zone.left, ( zone.top + rowPadding ) );
+          current = zone;
+        }
+      }
+    });
+    return;
+  }
+  function onChunkDrop ( adr, type ) {
+    if ( typeof( onChange ) == "function" ) {
+      onChange( adr, current.frame, current.byte );
+    }
+    shadow.hide();
+    frames[current.frame].set.full( current.byte, type );
+    return { "x" : current.left, "y" : ( current.top + rowPadding ), "frame" : current.frame, "adr" : current.byte };
+  }
+  function calcGlobalOffset () {
+    offsetY = document.getElementById( "dialogModal-body" ).offsetTop +
+              document.getElementById( "contentBox" ).offsetTop       +
+              document.getElementById( "modalBox" ).offsetTop;
+    offsetX = document.getElementById( "dialogModal-body" ).offsetLeft +
+              document.getElementById( "contentBox" ).offsetLeft       +
+              document.getElementById( "modalBox" ).offsetLeft;
+    return;
+  }
+  function checkZone () {
+    
+  }
+  function getAvalibleZones ( startFrame, startAdr, startBit, type  ) {
+    avalible = [];
+    calcGlobalOffset();
+    frames.forEach( function( frame, i ) {
+      for ( var j=0; j<frame.get.size(); j++ ) {
+        if ( type == "bool" ) {
+          for ( var k=0; k<8; k++ ) {
+            if ( ( frame.is.adrFree( j, k, type ) == true ) || ( ( k == startBit ) && ( i == startFrame ) && ( j == startAdr ) ) ) {
+              let coords = frame.get.coords( j, k, function ( x, y ) {});
+              avalible.push({
+                "frame"  : i,
+                "byte"   : j,
+                "bit"    : k,
+                "top"    : coords.y - rowPadding,
+                "bottom" : coords.y + frame.get.height() + rowPadding,
+                "left"   : coords.x,
+                "right"  : coords.x + frame.get.byteWidth()
+              });
+            }  
+          }
+        } else {
+          if ( ( frame.is.adrFree( j, 0, type ) == true ) || ( ( i == startFrame ) && ( j == startAdr ) ) ) {
+            let coords = frame.get.coords( j, 0, function ( x, y ) {});
+            avalible.push({
+              "frame"  : i,
+              "byte"   : j,
+              "bit"    : 0,
+              "top"    : coords.y - rowPadding,                      /* from frame */
+              "bottom" : coords.y + frame.get.height() + rowPadding, /* from frame */
+              "left"   : coords.x,                                   /* frome byte and bit */
+              "right"  : coords.x + frame.get.byteWidth()            /* frome byte and bit */
+            });
+          }
+        }
+      }
+      return;
+    });
+    return;
+  }
+  function resetSectionsFocus () {
+    frames.forEach( function ( frame, i ) {
+      if ( frame.focus.is() == true ) {
+        settings.get( frame )
+        frame.focus.reset();
+      }
+      return;
+    });
+    return;
+  }
+  function isSpace ( type ) {
+    let res = null;
+    frames.forEach( function ( frame, i ) {
+      if ( frame.is.space( type ) == true ) {
+        res = i;
+      }
+    });
+    return res;
+  }
+  function addFrame () {
+    let frame       = document.createElement( "DIV" );
+    frame.className = "row";
+    let cur         = frames.length;    
+    frames.push( new can.Frame( cur, resetSectionsFocus, settings.set ) );
+    frames.forEach( function ( frame ) { frame.adr = parseInt( frame.adr ) });
+    frame.appendChild( frames[cur].get.box() );
+    self.content.appendChild( frame );
+    return frames.length - 1;
+  }
+  function searchFreeFrame ( type ) {
+    let adr = isSpace( type );
+    if ( adr == null ) {
+      adr = addFrame();
+    }
+    return adr;
+  }
+  this.initOnChange = function ( callback ) {
+    onChange = callback;
+  }
+  this.make         = function () {
     self.title       = "CAN шина";
     self.content     = document.createElement( "DIV" );
     let bar          = document.createElement( "DIV" );
@@ -74,39 +215,88 @@ function Dialog () {
     button.innerHTML = "+";
     button.className = "small";
     button.addEventListener( 'click', function () {
-      let frame       = document.createElement( "DIV" );
-      frame.className = "row";
-      sections.push( new can.Frame() );
-      frame.appendChild( new can.Frame().getBox() );
-      self.content.appendChild( frame );
+      addFrame();
     });
     bar.appendChild( button );
     self.content.appendChild( bar );
+    self.content.appendChild( shadow.getBox() );
+    self.content.appendChild( settings.draw() );
     self.action = function () {
       return;
     }
     return;
   }
-  this.makeMB       = function () {
+  this.redraw       = function () {
+    chunks.forEach( function( chunk, i ) {
+      let prevType = chunk.type;
+      chunk.restyle();
+      if ( prevType != chunk.type ) {
+        frames[chunk.frame].set.free( chunk.byte, prevType );
+        chunk.frame = searchFreeFrame( chunk.type );
+        let address = frames[chunk.frame].add.data( chunk.id, chunk.type );
+        chunk.byte  = address.byte;
+        chunk.bit   = address.bit;
+      }
+      frames[chunk.frame].get.coords( chunk.byte, chunk.bit, function ( x, y ) {
+        chunk.move( x, y );
+      });
+    });
+  }
+  this.addChunk     = function ( id, getType ) {
+    let type = getType();
+    if ( ( id != null ) && ( type != null ) ) {
+      let exist = false;
+      chunks.forEach( function( chunk, i ) {
+        if ( chunk.id == id ) {
+          exist = true;
+        }
+      });
+      if ( exist == false ) {
+        let adr     = searchFreeFrame( type );
+        let address = frames[adr].add.data( id, type );
+        let byte    = address.byte;
+        let bit     = address.bit;
+        chunks.push( new can.Chunk( id, type, onChunkDragStart, onChunkDraging, onChunkDrop, getType ) );
+        frames[adr].get.coords( byte, bit, function( x, y ) {
+          chunks[chunks.length - 1].place( adr, byte, bit );
+          chunks[chunks.length - 1].move( x, y );
+          self.content.appendChild( chunks[chunks.length - 1].getBox() );
+        });
+      }
+    }
+    return;
+  }
+  this.removeChunk  = function ( id ) {
+    return;
+  }
+  this.getFrames    = function () {
+    return frames;
+  }
+}
+function MbDialog () {
+  var self = this;
+  this.title   = "";
+  this.content = document.createElement( "DIV" );
+  this.action  = null;
+  this.data    = null;
+  this.make = function () {
     self.title             = "ModBUS шина";
     self.content           = document.createElement( "DIV" );
     self.content.innerHTML = "No data!"
     self.action = function () {
       return;
     }
-    return;
   }
-  return;
 }
 function Dialogs () {
   var self      = this;
-  this.external = new Dialog();
-  this.can      = new Dialog();
-  this.mb       = new Dialog();
+  this.external = new ExternalDialog();
+  this.can      = new CanDialog();
+  this.mb       = new MbDialog();
   this.init     = function () {
-    self.external.makeExternal();
-    self.can.makeCAN();
-    self.mb.makeMB();
+    self.external.make();
+    self.can.make();
+    self.mb.make();
     return;
   }
   return;
@@ -158,24 +348,33 @@ function Modal () {
     }
     return;
   }
-  function draw ( dialog ) {
+  function draw ( dialog, data=null ) {
     clean();
+    dialog.data     = data;
     title.innerHTML = dialog.title;
     body.appendChild( dialog.content );
     return;
   }
-
+  this.initOnChange = function ( callback ) {
+    dialogs.can.initOnChange( callback );
+    return;
+  }
   this.showExternal = function () {
     currant = "ext";
     draw( dialogs.external );
     return;
   }
+  this.addCanChunk  = function ( id, typeCallback ) {
+    dialogs.can.addChunk( id, typeCallback );
+    return;
+  }
   this.showCan      = function () {
     currant = "can";
+    dialogs.can.redraw();
     draw( dialogs.can );
     return;
   }
-  this.showMb       = function () {
+  this.showMb       = function ( id=null, type=null ) {
     currant = "mb";
     draw( dialogs.mb );
     return;

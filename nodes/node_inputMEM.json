@@ -7,15 +7,17 @@
   "help"    : "Чтение данных из памяти устройства. Необходимо выбрать тип данных и расположение данных в регистровой моделе",
   "options" : [
     {
-      "name"  : "type",
-      "text"  : "тип",
-      "type"  : "byte",
-      "value" : 0
+      "name"   : "type",
+      "text"   : "тип",
+      "type"   : "byte",
+      "select" : [],
+      "value"  : 0
     },{
-      "name"  : "adr",
-      "text"  : "адрес",
-      "type"  : "adr",
-      "value" : 0
+      "name"   : "adr",
+      "text"   : "адрес",
+      "type"   : "adr",
+      "select" : [],
+      "value"  : 0
     }
   ],
   "inputs"  : [],

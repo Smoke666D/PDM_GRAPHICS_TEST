@@ -1,10 +1,10 @@
 {
-  "name"    : "node_logicOr",
+  "name"    : "node_logicOr3",
   "type"    : "logic",
   "table"   : 0,
-  "heading" : "Булева ИЛИ",
+  "heading" : "Булева ИЛИ 3",
   "short"   : "or",
-  "help"    : "Булева операция ИЛИ",
+  "help"    : "Булева операция ИЛИ 3",
   "options" : [],
   "inputs"  : [
     {
@@ -16,21 +16,6 @@
     },{
       "type"   : "bool",
       "help"   : "Условие 3"
-    },{
-      "type"   : "bool",
-      "help"   : "Условие 4"
-    },{
-      "type"   : "bool",
-      "help"   : "Условие 5"
-    },{
-      "type"   : "bool",
-      "help"   : "Условие 6"
-    },{
-      "type"   : "bool",
-      "help"   : "Условие 7"
-    },{
-      "type"   : "bool",
-      "help"   : "Условие 8"
     }
   ],
   "outputs" : [

@@ -1,0 +1,30 @@
+{
+  "name"    : "node_inputPointer",
+  "type"    : "inputs",
+  "table"   : 0,
+  "heading" : "Указатель",
+  "short"   : "P",
+  "help"    : "Указатель на переменную",
+  "options" : [
+    {
+      "name"   : "pointer",
+      "text"   : "Цепь",
+      "type"   : "short",
+      "select" : [],
+      "value"  : 0
+    },{
+      "name"   : "userString",
+      "text"   : "Коммент",
+      "type"   : "string",
+      "select" : [],
+      "value"  : ""
+    }
+  ],
+  "inputs"  : [
+    {
+      "type"   : "bool",
+      "help"   : "Данные"
+    }
+  ],
+  "outputs" : []
+}

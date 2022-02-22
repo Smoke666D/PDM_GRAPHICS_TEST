@@ -8,7 +8,7 @@
   "scripts": {
     "start": "electron .",
     "rebuild": "electron-rebuild --force",
-    "make": "electron-packager ./ Energan --overwrite --platform=win32,linux,darwin --arch=x64 --icon='./img/favicon.ico' --prune=true --out=release-builds",
+    "make": "electron-packager ./ LogicTools --overwrite --platform=win32 --arch=x64 --icon='./img/favicon.ico' --prune=true --out=release-builds",
     "test-spectron": "mocha  ./test/spectron/spec.ts"
   },
   "dependencies": {

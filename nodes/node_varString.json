@@ -7,10 +7,11 @@
   "help"    : "Чтение и запись строчной переменной до 16 символов. Можно использовать, как буфер или константу.",
   "options" : [
     {
-      "name"  : "default",
-      "text"  : "значение",
-      "type"  : "string",
-      "value" : ""
+      "name"   : "default",
+      "text"   : "значение",
+      "type"   : "string",
+      "select" : [],
+      "value"  : ""
     }
   ],
   "inputs"  : [

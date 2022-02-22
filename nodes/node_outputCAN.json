@@ -7,15 +7,26 @@
   "help"    : "Запись данных по CAN шине. Необходимо выбрать тип данных, затем выбрать сообщение и расположение данных в сообщении",
   "options" : [
     {
-      "name"  : "type",
-      "text"  : "тип",
-      "type"  : "byte",
-      "value" : 0
+      "name"   : "type",
+      "text"   : "тип",
+      "type"   : "select",
+      "select" : [ "bool", "byte", "short" ],
+      "value"  : "byte"
     },{
-      "name"  : "adr",
-      "text"  : "адрес",
-      "type"  : "adr",
-      "value" : null
+      "name"   : "adr",
+      "text"   : "адрес",
+      "type"   : "dialog",
+      "select" : "canAdr",
+      "value"  : {
+        "frame"  : 0, 
+        "chunck" : 0 
+      }
+    },{
+      "name"   : "userString",
+      "text"   : "Коммент",
+      "type"   : "string",
+      "select" : [],
+      "value"  : ""
     }
   ],
   "inputs"  : [

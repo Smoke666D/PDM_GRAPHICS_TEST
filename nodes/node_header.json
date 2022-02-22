@@ -1,0 +1,36 @@
+{
+  "name"    : "node_header",
+  "type"    : "inputs",
+  "table"   : 0,
+  "heading" : "Заголовок",
+  "short"   : "Header",
+  "help"    : "Пользовательский заголовок",
+  "options" : [
+    {
+      "name"   : "label",
+      "text"   : "Заголовок",
+      "type"   : "string",
+      "select" : [],
+      "value"  : "Header"
+    }
+  ],
+  "inputs"  : [
+    {
+      "type"   : "null",
+      "help"   : ""
+    },{
+      "type"   : "null",
+      "help"   : ""
+    },{
+      "type"   : "null",
+      "help"   : ""
+    },{
+      "type"   : "null",
+      "help"   : ""
+    },{
+      "type"   : "null",
+      "help"   : ""
+    }
+  ],
+  "outputs" : []
+}

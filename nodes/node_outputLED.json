@@ -10,7 +10,14 @@
       "name"   : "adr",
       "text"   : "канал",
       "type"   : "led",
+      "select" : [],
       "value"  : 0
+    },{
+      "name"   : "userString",
+      "text"   : "Коммент",
+      "type"   : "string",
+      "select" : [],
+      "value"  : ""
     }
   ],
   "inputs"  : [

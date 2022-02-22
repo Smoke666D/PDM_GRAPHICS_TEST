@@ -1,0 +1,30 @@
+{
+  "name"    : "node_logicAnd3",
+  "type"    : "logic",
+  "table"   : 0,
+  "heading" : "Булева И 3",
+  "short"   : "and",
+  "help"    : "Булева операция И 3",
+  "options" : [],
+  "inputs"  : [
+    {
+      "type"   : "bool",
+      "help"   : "Условие 1"
+    },{
+      "type"   : "bool",
+      "help"   : "Условие 2"
+    },{
+      "type"   : "bool",
+      "help"   : "Условие 3"
+    }
+  ],
+  "outputs" : [
+    {
+      "type"   : "bool",
+      "help"   : "Результат операции"
+    }
+  ],
+  "script" : {
+    "command" : "And"
+  }
+}

@@ -19,9 +19,47 @@
   height: 30px!important;
 }
 
-.can {
-
-}
+.col-setting {
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 90px;
+  flex: 0 0 90px;
+  max-width: 90px; }
+.can {}
+  .can.chunk {
+    position: absolute;
+    height: 48px;
+    width: 80px;
+    color: #d2d3d4;
+    text-align: center;
+    background-clip: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: move;
+    opacity: 0.9;
+    z-index: 10;
+    border: 1px solid rgba(127, 129, 131, 1);
+    border-radius: 0.25rem;
+    transition: border 0.5s ease;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;}
+    .can.chunk:hover {
+      border: 1px solid #bdbebf; }
+    .can.chunk.focus {
+      border: 1px solid rgb(78,213,237); }
+  .can.shadow {
+    position: absolute;
+    height: 48px;
+    width: 80px;
+    z-index: 9;
+    background-color: rgba(51, 242, 233, 0.3);
+    border-radius: 0.25rem; }
+      .can.shadow.hide {
+        opacity: 0; }
   .can.frame {
     background-color: #373a40;
     border-color: #4c5058;
@@ -29,26 +67,70 @@
     height: auto;
     width: auto;
   }
-  .can.byte {
-    height: 60px;
-    width: auto;
+  .can h4 {
+    color: #4c5058;
+    padding-top: 6px;
+  }
+  .can.message {
+    z-index: 8;
     display: flex;
-    padding-left: 5px;
-    padding-right: 5px;
+    width: 640px;
+    height: 50px;
+    border: 1px solid #4c5058;
+    padding-left: 0px;
+    padding-right: 0px;
+    border-radius: 0.25rem;
+    transition: all 0.5s ease;
+    margin-left: 10px; }
+    .can.message:hover {
+      border-color: #bdbebf; }
+    .can.message.focus {
+      border-color: rgb(78,213,237); }
+  .can.byte-data {
+    height: auto;
+    display: flex;
+    z-index: 7;
+    transition: all 0.5s ease;
+    background-color: #373a40; }
+    .can.byte-data.common {
+      border-right: 2px solid #4c5058; }
+    .can.byte-data.last {
+      border-radius: 0.5rem; }
+  .can.bit {
+    z-index: 6;
+    height: 100%; }
+    .can.bit.bordered {
+      border-right: 1px solid #4c5058;}
+    .can.bit.last {
+      border-radius: 0.5rem; }
+    .can.bit:hover {
+      //border-color: #4c5058;
+    }
+  .can input {
+    height: 30px;
     background-color: #373a40;
     border: 1px solid #4c5058;
-  }
-  .can.bit {
-    width: 10px;
-    border: 1px solid #4c5058;
-    height: 100%;
-  }
+    border-radius: 0.25rem;
+    transition: all 0.5s ease;
+    outline: 0;
+    color: #d2d3d4;
+    max-width: 65px;
+    min-width: 65px;
+    text-align: center;}
+    .can input:hover {
+      border: 1px solid #bdbebf;}
+    .can input:focus {
+      border-color: rgb(78,213,237);
+      outline: 0; }
 
+.shift-down {
+  margin-top: 10px;
+}
 .switch {
   position: relative;
   display: inline-block;
-  width: 40px;
-  height: 24px;
+  height: 30px;
+  width: 65px;
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none; }
@@ -79,8 +161,8 @@
   .slider:before {
     position: absolute;
     content: "";
-    height: 16px;
-    width: 16px;
+    height: 22px;
+    width: 28px;
     left: 4px;
     bottom: 3px;
     background-color: #4c5058;
@@ -89,8 +171,7 @@
     border-radius: 0.25rem;
   }
 
-  input:checked + .slider {
-    background-color: rgb(78,213,237);}
+  input:checked + .slider {}
   input[disabled]:checked + .slider {
     background-color: #ccc;}
   input:hover + .slider:before {
@@ -99,7 +180,7 @@
     border-color: #bdbebf; }
   input:focus + .slider {}
   input:checked + .slider:before {
-    -webkit-transform: translateX(16px);
-    -ms-transform: translateX(16px);
-    transform: translateX(16px);
+    -webkit-transform: translateX(28px);
+    -ms-transform: translateX(28px);
+    transform: translateX(28px);
 }
