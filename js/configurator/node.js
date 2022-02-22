@@ -711,8 +711,10 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
           break;
         case "pointer":
           self.header.innerHTML = "P" + option.value;  
+          break;
         case "label":
           self.header.innerHTML = option.value;  
+          break;
       }
       return;
     });
