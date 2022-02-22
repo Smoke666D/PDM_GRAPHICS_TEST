@@ -20,11 +20,19 @@
       "value"  : ""
     }
   ],
-  "inputs"  : [],
+  "inputs"  : [
+    {
+      "type"   : "bool",
+      "help"   : "Сброс триггера"
+    }
+  ],
   "outputs" : [
     {
       "type"   : "bool",
-      "help"   : "Данные"
+      "help"   : "Кнопка"
+    },{
+      "type"   : "bool",
+      "help"   : "Триггер"
     }
   ]
 }

@@ -53,8 +53,6 @@
     "node_logicMoreEqual" : false,
     "node_logicEqual"     : false,
 
-    "node_logicTriger"    : true,
-
     "node_timersDelay"    : false,
     "node_timersTrigger"  : false,
     "node_timersPWM"      : true,
