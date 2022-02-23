@@ -1,12 +1,15 @@
 {
-  "name"    : "node_logicEqual",
-  "type"    : "logic",
-  "table"   : 0,
-  "heading" : "Равенство",
-  "short"   : "==",
-  "help"    : "Операция сравнения на неравенство",
-  "options" : [],
-  "inputs"  : [
+  "name"     : "node_logicEqual",
+  "type"     : "logic",
+  "table"    : 0,
+  "heading"  : "Равенство",
+  "short"    : "==",
+  "help"     : "Операция сравнения на неравенство",
+  "compiler" : {
+    "denisScript" : null
+  },
+  "options"  : [],
+  "inputs"   : [
     {
       "type"   : "any",
       "help"   : "Вход 1"
@@ -15,7 +18,7 @@
       "help"   : "Вход 2"
     }
   ],
-  "outputs" : [
+  "outputs"  : [
     {
       "type"   : "bool",
       "help"   : "Результат сравнения"

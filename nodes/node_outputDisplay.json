@@ -5,6 +5,9 @@
   "heading" : "Дисплей",
   "short"   : "Display",
   "help"    : "Вывод строковых данных на дисплей",
+  "compiler" : {
+    "denisScript" : null
+  },
   "options" : [],
   "inputs"  : [
     {

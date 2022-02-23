@@ -1,12 +1,20 @@
 {
-  "name"    : "node_logicMore",
-  "type"    : "logic",
-  "table"   : 0,
-  "heading" : "Строгое неравенство",
-  "short"   : ">",
-  "help"    : "Операция строго сравнения (больше)",
-  "options" : [],
-  "inputs"  : [
+  "name"     : "node_logicMore",
+  "type"     : "logic",
+  "table"    : 0,
+  "heading"  : "Строгое неравенство",
+  "short"    : ">",
+  "help"     : "Операция строго сравнения (больше)",
+  "compiler" : {
+    "denisScript" : {
+      "setup"   : "COMPARE_CONST.$n$=$in0$>$const(in1)$;\n",
+      "outputs" : [
+        "COMPARE_CONST.$n$"
+      ]
+    }
+  },
+  "options"  : [],
+  "inputs"   : [
     {
       "type"   : "short",
       "help"   : "Большее"
@@ -15,13 +23,10 @@
       "help"   : "Меньшее"
     }
   ],
-  "outputs" : [
+  "outputs"  : [
     {
       "type"   : "bool",
       "help"   : "Результат сравнения"
     }
-  ],
-  "script" : {
-    "command" : "COMPARE_CONST"
-  }
+  ]
 }

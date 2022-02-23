@@ -5,6 +5,9 @@
   "heading" : "Таймер",
   "short"   : "trigger",
   "help"    : "Циклический таймер. ",
+  "compiler" : {
+    "denisScript" : null
+  },
   "options" : [
     {
       "name"   : "delay",

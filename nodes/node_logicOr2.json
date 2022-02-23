@@ -1,12 +1,20 @@
 {
-  "name"    : "node_logicOr2",
-  "type"    : "logic",
-  "table"   : 0,
-  "heading" : "Булева ИЛИ 2",
-  "short"   : "or",
-  "help"    : "Булева операция ИЛИ 2",
-  "options" : [],
-  "inputs"  : [
+  "name"     : "node_logicOr2",
+  "type"     : "logic",
+  "table"    : 0,
+  "heading"  : "Булева ИЛИ 2",
+  "short"    : "or",
+  "help"     : "Булева операция ИЛИ 2",
+  "compiler" : {
+    "denisScript" : {
+      "setup"   : "Or.$n$=$in0$+$in1$;\n",
+      "outputs" : [
+        "Or.$n$"
+      ]
+    }
+  },
+  "options"  : [],
+  "inputs"   : [
     {
       "type"   : "bool",
       "help"   : "Условие 1"
@@ -15,13 +23,13 @@
       "help"   : "Условие 2"
     }
   ],
-  "outputs" : [
+  "outputs"  : [
     {
       "type"   : "bool",
       "help"   : "Результат операции"
     }
   ],
-  "script" : {
+  "script"   : {
     "command" : "Or"
   }
 }

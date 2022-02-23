@@ -5,6 +5,9 @@
   "heading" : "Байт переменная",
   "short"   : "byte",
   "help"    : "Чтение и запись буйтовой переменной. Можно использовать, как буфер или константу.",
+  "compiler" : {
+    "denisScript" : null
+  },
   "options" : [
     {
       "name"   : "default",

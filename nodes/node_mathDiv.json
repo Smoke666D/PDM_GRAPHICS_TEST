@@ -5,6 +5,9 @@
   "heading" : "Деление",
   "short"   : "/",
   "help"    : "Математическая операция деления",
+  "compiler" : {
+    "denisScript" : null
+  },
   "options" : [],
   "inputs"  : [
     {

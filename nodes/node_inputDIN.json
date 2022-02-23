@@ -1,10 +1,16 @@
 {
-  "name"    : "node_inputDIN",
-  "type"    : "inputs",
-  "table"   : 0,
-  "heading" : "Дискретный вход",
-  "short"   : "DIN",
-  "help"    : "Дискретный вход. Перед использованием выбирете номер входа",
+  "name"     : "node_inputDIN",
+  "type"     : "inputs",
+  "table"    : 0,
+  "heading"  : "Дискретный вход",
+  "short"    : "DIN",
+  "help"     : "Дискретный вход. Перед использованием выбирете номер входа",
+  "compiler" : {
+    "denisScript" : {
+      "setup"   : "",
+      "outputs" : []
+    }
+  },
   "options" : [
     {
       "name"   : "adr",

@@ -5,6 +5,9 @@
   "heading" : "Указатель",
   "short"   : "P",
   "help"    : "Указатель на переменную",
+  "compiler" : {
+    "denisScript" : null
+  },
   "options" : [
     {
       "name"   : "pointer",

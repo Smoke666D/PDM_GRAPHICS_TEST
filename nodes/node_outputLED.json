@@ -5,6 +5,12 @@
   "heading" : "Светодиод",
   "short"   : "LED",
   "help"    : "Внешний светодиод. Необходимо выбрать номер внешнего светодиода.",
+  "compiler" : {
+    "denisScript" : {
+      "setup"   : "KEYPAD_LED$color$.$adr$=$in0$;\n",
+      "outputs" : []
+    }
+  },
   "options" : [
     {
       "name"   : "adr",
@@ -12,6 +18,12 @@
       "type"   : "led",
       "select" : [],
       "value"  : 0
+    },{
+      "name"   : "color",
+      "text"   : "цвет",
+      "type"   : "select",
+      "select" : [ "GREEN", "RED", "BLUE" ],
+      "value"  : "GREEN"
     },{
       "name"   : "userString",
       "text"   : "Коммент",

@@ -5,6 +5,9 @@
   "heading" : "Булевая переменная",
   "short"   : "bool",
   "help"    : "Чтение и запись булевой переменной. Можно использовать, как буфер или константу.",
+  "compiler" : {
+    "denisScript" : null
+  },
   "options" : [
     {
       "name"   : "default",

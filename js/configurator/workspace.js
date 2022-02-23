@@ -93,6 +93,14 @@ function Workspace () {
       }
     });
   }
+  this.get  = function ( scheme ) {
+    let out = null;
+    if ( typeof( scheme ) == 'object' ) {
+      config.set( scheme );
+      out = config.get();
+    }
+    return out;
+  }
   this.save = function ( scheme, path ) {
     if ( typeof( path ) == 'string' ) {
       if ( typeof( scheme ) == 'object' ) {

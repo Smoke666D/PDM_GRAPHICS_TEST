@@ -5,7 +5,10 @@
   "heading" : "ЦАП",
   "short"   : "AOUT",
   "help"    : "Аналоговый выход. Необходимо выбрать канал",
-  "inputs"  : [
+  "compiler" : {
+    "denisScript" : null
+  },
+  "options"  : [
     {
       "name"   : "adr",
       "text"   : "канал",

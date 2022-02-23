@@ -5,6 +5,9 @@
   "heading" : "Умножение",
   "short"   : "x",
   "help"    : "Математическая операция умножения",
+  "compiler" : {
+    "denisScript" : null
+  },
   "options" : [],
   "inputs"  : [
     {

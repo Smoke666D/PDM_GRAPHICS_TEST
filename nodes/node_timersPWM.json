@@ -5,6 +5,14 @@
   "heading" : "ШИМ",
   "short"   : "tim",
   "help"    : "Генератор ШИМ сигнала",
+  "compiler" : {
+    "denisScript" : {
+      "setup"   : "Tim.$n$=$delayHight$/$delayLow$+$in0$;\n",
+      "outputs" : [
+        "Tim.$n$"
+      ]
+    }
+  },
   "options" : [
     {
       "name"   : "delayHight",

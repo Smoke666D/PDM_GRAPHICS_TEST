@@ -1,10 +1,13 @@
 {
-  "name"    : "node_inputMB",
-  "type"    : "inputs",
-  "table"   : 0,
-  "heading" : "ModBus",
-  "short"   : "ModBus",
-  "help"    : "Чтение данных из шины ModBUS. Необходимо выбрать тип данных и расположение данных в регистровой моделе",
+  "name"     : "node_inputMB",
+  "type"     : "inputs",
+  "table"    : 0,
+  "heading"  : "ModBus",
+  "short"    : "ModBus",
+  "help"     : "Чтение данных из шины ModBUS. Необходимо выбрать тип данных и расположение данных в регистровой моделе",
+  "compiler" : {
+    "denisScript" : null
+  },
   "options" : [
     {
       "name"   : "type",

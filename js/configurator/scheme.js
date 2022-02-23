@@ -537,7 +537,7 @@ function Scheme ( id ) {
             self.device.load( data.device );
 
             data.nodes.forEach( function ( node ) {
-              self.addNode( lib.getTypeByName( node.name ), function() { y}, node.options );
+              self.addNode( lib.getTypeByName( node.name ), function() { console.log( 'her' )}, node.options );
               self.nodes[nodeID - 1].move( node.x, node.y );
               self.nodes[nodeID - 1].update();
             });

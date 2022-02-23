@@ -1,11 +1,14 @@
 {
-  "name"    : "node_header",
-  "type"    : "inputs",
-  "table"   : 0,
-  "heading" : "Заголовок",
-  "short"   : "Header",
-  "help"    : "Пользовательский заголовок",
-  "options" : [
+  "name"     : "node_header",
+  "type"     : "inputs",
+  "table"    : 0,
+  "heading"  : "Заголовок",
+  "short"    : "Header",
+  "help"     : "Пользовательский заголовок",
+  "compiler" : {
+    "denisScript" : null
+  },
+  "options"  : [
     {
       "name"   : "label",
       "text"   : "Заголовок",
@@ -14,7 +17,7 @@
       "value"  : "Header"
     }
   ],
-  "inputs"  : [
+  "inputs"   : [
     {
       "type"   : "null",
       "help"   : ""
@@ -32,5 +35,5 @@
       "help"   : ""
     }
   ],
-  "outputs" : []
+  "outputs"  : []
 }

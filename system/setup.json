@@ -1,15 +1,16 @@
 {
   "nodNumber"     : 100,
   "hardware"      : {
-    "din"    : 10,
-    "dout"   : 10,
-    "ain"    : 5,
-    "aout"   : 5,
-    "sw"     : 0,
-    "led"    : 0,
-    "rtc"    : false,
-    "can"    : true,
-    "modbus" : false
+    "din"      : 10,
+    "dout"     : 10,
+    "ain"      : 5,
+    "aout"     : 5,
+    "sw"       : 0,
+    "led"      : 0,
+    "rtc"      : false,
+    "can"      : true,
+    "modbus"   : false,
+    "compiler" : "DenisScript"
   },
   "options" : [
     {

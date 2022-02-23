@@ -5,6 +5,9 @@
   "heading" : "Сумма",
   "short"   : "+",
   "help"    : "Математическая операция сложения",
+  "compiler" : {
+    "denisScript" : null
+  },
   "options" : [],
   "inputs"  : [
     {

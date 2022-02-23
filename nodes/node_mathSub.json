@@ -5,6 +5,9 @@
   "heading" : "Разница",
   "short"   : "-",
   "help"    : "Математическая операция вычитания",
+  "compiler" : {
+    "denisScript" : null
+  },
   "options" : [],
   "inputs"  : [
     {

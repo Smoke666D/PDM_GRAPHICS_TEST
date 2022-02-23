@@ -5,6 +5,9 @@
   "heading" : "Нестрогое неравенство",
   "short"   : "≥",
   "help"    : "Операция нестрого сравнения (больше или равно)",
+  "compiler" : {
+    "denisScript" : null
+  },
   "options" : [],
   "inputs"  : [
     {

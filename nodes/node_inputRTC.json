@@ -1,13 +1,16 @@
 {
-  "name"    : "node_inputRTC",
-  "type"    : "inputs",
-  "table"   : 0,
-  "heading" : "Часы",
-  "short"   : "RTC",
-  "help"    : "Чтение даты и времени из внутреннего источника времени (часы реального времени)",
-  "options" : [],
-  "inputs"  : [],
-  "outputs" : [
+  "name"     : "node_inputRTC",
+  "type"     : "inputs",
+  "table"    : 0,
+  "heading"  : "Часы",
+  "short"    : "RTC",
+  "help"     : "Чтение даты и времени из внутреннего источника времени (часы реального времени)",
+  "compiler" : {
+    "denisScript" : null
+  },
+  "options"  : [],
+  "inputs"   : [],
+  "outputs"  : [
     {
       "type"   : "date",
       "help"   : "Данные"

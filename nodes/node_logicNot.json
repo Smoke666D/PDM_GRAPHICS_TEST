@@ -1,24 +1,27 @@
 {
-  "name"    : "node_logicNot",
-  "type"    : "logic",
-  "table"   : 0,
-  "heading" : "Булева НЕ",
-  "short"   : "not",
-  "help"    : "Булева операция отрицания. Инвертирует значение",
-  "options" : [],
-  "inputs"  : [
+  "name"     : "node_logicNot",
+  "type"     : "logic",
+  "table"    : 0,
+  "heading"  : "Булева НЕ",
+  "short"    : "not",
+  "help"     : "Булева операция отрицания. Инвертирует значение",
+  "compiler" : {
+    "denisScript" : "Inv.$n$=$in0$;\n"
+  },
+  "options"  : [],
+  "inputs"   : [
     {
       "type"   : "bool",
       "help"   : "вход"
     }
   ],
-  "outputs" : [
+  "outputs"  : [
     {
       "type"   : "bool",
       "help"   : "выход"
     }
   ],
-  "script" : {
+  "script"   : {
     "command" : "Inv"
   }
 }

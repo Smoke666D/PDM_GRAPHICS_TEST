@@ -1,10 +1,13 @@
 {
-  "name"    : "node_inputCAN",
-  "type"    : "inputs",
-  "table"   : 1,
-  "heading" : "CAN",
-  "short"   : "CAN",
-  "help"    : "Чтение данных из CAN шины. Необходимо выбрать тип данных, затем выбрать сообщение и расположение данных в сообщении",
+  "name"     : "node_inputCAN",
+  "type"     : "inputs",
+  "table"    : 1,
+  "heading"  : "CAN",
+  "short"    : "CAN",
+  "help"     : "Чтение данных из CAN шины. Необходимо выбрать тип данных, затем выбрать сообщение и расположение данных в сообщении",
+  "compiler" : {
+    "denisScript" : null
+  },
   "options" : [
     {
       "name"   : "type",

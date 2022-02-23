@@ -1,12 +1,15 @@
 {
-  "name"    : "node_logicXor",
-  "type"    : "logic",
-  "table"   : 0,
-  "heading" : "Булева искл.ИЛИ",
-  "short"   : "xor",
-  "help"    : "Булева операция исключающего ИЛИ",
-  "options" : [],
-  "inputs"  : [
+  "name"     : "node_logicXor",
+  "type"     : "logic",
+  "table"    : 0,
+  "heading"  : "Булева искл.ИЛИ",
+  "short"    : "xor",
+  "help"     : "Булева операция исключающего ИЛИ",
+  "compiler" : {
+    "denisScript" : null
+  },
+  "options"  : [],
+  "inputs"   : [
     {
       "type"   : "bool",
       "help"   : "Условие 1"
@@ -15,7 +18,7 @@
       "help"   : "Условие 2"
     }
   ],
-  "outputs" : [
+  "outputs"  : [
     {
       "type"   : "bool",
       "help"   : "Результат операции"

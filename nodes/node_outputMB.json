@@ -5,6 +5,9 @@
   "heading" : "ModBus",
   "short"   : "ModBus",
   "help"    : "Запись данных по шине ModBUS. Необходимо выбрать тип данных и расположение данных в регистровой моделе",
+  "compiler" : {
+    "denisScript" : null
+  },
   "options" : [
     {
       "name"   : "type",

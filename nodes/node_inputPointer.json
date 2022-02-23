@@ -1,11 +1,14 @@
 {
-  "name"    : "node_inputPointer",
-  "type"    : "inputs",
-  "table"   : 0,
-  "heading" : "Указатель",
-  "short"   : "P",
-  "help"    : "Указатель на переменную",
-  "options" : [
+  "name"     : "node_inputPointer",
+  "type"     : "inputs",
+  "table"    : 0,
+  "heading"  : "Указатель",
+  "short"    : "P",
+  "help"     : "Указатель на переменную",
+  "compiler" : {
+    "denisScript" : "null"
+  },
+  "options"  : [
     {
       "name"   : "pointer",
       "text"   : "Цепь",
@@ -20,11 +23,11 @@
       "value"  : ""
     }
   ],
-  "inputs"  : [
+  "inputs"   : [
     {
       "type"   : "bool",
       "help"   : "Данные"
     }
   ],
-  "outputs" : []
+  "outputs"  : []
 }

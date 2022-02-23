@@ -5,6 +5,7 @@ var workspace = require( './workspace.js' ).workspace;
 var config    = require( './workspace.js' ).config;
 var remote    = require('electron').remote;
 var shiftKey  = require('./node.js').shiftKey;
+var compiler  = require( '../compiler/compiler.js' );
 /*----------------------------------------------------------------------------*/
 const fileOptions = {
   defaultPath : remote.app.getPath( 'documents' ) + "/sheme.json",
@@ -127,6 +128,7 @@ function Configurator ( size ) {
   let cancelButton    = document.getElementById( 'cancel-button'    );
   let undoButton      = document.getElementById( 'undo-button'      );
   let redoButton      = document.getElementById( 'redo-button'      );
+  let buildButton     = document.getElementById( 'build-button'      );
   var schemeBox       = document.getElementById( 'scheme'           );
   var schemeFrame     = document.getElementById( 'scheme-frame'     );
   var nodeLibrary     = document.getElementById( 'nodeLib-list'     );
@@ -200,6 +202,9 @@ function Configurator ( size ) {
     });
     return;
   }
+  function get () {
+    return workspace.get( self.scheme );
+  }
   function save () {
     remote.dialog.showSaveDialog( remote.getCurrentWindow(), fileOptions ).then( function ( value ) {
       if ( value.canceled == false ) {
@@ -223,6 +228,9 @@ function Configurator ( size ) {
   function unlink () {
     self.scheme.unlink();
     return;
+  }
+  function build () {
+    compiler.build( get() );
   }
   function del () {
     self.scheme.removeInFocus();
@@ -322,6 +330,7 @@ function Configurator ( size ) {
     shortcuts.add( "ctrlKey", "z",          "Отменить действие",                    function() { undo()       });
     shortcuts.add( "ctrlKey", "y",          "Повторить действие",                   function() { redo()       });
     shortcuts.add( "ctrlKey", "u",          "Удалить связи выделенного объекта",    function() { unlink()     });
+    shortcuts.add( "ctrlKey", "b",          "Компиляция схемы",                     function() { build()      });
     shortcuts.add( null,      "F1",         "Показать помощ",                       function() { showHelp();  });
     shortcuts.add( null,      "Delete",     "Удалить выделенный объект",            function() { del();       });
     shortcuts.add( null,      "Escape",     "Отменить действие",                    function() { cancel();    });
@@ -388,6 +397,11 @@ function Configurator ( size ) {
     });
     loadButton.addEventListener( 'click', function () {
       open();
+      return;
+    });
+    /*-------------------------------------------------*/
+    buildButton.addEventListener( 'click', function () {
+      build();
       return;
     });
     /*-------------------------------------------------*/

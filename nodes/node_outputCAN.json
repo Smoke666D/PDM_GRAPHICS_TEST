@@ -1,11 +1,14 @@
 {
-  "name"    : "node_outputCAN",
-  "type"    : "outputs",
-  "table"   : 1,
-  "heading" : "CAN",
-  "short"   : "CAN",
-  "help"    : "Запись данных по CAN шине. Необходимо выбрать тип данных, затем выбрать сообщение и расположение данных в сообщении",
-  "options" : [
+  "name"     : "node_outputCAN",
+  "type"     : "outputs",
+  "table"    : 1,
+  "heading"  : "CAN",
+  "short"    : "CAN",
+  "help"     : "Запись данных по CAN шине. Необходимо выбрать тип данных, затем выбрать сообщение и расположение данных в сообщении",
+  "compiler" : {
+    "denisScript" : ""
+  },
+  "options"  : [
     {
       "name"   : "type",
       "text"   : "тип",
@@ -30,11 +33,11 @@
       "value"  : ""
     }
   ],
-  "inputs"  : [
+  "inputs"   : [
     {
       "type"   : "any",
       "help"   : "Данные"
     }
   ],
-  "outputs" : []
+  "outputs"  : []
 }

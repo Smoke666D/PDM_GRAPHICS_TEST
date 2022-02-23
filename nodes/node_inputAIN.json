@@ -1,11 +1,14 @@
 {
-  "name"    : "node_inputAIN",
-  "type"    : "float",
-  "table"   : 0,
-  "heading" : "АЦП",
-  "short"   : "AIN",
-  "help"    : "Аналоговый вход. Выбирете необходимый канал перед использованием.",
-  "options" : [
+  "name"     : "node_inputAIN",
+  "type"     : "float",
+  "table"    : 0,
+  "heading"  : "АЦП",
+  "short"    : "AIN",
+  "help"     : "Аналоговый вход. Выбирете необходимый канал перед использованием.",
+  "compiler" : {
+    "denisScript" : null
+  },
+  "options"  : [
     {
       "name"   : "adr",
       "text"   : "канал",

@@ -5,6 +5,9 @@
   "heading" : "Дискретный выход",
   "short"   : "DOUT",
   "help"    : "Дискретный выход. Необходимо выбрать номер канала",
+  "compiler" : {
+    "denisScript" : "OutSetup.$adr$=$current_startup$/$current_nominal$/$delay$;\nOut.$adr$=$in0$;\nOutName.$adr$=$name$;\n"
+  },
   "options" : [
     {
       "name"   : "adr",
@@ -13,13 +16,13 @@
       "select" : [],
       "value"  : 0
     },{
-      "name"   : "current nominal",
+      "name"   : "current_nominal",
       "text"   : "ток номинальный",
       "type"   : "byte",
       "select" : [],
       "value"  : 0
     },{
-      "name"   : "current startup",
+      "name"   : "current_startup",
       "text"   : "ток пусковой",
       "type"   : "byte",
       "select" : [],

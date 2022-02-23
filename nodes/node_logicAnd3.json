@@ -1,12 +1,20 @@
 {
-  "name"    : "node_logicAnd3",
-  "type"    : "logic",
-  "table"   : 0,
-  "heading" : "Булева И 3",
-  "short"   : "and",
-  "help"    : "Булева операция И 3",
-  "options" : [],
-  "inputs"  : [
+  "name"     : "node_logicAnd3",
+  "type"     : "logic",
+  "table"    : 0,
+  "heading"  : "Булева И 3",
+  "short"    : "and",
+  "help"     : "Булева операция И 3",
+  "compiler" : {
+    "denisScript" : {
+      "setup"   : "And.$n$=$in0$+$in1$+$in2$;\n",
+      "outputs" : [
+        "And.$n$"
+      ]
+    }
+  },
+  "options"  : [],
+  "inputs"   : [
     {
       "type"   : "bool",
       "help"   : "Условие 1"
@@ -18,13 +26,10 @@
       "help"   : "Условие 3"
     }
   ],
-  "outputs" : [
+  "outputs"  : [
     {
       "type"   : "bool",
       "help"   : "Результат операции"
     }
-  ],
-  "script" : {
-    "command" : "And"
-  }
+  ]
 }
