@@ -106,7 +106,7 @@ function CanDialog () {
   }
   function onChunkDragStart ( frame, byte, bit, type ) {
     let coords = frames[frame].get.coords( byte, bit, function ( x, y ) {});
-    frames[frame].set.free( byte, type );
+    frames[frame].set.free( byte, bit, type );
     getAvalibleZones( frame, byte, 0, type );
     current = null;
     shadow.setWidth( type );
@@ -130,7 +130,7 @@ function CanDialog () {
       onChange( adr, current.frame, current.byte );
     }
     shadow.hide();
-    frames[current.frame].set.full( current.byte, type );
+    frames[current.frame].set.full( current.byte, current.bit, type );
     return { "x" : current.left, "y" : ( current.top + rowPadding ), "frame" : current.frame, "adr" : current.byte };
   }
   function calcGlobalOffset () {

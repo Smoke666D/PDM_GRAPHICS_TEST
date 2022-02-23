@@ -405,7 +405,7 @@ function Frame ( id=0, onClick, setSettings ) {
       return;
     }
     this.free = function ( byte, bit, type ) {
-      let length = getLengthByte( type );
+      let length = getLength( type );
       let sub    = 0;
       let start  = bit;
       for ( var i=0; i<getLengthByte( type ); i++ ) {
@@ -516,7 +516,10 @@ function Frame ( id=0, onClick, setSettings ) {
           }
           for ( var j=start; j<sub; j++ ) {
             if ( bytes[byte + i].bits[j].free == true ) {
+              //console.log( 'Byte ' + ( byte + i ) + ' bit ' + j + ' is FREE' );
               acc++;
+            } else {
+              //console.log( 'Byte ' + ( byte + i ) + ' bit ' + j + ' is FULL' );
             }
           }
           start = 0;
