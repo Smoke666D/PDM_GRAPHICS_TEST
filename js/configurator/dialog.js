@@ -1,6 +1,7 @@
 /*----------------------------------------------------------------------------*/
 var lib = require('./nodeLib.js').nodeLib;
 var can = require('./can.js');
+var getLength = require('./can.js').getLength;
 /*----------------------------------------------------------------------------*/
 const rowPadding = 5;
 /*----------------------------------------------------------------------------*/
@@ -87,6 +88,22 @@ function CanDialog () {
   this.action  = null;
   this.data    = null;
 
+  function isFree ( adr, type ) {
+    let res    = true;
+    let length = getLength( type );
+    chunks.forEach( function ( chunk, i ) {
+      if ( chunk.frame == adr.frame ) {
+        for ( var j=0; j<length; j++ ) {
+          let cur = adr.byte*8 + j
+          if ( ( cur >= ( chunk.byte * 8 + chunk.bit ) ) && ( cur <= ( chunk.byte * 8 + chunk.bit + chunk.length ) ) ) {
+            res = false;
+            break;
+          }
+        }
+      }
+    });
+    return res;
+  }
   function onChunkDragStart ( frame, byte, bit, type ) {
     let coords = frames[frame].get.coords( byte, bit, function ( x, y ) {});
     frames[frame].set.free( byte, type );
@@ -239,11 +256,15 @@ function CanDialog () {
       }
       frames[chunk.frame].get.coords( chunk.byte, chunk.bit, function ( x, y ) {
         chunk.move( x, y );
+        if ( chunk.added == false ) {
+          self.content.appendChild( chunk.getBox() );
+          chunk.added = true;
+        }
       });
     });
   }
-  this.addChunk     = function ( id, getType ) {
-    let type = getType();
+  this.addChunk     = function ( id, getType, type, callback, adr=null ) {
+    let newChunk = false;
     if ( ( id != null ) && ( type != null ) ) {
       let exist = false;
       chunks.forEach( function( chunk, i ) {
@@ -252,19 +273,41 @@ function CanDialog () {
         }
       });
       if ( exist == false ) {
-        let adr     = searchFreeFrame( type );
-        let address = frames[adr].add.data( id, type );
-        let byte    = address.byte;
-        let bit     = address.bit;
+        if ( adr != null ) {
+          if ( frames.length <= adr.frame ) {
+            for ( var i=frames.length; i<( adr.frame + 1); i++ ) {
+              addFrame();
+            }
+          }
+          if ( frames[adr.frame].is.adrFree( adr.byte, adr.bit, type ) == false ) {
+            adr.frame = searchFreeFrame( type );
+            let buf   = frames[adr.frame].add.data( id, type );
+            adr.byte  = buf.byte;
+            adr.bit   = buf.bit;
+          } else {
+            frames[adr.frame].set.full( adr.byte, adr.bit, type );
+          }
+        } else {
+          newChunk  = true;
+          adr.frame = searchFreeFrame( type );
+          let buf   = frames[adr.frame].add.data( id, type );
+          adr.byte  = buf.byte;
+          adr.bit   = buf.bit;
+        }
         chunks.push( new can.Chunk( id, type, onChunkDragStart, onChunkDraging, onChunkDrop, getType ) );
-        frames[adr].get.coords( byte, bit, function( x, y ) {
-          chunks[chunks.length - 1].place( adr, byte, bit );
-          chunks[chunks.length - 1].move( x, y );
-          self.content.appendChild( chunks[chunks.length - 1].getBox() );
-        });
+        chunks[chunks.length - 1].place( adr.frame, adr.byte, adr.bit );
+        callback();
+        /*
+        if ( newChunk == true ) {
+          frames[adr.frame].get.coords( adr.byte, adr.bit, function( x, y ) {
+            chunks[chunks.length - 1].move( x, y );
+            self.content.appendChild( chunks[chunks.length - 1].getBox() );
+            callback();
+          });
+        }*/
       }
     }
-    return;
+    return adr;
   }
   this.removeChunk  = function ( id ) {
     return;
@@ -364,9 +407,8 @@ function Modal () {
     draw( dialogs.external );
     return;
   }
-  this.addCanChunk  = function ( id, typeCallback ) {
-    dialogs.can.addChunk( id, typeCallback );
-    return;
+  this.addCanChunk  = function ( id, typeCallback, type, adr=null, callback ) {
+    return dialogs.can.addChunk( id, typeCallback, type, adr, callback );
   }
   this.showCan      = function () {
     currant = "can";

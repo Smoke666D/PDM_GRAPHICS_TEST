@@ -84,7 +84,7 @@ function Menu ( box, object, items = [] ) {
   init( box, object, items );
   return;
 }
-function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlinkCallback, contextMenuCallback, focusCallBack ) {
+function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlinkCallback, contextMenuCallback, focusCallBack, onInitFinish, options=null ) {
   var self                = this;
   var box                 = box;
   var pinCallback         = pinCallback;
@@ -514,32 +514,40 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
       }
       return;
     }
-    this.dialog  = function () {
+    this.dialog  = function ( callback ) {
       function getType () {
         let type = "byte";
-        self.options.forEach( function ( option, i ) {
+        self.options.forEach( function ( option ) {
           if ( option.name == "type" ) {
             type = option.value;
           }
         });
         return type;
       }
-      let res = null;
+      let res  = null;
+      let adr  = null;
+      let type = null;
       self.options.forEach( function ( option, i ) {
         if ( option.name == "adr" ) {
           switch ( option.select ) {
             case "canAdr":
               res = "can";
+              adr = option.value;
               break;
-         } 
+          } 
+        }
+        if ( option.name == "type" ) {
+          type = option.value;
         }
       });
       if ( res != null ) {
         switch ( res ) {
           case "can" :
-            dialog.addCanChunk( self.id, getType );
+            dialog.addCanChunk( self.id, getType, type, callback, adr );
             break;
         }
+      } else { 
+        callback();
       } 
       return;
     }
@@ -584,6 +592,9 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
     });
     data.options.forEach( function ( option, i) {
       self.options.push( new Option( option, self.id, function() {self.update()} ) );
+      if ( options != null ) {
+        self.options[i].value = options[i].value;
+      }
       return;
     });
     return;
@@ -687,19 +698,20 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
     box.appendChild( self.obj );
     return;
   }
-  function startInit ( type, id, box ) {
+  /* Callback - is finish of initilization */
+  function startInit ( callback ) {
     self.focus.status = false;
-    makeNode( self.type ); /* Get data from library */
-    draw();                /* Draw UI of Node       */
-    setSize();             /* Set size of tje box   */
-    self.move();           /* Move node box in mesh */
-    init.drag();           /* Init drag and drop    */
-    init.pins();           /* Draw pins PU          */
-    show();                /* Show UI readynode box */
-    init.click();          /* Add clixk events      */
-    init.context();        /* Add context menu      */
-    init.dialog();         /* Add chunks in dialogs */
-    init.tooltip();        /* Add tooltip of Node   */
+    makeNode( self.type );   /* Get data from library */
+    draw();                  /* Draw UI of Node       */
+    setSize();               /* Set size of tje box   */
+    self.move();             /* Move node box in mesh */
+    init.drag();             /* Init drag and drop    */
+    init.pins();             /* Draw pins PU          */
+    show();                  /* Show UI readynode box */
+    init.click();            /* Add clixk events      */
+    init.context();          /* Add context menu      */
+    init.tooltip();          /* Add tooltip of Node   */
+    init.dialog( callback ); /* Add chunks in dialogs */
     return;
   }
   /*----------------------------------------*/
@@ -771,7 +783,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
     };
   }
   /*----------------------------------------*/
-  startInit ( type, id, box );
+  startInit( onInitFinish );
   return;
 }
 /*----------------------------------------------------------------------------*/

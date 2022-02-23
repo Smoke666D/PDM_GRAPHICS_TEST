@@ -19,7 +19,7 @@
       "select" : "canAdr",
       "value"  : { 
         "frame"  : 0, 
-        "chunck" : 0 
+        "chunck" : 0
       }
     },{
       "name"   : "userString",

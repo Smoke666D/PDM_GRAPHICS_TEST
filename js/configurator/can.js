@@ -201,6 +201,7 @@ function Chunk ( id, type, onDrag, onDraging, onDrop, getType ) {
   this.frame  = null;
   this.byte   = null;
   this.bit    = null;
+  this.added  = false;
   this.length = getLength( self.type );
 
   function init () {
@@ -316,24 +317,11 @@ function Byte ( id ) {
   var box   = null;
   var id    = id;
   
-  this.free = true;
   this.bits = [];
   this.get  = new Get();
-  this.set  = new Set();
   function Get () {
     this.box = function () {
       return box;
-    }
-    return;
-  }
-  function Set () {
-    this.full = function ( id ) {
-      self.free = false;
-      return;
-    }
-    this.free = function () {
-      self.free = true;
-      return;
     }
     return;
   }
@@ -396,17 +384,43 @@ function Frame ( id=0, onClick, setSettings ) {
   this.focus     = new Focus();
   this.is        = new Is();
   function Set () {
-    this.full = function ( adr, type ) {
-      let length = getLengthByte( type );
-      for ( var i=0; i<length; i++ ) {
-        bytes[adr + i].set.full();
+    this.full = function ( byte, bit, type ) {
+      let length = getLength( type );
+      let sub    = 0;
+      let start  = bit;
+      for ( var i=0; i<getLengthByte( type ); i++ ) {
+        if ( i > 0 ) {
+          start = 0;
+        }
+        if ( length > ( 8 - start ) ) {
+          sub     = 8 - start;
+          length -= 8 - start;
+        } else {
+          sub = length;
+        }
+        for ( var j=0; j<sub; j++ ) {
+          bytes[byte + i].bits[start + j].free = false;
+        }
       }
       return;
     }
-    this.free = function ( adr, type ) {
+    this.free = function ( byte, bit, type ) {
       let length = getLengthByte( type );
-      for ( var i=0; i<length; i++ ) {
-        bytes[adr + i].set.free();
+      let sub    = 0;
+      let start  = bit;
+      for ( var i=0; i<getLengthByte( type ); i++ ) {
+        if ( i > 0 ) {
+          start = 0;
+        }
+        if ( length > ( 8 - start ) ) {
+          sub     = 8 - start;
+          length -= 8 - start;
+        } else {
+          sub = length;
+        }
+        for ( var j=0; j<sub; j++ ) {
+          bytes[byte + i].bits[start + j].free = true;
+        }
       }
       return;
     }
@@ -433,8 +447,14 @@ function Frame ( id=0, onClick, setSettings ) {
     }
     this.space = function ( type ) {
       let adr = null;
+      let sub = 1;
       for ( var byte=0; byte<dataSize; byte++ ) {
-        for ( var bit=0; bit<8; bit++ ) {
+        if ( getLength( type ) < 8 ) {
+          sub = 8
+        } else {
+          sub = 1
+        }
+        for ( var bit=0; bit<sub; bit++ ) {
           if ( self.is.adrFree( byte, bit, type ) == true ) {
             adr = { "byte" : byte, "bit" : bit };
             break;
@@ -451,7 +471,7 @@ function Frame ( id=0, onClick, setSettings ) {
     this.data = function ( id, type ) {
       let adr  = self.get.space( type );
       if ( adr != null ) {
-        self.set.full( adr.byte, type );
+        self.set.full( adr.byte, adr.bit, type );
       }
       return adr;
     }
@@ -482,16 +502,26 @@ function Frame ( id=0, onClick, setSettings ) {
       let length  = getLengthByte( type );
       let fullLen = getLength( type );
       let start   = bit;
+      let sub     = 0;
       if ( ( ( byte + length ) <= dataSize ) ) {
         for ( var i=0; i<length; i++ ) {
-          for ( var j=start; j<8; j++ ) {
+          if ( i > 0 ) {
+            start = 0;
+          }
+          if ( fullLen > ( 8 - start ) ) {
+            fullLen -= 8 - start;
+            sub      = 8 - start;
+          } else {
+            sub = fullLen + start;
+          }
+          for ( var j=start; j<sub; j++ ) {
             if ( bytes[byte + i].bits[j].free == true ) {
               acc++;
-            } 
+            }
           }
           start = 0;
         }
-        if ( acc >= fullLen ) {
+        if ( acc >= getLength( type ) ) {
           res = true;
         }
       }

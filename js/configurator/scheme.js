@@ -213,10 +213,18 @@ function Scheme ( id ) {
     return;
   }
   function getPinObject ( adr ) {
-    return self.nodes[adr.node].get.pinObject( adr.pin );
+    let res = null;
+    if ( adr.node < self.nodes.length ) {
+      res = self.nodes[adr.node].get.pinObject( adr.pin );
+    }
+    return res;
   }
   function getPinData ( adr ) {
-    return self.nodes[adr.node].get.pinData( adr.pin );
+    let res = null;
+    if ( adr.node < self.nodes.length ) {
+      res = self.nodes[adr.node].get.pinData( adr.pin );
+    }
+    return res;
   }
   function removeLinksOfNode ( adr ) {
     for ( var i=0; i<self.links.length; i++ ) {
@@ -365,25 +373,28 @@ function Scheme ( id ) {
     }
     return;
   }
-  this.addNode       = function ( type ) {
-    self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrag, beforNodeRemove, onNodeUnlink, beforContextMenu, onNodeFocus ) );
+  this.addNode       = function ( type, onFinish, options=null ) {
+    self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrag, beforNodeRemove, onNodeUnlink, beforContextMenu, onNodeFocus, onFinish, options ) );
     self.nodes[nodeID - 1].focus.set();
     return;
   }
   this.addLink       = function ( from, to ) {
     let currentID = 0;
     let start     = getPinObject( from );
-    let end       = getPinObject( to   );
-    if ( prevLink == null ) {
-      currentID = linkID++;
-      self.links.push( new Link( from, to, start, end, getPinData( from ), currentID ) );
+    let end       = getPinObject(  to  );
+    if ( ( start != null ) && ( end != null ) ) {
+      if ( prevLink == null ) {
+        currentID = linkID++;
+        self.links.push( new Link( from, to, start, end, getPinData( from ), currentID ) );
+      } else {
+        currentID = prevLink[0];
+        self.links[currentID].setFrom( from, start );
+      }
+      self.nodes[from.node].set.pinConnected( from.pin, id );
+      self.nodes[to.node].set.pinConnected( to.pin, id );
     } else {
-      currentID = prevLink[0];
-      self.links[currentID].setFrom( from, start );
+      console.log( "error on link: " + from.node + " to " + to.node );
     }
-    self.nodes[from.node].set.pinConnected( from.pin, id );
-    self.nodes[to.node].set.pinConnected( to.pin, id );
-
     return;
   }
   this.removeLink    = function ( id ) {
@@ -503,6 +514,7 @@ function Scheme ( id ) {
       });
       return res;
     }
+
     checker = check( Object.keys( data ), schemeKeys );
     if ( checker == true ) {
       checker = self.device.check( data.device );
@@ -523,13 +535,10 @@ function Scheme ( id ) {
           if ( checker == true ) {
             self.clean();
             self.device.load( data.device );
+
             data.nodes.forEach( function ( node ) {
-              self.addNode( lib.getTypeByName( node.name ) );
+              self.addNode( lib.getTypeByName( node.name ), function() { }, node.options );
               self.nodes[nodeID - 1].move( node.x, node.y );
-              node.options.forEach( function ( option, i ) {
-                self.nodes[nodeID - 1].set.option( i, option.value );
-                self.nodes[nodeID - 1].options[i].update();
-              });
               self.nodes[nodeID - 1].update();
             });
             data.links.forEach( function ( link ) {

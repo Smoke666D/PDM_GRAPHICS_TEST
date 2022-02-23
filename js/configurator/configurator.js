@@ -211,10 +211,12 @@ function Configurator ( size ) {
   function open () {
     remote.dialog.showOpenDialog( remote.getCurrentWindow(), fileOptions ).then( function ( value ) {
       if ( value.canceled == false ) {
-        workspace.load( value.filePaths[0], function (data) {
+        workspace.load( value.filePaths[0], function ( data ) {
           self.scheme.load( data );
+          return;
         });
       }
+      return;
     });
     return;
   }
@@ -413,7 +415,9 @@ function Configurator ( size ) {
   }
   /*----------------------------------------*/
   this.addNode = function ( id ) {
-    self.scheme.addNode( id );
+    self.scheme.addNode( id, function() {
+      return;
+    });
     return;
   }
   init( size );
