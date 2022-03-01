@@ -1,22 +1,21 @@
 /*  */
-function Parser ( data ) {
-  var data = data;
-
-  console.log( data )
-
-  let endPoints = []; /* Оконечные ноды без выходов или без подключенных выходов */
-  let pointers  = []; /* Перечень источников указателей                          */
-
+function Parser () {
+  var self = this;
+  var data = null;
+  /*----------------------------------------*/
+  this.endPoints = []; /* Оконечные ноды без выходов или без подключенных выходов */
+  this.pointers  = []; /* Перечень источников указателей                          */
+  this.index     = []; /* Индексы элементов, номера по типу нода                  */
   /*------------------ Ok ------------------*/
   function calcEndPoints () {
     data.nodes.forEach( function ( node ) {
       if ( node.name != 'node_inputPointer' ) {
-        endPoints.push( node.id );
+        self.endPoints.push( node.id );
       }
       return;
     });
     data.links.forEach( function ( link ) {
-      endPoints.splice( endPoints.indexOf( link.from.node ), 1 );
+      self.endPoints.splice( self.endPoints.indexOf( link.from.node ), 1 );
       return;
     });
     return;
@@ -27,12 +26,12 @@ function Parser ( data ) {
     data.nodes.forEach( function ( node ) {
       if  ( node.name == 'node_inputPointer' ) {
         net = parseInt( node.options[0].value );
-        for ( var i=pointers.length; i<( net + 1 ); i++ ) {
-          pointers.push( 0 );
+        for ( var i=self.pointers.length; i<( net + 1 ); i++ ) {
+          self.pointers.push( 0 );
         }
         data.links.forEach( function ( link ) {
           if ( link.to.node == node.id ) {
-            pointers[net] = link.from;
+            self.pointers[net] = link.from;
           }
           return;
         });
@@ -41,31 +40,65 @@ function Parser ( data ) {
     });
     return;
   }
-  /*------------------ NO ------------------*/
+  /*------------------ Ok ------------------*/
+  function calcIndex () {
+    let counter = 0;
+    let name    = "";
+    data.nodes.forEach( function ( node ) {
+      counter = 0;
+      name    = node.name;
+      if ( parseInt( name[name.length - 1] ) > 0 ) {
+        name = name.substring( 0, ( name.length - 1 ) );
+      }
+      self.index.forEach( function ( index ) {
+        if ( index.name == name ) {
+          counter++;
+        }
+      });
+      self.index.push( {
+        "name" : name,
+        "n"    : ( counter + 1 ),
+        "id"   : node.id
+      });
+    });
+    return;
+  }
+  /*------------------ Ok ------------------*/
+  this.getIndexById = function ( id ) {
+    let result = null;
+    self.index.forEach( function( index, i ) {
+      if ( index.id == id ) {
+        result = index.n;
+      }
+    });
+    return result
+  }
+  /*------------------ Ok ------------------*/
   this.getConectedAdr = function ( adr ) {
     let res = [];
     data.links.forEach( function ( link ) {
-      if ( link.from == adr ) {
+      if ( ( link.from.node == adr.node ) && ( link.from.pin == adr.pin ) ) {
         res.push( link.to );
       }
-      if ( link.to == adr ) {
+      if ( ( link.to.node == adr.node ) && ( link.to.pin == adr.pin ) ) {
         res.push( link.from )
       }
       return;
     });
     return res;
   }
-  /*------------------ NO ------------------*/
+  /*------------------ Ok ------------------*/
   this.getNode = function ( id ) {
     return data.nodes[id];
   }
-
-
-
-
-  calcEndPoints();
-  calcPointers();
-  console.log( pointers );
+  /*------------------ Ok ------------------*/
+  this.init = function ( input ) {
+    data = input;
+    calcEndPoints();
+    calcPointers();
+    calcIndex();
+    return;
+  }
   return;
 }
 

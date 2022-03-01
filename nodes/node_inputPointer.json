@@ -6,7 +6,7 @@
   "short"    : "P",
   "help"     : "Указатель на переменную",
   "compiler" : {
-    "denisScript" : "null"
+    "denisScript" : null
   },
   "options"  : [
     {

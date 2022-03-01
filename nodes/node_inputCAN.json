@@ -6,7 +6,12 @@
   "short"    : "CAN",
   "help"     : "Чтение данных из CAN шины. Необходимо выбрать тип данных, затем выбрать сообщение и расположение данных в сообщении",
   "compiler" : {
-    "denisScript" : null
+    "denisScript" : {
+      "setup"   : "",
+      "outputs" : [
+        "CAN_CH.$n$"
+      ]
+    }
   },
   "options" : [
     {

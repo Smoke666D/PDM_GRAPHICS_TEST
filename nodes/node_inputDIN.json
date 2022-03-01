@@ -8,7 +8,9 @@
   "compiler" : {
     "denisScript" : {
       "setup"   : "",
-      "outputs" : []
+      "outputs" : [
+        "DIN.$n$"
+      ]
     }
   },
   "options" : [

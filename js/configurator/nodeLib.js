@@ -166,6 +166,9 @@ function NodeLib () {
     });
     return res;
   }
+  this.getNodeRecordByName = function ( name ) {
+    return self.getNodeRecord( self.getTypeByName( name ) );
+  }
   this.getSection       = function ( id ) {
     return sections[id];
   }
