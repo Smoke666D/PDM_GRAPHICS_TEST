@@ -9,8 +9,8 @@
     "denisScript" : {
       "setup"   : "KEYPAD_TRESET.$adr$=$in0$;\n",
       "outputs" : [
-        "KEYPAD_BUTTON.$n$",
-        "KEYPAD_TOGGLE.$n$"
+        "KEYPAD_BUTTON.$adr$",
+        "KEYPAD_TOGGLE.$adr$"
       ]
     }
   },

@@ -3,18 +3,26 @@ const { parse } = require('path');
 var Parser = require('./parser.js').Parser;
 var lib    = require('../configurator/nodeLib.js').nodeLib;
 /*----------------------------------------------------------------------------*/
-var lang   = "denisScript";
-let parser = new Parser();
+var lang     = "denisScript";
+let parser   = new Parser();
+var doneList = [];
 /*----------------------------------------------------------------------------*/
 /*------------------ Ok ------------------*/
 function getMakeData ( record, lng ) {
-  let out = null;
-  console.log( record )
-  Object.keys( record.compiler ).forEach( function ( key ) {
-    if ( key == lng ) {
-      out = record.compiler[lng]
+  let out   = null;
+  let doing = true;
+  if ( ( 'name' in record ) == true ) {
+    if ( record.name.startsWith( 'node_var' ) == true ) {
+      doing = false;
     }
-  });
+  }
+  if ( doing == true ) {
+    Object.keys( record.compiler ).forEach( function ( key ) {
+      if ( key == lng ) {
+        out = record.compiler[lng];
+      }
+    });
+  }
   return out;
 }
 /*------------------ No ------------------*/
@@ -75,13 +83,26 @@ function processLine ( id ) {
   if ( makeData != null ) {
     let str      = makeSetup( makeData.setup, id );
     if ( str.length > 0 ) {
-      output   += str
-      let adrs  = getFromNodes( id );
-      if ( adrs.length > 0 ) {
-        adrs.forEach( function ( adr ) {
-          output += processLine( adr.node );
-        });
+      if ( str != "null" ) {
+        output += str
+        doneList.push( id );
+        let adrs = getFromNodes( id );
+        if ( adrs.length > 0 ) {
+          adrs.forEach( function ( adr ) {
+            let doing = true;
+            doneList.forEach( function ( number ) {
+              if ( number == adr.node ) {
+                doing = false;
+              }
+            });
+            if ( doing == true ) {
+              output += processLine( adr.node );
+            }
+          });
+        }
       }
+    } else {
+      output += "___ERROR___ (" + getNodeRecord( id ).name + ")\n";
     }
   }
   return output;
@@ -165,6 +186,7 @@ function makeSetup ( string, id ) {
 /*------------------ No ------------------*/
 function build ( data ) {
   let output = "";
+  doneList   = [];
   parser.init( data );
   console.log( '-------------------' );
 
