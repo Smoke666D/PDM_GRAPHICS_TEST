@@ -9,6 +9,7 @@ let parser = new Parser();
 /*------------------ Ok ------------------*/
 function getMakeData ( record, lng ) {
   let out = null;
+  console.log( record )
   Object.keys( record.compiler ).forEach( function ( key ) {
     if ( key == lng ) {
       out = record.compiler[lng]
@@ -38,13 +39,16 @@ function makeIn ( string, id ) {
         case 'node_timersPWM':
           output = 'Hi';
           break;
+        case 'node_inputSW':
+          output = 'Lo';
+          break;
         default:
-          console.log( "No address on making 'in'" );
+          console.log( "[MAKE] No address on making 'in': " + parser.getNode( id ).name );
           break;
       }
     }
   } else {
-    console.log( "In string starts with error: " + string );
+    console.log( "[MAKE] In string starts with error: " + string );
   }
   return output;
 }
@@ -81,6 +85,36 @@ function processLine ( id ) {
     }
   }
   return output;
+}
+/*------------------ No ------------------*/
+function makeCan () {
+
+}
+/*------------------ Ok ------------------*/
+function makeDevice ( device ) {
+  let string = getMakeData( lib.getSetup(), lang ).setup;
+  if ( ( string != null ) && ( string.length > 0 ) ) {
+    let start = 0;
+    let end   = 0;
+    let data  = "";
+    while ( start >= 0 ) {
+      start = string.indexOf( '$', 0 );
+      end   = string.indexOf( '$', ( start + 1 ) );
+      if ( ( start > 0 ) && ( end > 0 ) ) {
+        start++;
+        end++;
+        data = string.substring( start, ( end - 1 ) );
+        Object.keys( device ).forEach( function ( key, i ) {
+          if ( data == key ) {
+            string = string.substring( 0, ( start - 1 ) ) + device[key] + string.substring( end, string.length ); 
+          }
+        }); 
+      }
+    }
+  } else {
+    console.log( "[MAKE] Error on device setup" );
+  }
+  return string;
 }
 /*------------------ Ok ------------------*/
 function makeSetup ( string, id ) {
@@ -134,8 +168,10 @@ function build ( data ) {
   parser.init( data );
   console.log( '-------------------' );
 
+  output +=makeDevice( data.device );
   parser.endPoints.forEach( function ( id ) {
     output += processLine( id );
+    output += "//-------------------\n"
   });
   output += 'END;'
 
@@ -143,7 +179,7 @@ function build ( data ) {
     if ( error != null ) {
       console.log( error );
     } else {
-      console.log( 'Make done' );
+      console.log( '[MAKE] done' );
     }
     return;
   });

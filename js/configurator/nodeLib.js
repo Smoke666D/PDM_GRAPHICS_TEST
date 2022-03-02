@@ -3,7 +3,7 @@ const fs = require('fs');
 /*----------------------------------------------------------------------------*/
 const typePriority = ["variable",  "logic",   "timers",  "math",       "loops", "inputs", "outputs"];
 const typeNames    = ["Переменные", "Логика", "Таймеры", "Математика", "Циклы", "Входы",  "Выходы" ];
-const setupKeys    = ["nodNumber", "hardware", "help", "options", "availableNods"];
+const setupKeys    = ["nodNumber", "hardware", "compiler", "help", "options", "availableNods"];
 /*----------------------------------------------------------------------------*/
 function portRecord () {
   var self    = this;

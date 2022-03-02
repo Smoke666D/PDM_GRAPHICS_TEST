@@ -6,7 +6,12 @@
   "short"    : "not",
   "help"     : "Булева операция отрицания. Инвертирует значение",
   "compiler" : {
-    "denisScript" : "Inv.$n$=$in0$;\n"
+    "denisScript" : {
+      "setup"   : "Inv.$n$=$in0$;\n",
+      "outputs" : [
+        "Inv.$n$"
+      ]
+    }
   },
   "options"  : [],
   "inputs"   : [

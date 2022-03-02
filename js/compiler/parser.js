@@ -9,13 +9,18 @@ function Parser () {
   /*------------------ Ok ------------------*/
   function calcEndPoints () {
     data.nodes.forEach( function ( node ) {
-      if ( node.name != 'node_inputPointer' ) {
-        self.endPoints.push( node.id );
+      let notEnd = false;
+      if ( ( node.name != 'node_inputPointer' ) && ( node.name != 'node_header' ) ) {
+        data.links.forEach( function ( link ) {
+          if ( link.from.node == node.id ) {
+            notEnd = true;
+          }
+          return;
+        });
+        if ( notEnd == false ) {
+          self.endPoints.push( node.id );
+        }
       }
-      return;
-    });
-    data.links.forEach( function ( link ) {
-      self.endPoints.splice( self.endPoints.indexOf( link.from.node ), 1 );
       return;
     });
     return;

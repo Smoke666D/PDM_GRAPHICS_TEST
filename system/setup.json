@@ -12,15 +12,21 @@
     "modbus"   : false,
     "compiler" : "DenisScript"
   },
+  "compiler" : {
+    "denisScript" : {
+      "setup"   : "DEV_ID=$id$;\nCAN_SPEED=$speed$;\n",
+      "outputs" : []
+    }
+  },
   "options" : [
     {
-      "name"   : "dev_id",
+      "name"   : "id",
       "text"   : "ID",
       "type"   : "byte",
       "select" : null,
       "value"  : 0
     },{
-      "name"   : "can_speed",
+      "name"   : "speed",
       "text"   : "скорость",
       "type"   : "select",
       "select" : [ 250, 500, 1000 ],
