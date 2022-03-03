@@ -26,6 +26,23 @@ function getMakeData ( record, lng ) {
   return out;
 }
 /*------------------ No ------------------*/
+function makeConst ( data, id ) {
+  let out = "___ERROR___";
+  if ( data.startsWith( 'const' ) ) {
+    let sub = data.substring( ( data.indexOf( '(' ) + 1 ), data.indexOf( ')' ) );
+    if ( sub.startsWith( 'in' ) ) {
+      let adr = parser.getConectedAdr( { 'node' : id, 'pin' : parseInt( sub[2] ) } );
+      if ( adr.length > 0 ) {
+        let node = parser.getNode( adr[0].node );
+        if ( node.name.startsWith( 'node_var' ) ) {
+          out = node.options[0].value;
+        }
+      }
+    }
+  }
+  return out;
+}
+/*------------------ Ok ------------------*/
 function makeIn ( string, id ) {
   let output = null;
   let str    = "";
@@ -109,7 +126,7 @@ function processLine ( id ) {
 }
 /*------------------ No ------------------*/
 function makeCan () {
-
+  return;
 }
 /*------------------ Ok ------------------*/
 function makeDevice ( device ) {
@@ -171,6 +188,10 @@ function makeSetup ( string, id ) {
           }
           if ( data == 'n' ) {
             value = parser.getIndexById( id );
+            done  = true;
+          }
+          if ( data.startsWith( 'const' ) ) {
+            value = makeConst( data, id );
             done  = true;
           }
         }
