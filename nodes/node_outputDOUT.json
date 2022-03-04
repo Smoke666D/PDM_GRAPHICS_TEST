@@ -6,7 +6,12 @@
   "short"   : "DOUT",
   "help"    : "Дискретный выход. Необходимо выбрать номер канала",
   "compiler" : {
-    "denisScript" : "OutSetup.$adr$=$current_startup$/$current_nominal$/$delay$;\nOut.$adr$=$in0$;\nOutName.$adr$=$name$;\n"
+    "denisScript" : {
+      "setup"   : "OutSetup.$adr$=$current_startup$/$current_nominal$/$delay$;\nOut.$adr$=$in0$;\nOutName.$adr$=$name$;\n",
+      "outputs" : [
+        "OutCur.$adr$"
+      ]
+    }
   },
   "options" : [
     {
@@ -44,7 +49,7 @@
       "text"   : "имя",
       "type"   : "string",
       "select" : [],
-      "value"  : ""
+      "value"  : "n/a"
     },{
       "name"   : "userString",
       "text"   : "Коммент",

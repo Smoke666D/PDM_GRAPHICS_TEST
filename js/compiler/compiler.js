@@ -25,7 +25,7 @@ function getMakeData ( record, lng ) {
   }
   return out;
 }
-/*------------------ No ------------------*/
+/*------------------ Ok ------------------*/
 function makeConst ( data, id ) {
   let out = "___ERROR___";
   if ( data.startsWith( 'const' ) ) {
@@ -81,7 +81,7 @@ function makeIn ( string, id ) {
 function getNodeRecord ( id ) {
   return lib.getNodeRecord( lib.getTypeByName( parser.getNode( id ).name ) );
 }
-/*------------------ No ------------------*/
+/*------------------ Ok ------------------*/
 function getFromNodes ( id ) {
   let out = [];
   let node = getNodeRecord( id );
@@ -93,7 +93,7 @@ function getFromNodes ( id ) {
   });
   return out;
 }
-/*------------------ No ------------------*/
+/*------------------ Ok ------------------*/
 function processLine ( id ) {
   let output   = "";
   let makeData = getMakeData( getNodeRecord( id ), lang );
@@ -103,30 +103,63 @@ function processLine ( id ) {
       if ( str != "null" ) {
         output += str
         doneList.push( id );
-        let adrs = getFromNodes( id );
-        if ( adrs.length > 0 ) {
-          adrs.forEach( function ( adr ) {
-            let doing = true;
-            doneList.forEach( function ( number ) {
-              if ( number == adr.node ) {
-                doing = false;
-              }
-            });
-            if ( doing == true ) {
-              output += processLine( adr.node );
-            }
-          });
-        }
       }
     } else {
-      output += "___ERROR___ (" + getNodeRecord( id ).name + ")\n";
+      if ( ( getNodeRecord( id ).name != 'node_outputCAN' ) && ( getNodeRecord( id ).name != 'node_inputDIN' ) ) {
+        output += "___ERROR___ (" + getNodeRecord( id ).name + ")\n";
+      }
+    }
+    let adrs = getFromNodes( id );
+    if ( adrs.length > 0 ) {
+      adrs.forEach( function ( adr ) {
+        let doing = true;
+        doneList.forEach( function ( number ) {
+          if ( number == adr.node ) {
+            doing = false;
+          }
+          return;
+        });
+        if ( doing == true ) {
+          output += processLine( adr.node );
+        }
+        return;
+      });
     }
   }
   return output;
 }
-/*------------------ No ------------------*/
+/*------------------ Ok ------------------*/
 function makeCan () {
-  return;
+  let output = "";
+  let frames = [];
+  parser.tables.forEach( function( table ) {
+    table.forEach( function ( id ) {
+      let node   = parser.getNode( id );
+      let record = lib.getNodeRecordByName( node.name );
+      if ( ( node.options[1].value.frame + 1 ) > frames.length ) {
+        frames.push( [] );
+      }
+      frames[node.options[1].value.frame].push( { 'id' : id, 'type' : node.options[0].value, 'byte' : node.options[1].value.byte, 'bit' : node.options[1].value.bit} );
+      return;
+    });
+    return;
+  });
+  frames.forEach( function ( frame, n ) {
+    let sub = 'CAN_OUT.' + n + '=';
+    frame.forEach( function ( chunk ) {
+      if ( parser.getNode( chunk.id ).name.indexOf( 'output' ) > 0 ) {
+        sub += makeIn( 'in0', chunk.id ) + '/' + chunk.byte + '/' + chunk.bit + '+';
+      }
+      return;
+    });
+    if ( sub.length > 10 ) {
+      sub = sub.substring( 0, ( sub.length - 1 ) ) + ';\n';
+      output += sub;
+    }
+    return;
+  });
+  output += "//-------------------\n"
+  return output;
 }
 /*------------------ Ok ------------------*/
 function makeDevice ( device ) {
@@ -211,7 +244,8 @@ function build ( data ) {
   parser.init( data );
   console.log( '-------------------' );
 
-  output +=makeDevice( data.device );
+  output += makeDevice( data.device );
+  output += makeCan();
   parser.endPoints.forEach( function ( id ) {
     output += processLine( id );
     output += "//-------------------\n"

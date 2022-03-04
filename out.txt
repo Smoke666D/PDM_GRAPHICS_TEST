@@ -1,12 +1,19 @@
 DEV_ID=0;
 CAN_SPEED=500;
-___ERROR___ (node_outputCAN)
+CAN_OUT.0=KEYPAD_TOGGLE.8/0/0+OutCur.1/1/0+And.1/0/1+And.1/0/2+OutCur.3/3/0+OutCur.2/5/0;
+CAN_OUT.1=OutCur.4/0/0+OutCur.5/2/0+OutCur.6/4/0+DIN.1/6/0;
 //-------------------
-___ERROR___ (node_outputCAN)
+KEYPAD_TRESET.0=Lo;
 //-------------------
-___ERROR___ (node_outputCAN)
+OutSetup.0=0/0/0;
+Out.0=And.2;
+OutName.0=n/a;
+And.2=KEYPAD_TOGGLE.1+KEYPAD_TOGGLE.8;
+KEYPAD_TRESET.0=KEYPAD_BUTTON.8;
 //-------------------
-___ERROR___ (node_outputCAN)
+And.1=KEYPAD_TOGGLE.8+Inv.1;
+Inv.1=KEYPAD_BUTTON.1;
+//-------------------
 //-------------------
 KEYPAD_LEDBLUE.0=Or.1;
 Or.1=And.2+KEYPAD_BUTTON.2;
@@ -16,9 +23,13 @@ KEYPAD_LEDGREEN.0=Or.2;
 Or.2=KEYPAD_BUTTON.2+And.3;
 And.3=KEYPAD_TOGGLE.2+And.2;
 //-------------------
-___ERROR___ (node_outputCAN)
+OutSetup.0=0/0/0;
+Out.0=Or.1;
+OutName.0=n/a;
 //-------------------
-___ERROR___ (node_outputCAN)
+OutSetup.0=0/0/0;
+Out.0=Or.2;
+OutName.0=n/a;
 //-------------------
 KEYPAD_LEDGREEN.0=And.5;
 And.5=Or.6+Tim.1;
@@ -33,16 +44,21 @@ Or.5=KEYPAD_TOGGLE.4+KEYPAD_TOGGLE.5;
 KEYPAD_TRESET.0=Or.4;
 Or.4=KEYPAD_BUTTON.8+KEYPAD_BUTTON.3+KEYPAD_TOGGLE.5;
 //-------------------
-___ERROR___ (node_outputCAN)
+OutSetup.0=0/0/0;
+Out.0=And.5;
+OutName.0=n/a;
 //-------------------
-___ERROR___ (node_outputCAN)
+OutSetup.0=0/0/0;
+Out.0=And.4;
+OutName.0=n/a;
 //-------------------
-___ERROR___ (node_outputCAN)
-//-------------------
-KEYPAD_LEDGREEN.0=KEYPAD_TOGGLE.6;
+OutSetup.0=0/0/0;
+Out.0=KEYPAD_BUTTON.6;
+OutName.0=n/a;
 KEYPAD_TRESET.0=Lo;
 //-------------------
-___ERROR___ (node_outputCAN)
+KEYPAD_LEDGREEN.0=KEYPAD_TOGGLE.6;
+//-------------------
 //-------------------
 KEYPAD_LEDGREEN.0=Inv.2;
 Inv.2=KEYPAD_TOGGLE.8;

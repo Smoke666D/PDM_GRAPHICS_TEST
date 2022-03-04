@@ -1,3 +1,4 @@
+var lib = require('../configurator/nodeLib.js').nodeLib;
 /*  */
 function Parser () {
   var self = this;
@@ -6,6 +7,7 @@ function Parser () {
   this.endPoints = []; /* Оконечные ноды без выходов или без подключенных выходов */
   this.pointers  = []; /* Перечень источников указателей                          */
   this.index     = []; /* Индексы элементов, номера по типу нода                  */
+  this.tables    = [];
   /*------------------ Ok ------------------*/
   function calcEndPoints () {
     data.nodes.forEach( function ( node ) {
@@ -68,6 +70,21 @@ function Parser () {
     });
     return;
   }
+  /*------------------ No ------------------*/
+  function calcTable () {
+    self.tables = [];
+    data.nodes.forEach( function ( node ) {
+      record = lib.getNodeRecordByName( node.name );
+      if ( record.table > 0 ) {
+        if ( self.tables.length < record.table ) {
+          self.tables.push( [] );
+        }
+        self.tables[record.table - 1].push( node.id );
+      }
+      return;
+    });
+    return;
+  }
   /*------------------ Ok ------------------*/
   this.getIndexById = function ( id ) {
     let result = null;
@@ -102,6 +119,7 @@ function Parser () {
     calcEndPoints();
     calcPointers();
     calcIndex();
+    calcTable();
     return;
   }
   return;
