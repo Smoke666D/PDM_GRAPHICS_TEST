@@ -410,6 +410,18 @@ function Modal () {
   this.addCanChunk  = function ( id, typeCallback, type, adr=null, callback ) {
     return dialogs.can.addChunk( id, typeCallback, type, adr, callback );
   }
+  this.getCanFrameData = function () {
+    let data = [];
+    let frames = dialogs.can.getFrames();
+    frames.forEach( function ( frame ) {
+      data.push({
+        'adr'     : parseInt( frame.adr ),
+        'timeout' : parseInt( frame.cheker.timeout ),
+        'length'  : 8
+      });
+    });
+    return data;
+  }
   this.showCan      = function () {
     currant = "can";
     dialogs.can.redraw();

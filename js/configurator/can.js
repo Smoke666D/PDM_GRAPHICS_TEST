@@ -35,12 +35,12 @@ function getLengthByte ( type ) {
 /*----------------------------------------------------------------------------*/
 function Subadr () {
   this.enb    = false;
-  this.adr    = 0;
+  this.adr    = 1285;
   this.length = 1;
 }
 function Checker () {
   this.enb     = false;
-  this.timeout = 10;
+  this.timeout = 900;
 }
 function Pointer ( adr, length, id ) {
   var self    = this;
@@ -61,23 +61,48 @@ function Settings () {
       label.innerHTML = text;
       return label;
     }
-    function addElement ( text, item ) {
+    function addElement ( text, item, disabled = false ) {
       let col1 = document.createElement( "DIV" );
       let col2 = document.createElement( "DIV" );
       col1.className = "can col-setting";
       col2.className = "can col-setting";
       col1.appendChild( drawText( text ) );
       col2.appendChild( item );
-      labelLine.appendChild( col1 );
-      inputLine.appendChild( col2 );
+      if ( disabled == false ) {
+        labelLine.appendChild( col1 );
+        inputLine.appendChild( col2 );
+      }
       return;
     }
     function drawAdress () {
-      adr      = document.createElement( "INPUT" );
-      adr.type = "number";
-      adr.min  = "0";
-      adr.max  = "255";
-      return addElement( "адрес", adr );
+      adr = document.createElement( "INPUT" );
+      adr.addEventListener( 'keyup', function () {
+        if ( !adr.value.startsWith( '0x' ) ) {
+          adr.value = '0x' + adr.value;
+        }
+        if ( adr.value.length > 6 ) {
+          adr.value = adr.value.substring( 0, 6 );
+        } else {
+          let char = adr.value[adr.value.length - 1];
+          if ( ( isNaN( parseInt( char ) ) ) && 
+               ( char != 'a' ) && 
+               ( char != 'A' ) &&
+               ( char != 'b' ) &&
+               ( char != 'B' ) &&
+               ( char != 'c' ) &&
+               ( char != 'C' ) &&
+               ( char != 'd' ) &&
+               ( char != 'D' ) &&
+               ( char != 'e' ) &&
+               ( char != 'E' ) &&
+               ( char != 'f' ) &&
+               ( char != 'F' ) ) {
+            adr.value = adr.value.substring( 0, ( adr.value.length - 1 ) );
+          }
+        }
+        return;
+      });
+      return addElement( "адрес", adr, false );
     }
     function drawCheckerEnb () {
       let box             = document.createElement( "LABEL" );
@@ -90,14 +115,14 @@ function Settings () {
       span.className      = "slider";
       box.appendChild( chekerEnb );
       box.appendChild( span );
-      return addElement( "проверка", box );
+      return addElement( "проверка", box, true );
     }
     function drawCheckerTimeout () {
       checkerTime      = document.createElement( "INPUT" );
       checkerTime.type = "number";
       checkerTime.min  = "0";
       checkerTime.max  = "65535";
-      return addElement( "период", checkerTime );
+      return addElement( "период", checkerTime, false );
     }
     function drawSubAddressEnb () {
       let box             = document.createElement( "LABEL" );
@@ -110,14 +135,14 @@ function Settings () {
       span.className      = "slider";
       box.appendChild( subadrEnb );
       box.appendChild( span );
-      return addElement( "субадрес", box );
+      return addElement( "субадрес", box, true );
     }
     function drawSubAdress () {
       subadr      = document.createElement( "INPUT" );
       subadr.type = "number";
       subadr.min  = "0";
       subadr.max  = "255";
-      return addElement( "субадрес", subadr );
+      return addElement( "субадрес", subadr, true );
     }
 
     let box             = document.createElement( "DIV" );

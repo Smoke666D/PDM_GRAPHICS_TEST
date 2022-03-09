@@ -23,6 +23,7 @@ function Scheme ( id ) {
   this.nodes   = [];          /* Nodes of scheme          */
   this.links   = [];          /* Links of scheme          */
   this.options = [];          /* Options of the scheme    */
+  this.tables  = [];          /* Tables for CAN frames    */
   this.help    = "";          /* Help string for options  */
   this.box     = null;        /* Scheme element in DOM    */
   this.device  = null;        /* Data of the device       */
@@ -352,6 +353,10 @@ function Scheme ( id ) {
     }
     return;
   }
+  function getTables () {
+    console.log( dialog.getCanFrameData() );
+    return;
+  }
   /*----------------------------------------*/
   this.clean         = function () {
     self.resetFocus();
@@ -481,6 +486,7 @@ function Scheme ( id ) {
       this.device  = {};
       this.nodes   = [];
       this.links   = [];
+      this.tables  = [];
     }
     let data    = new SaveData();    
     data.device = self.device.save();
@@ -492,11 +498,16 @@ function Scheme ( id ) {
       data.links.push( link.save() );
       return;
     });
+    getTables();
+    self.tables.forEach( function ( table ) {
+      data.tables.push( table );
+      return;
+    });
     return data;
   }
   this.load          = function ( data ) {
     let checker      = true;
-    const schemeKeys = ["device", "nodes", "links"];
+    const schemeKeys = ["device", "nodes", "links", "tables"];
     const nodeKeys   = ["id", "name", "options", "x", "y"];
     const linkKeys   = ["id", "from", "to"];
     function check ( data0, data1 ) {
@@ -535,15 +546,23 @@ function Scheme ( id ) {
           if ( checker == true ) {
             self.clean();
             self.device.load( data.device );
-
             data.nodes.forEach( function ( node ) {
               self.addNode( lib.getTypeByName( node.name ), function() { console.log( 'her' )}, node.options );
               self.nodes[nodeID - 1].move( node.x, node.y );
               self.nodes[nodeID - 1].update();
+              return;
             });
             data.links.forEach( function ( link ) {
               self.addLink( link.from, link.to );
+              return;
             });
+            self.tables = [];
+            if ( data.tables != undefined ) {
+              data.tables.forEach( function ( table ) {
+                self.tables.push( table );
+                return;
+              });
+            }
           } else {
             console.log( "Wrong file structure. Link section error" );  
           }

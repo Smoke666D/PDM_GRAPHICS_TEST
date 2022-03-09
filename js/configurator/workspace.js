@@ -20,7 +20,7 @@ function Config () {
       if ( busy == 0 ) {
         busy = 1;
         let text = JSON.stringify( data, null, '  ' );
-        fs.writeFile( path, text, {encoding: "utf8"}, function ( error ) {
+        fs.writeFile( path, text, { encoding: "utf8" }, function ( error ) {
           if ( error ) {
             console.log( "Error on configuration saving!");
           }

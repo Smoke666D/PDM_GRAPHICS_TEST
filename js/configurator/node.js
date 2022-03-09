@@ -527,7 +527,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
       let res  = null;
       let adr  = null;
       let type = null;
-      self.options.forEach( function ( option, i ) {
+      self.options.forEach( function ( option ) {
         if ( option.name == "adr" ) {
           switch ( option.select ) {
             case "canAdr":
