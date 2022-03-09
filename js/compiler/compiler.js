@@ -132,6 +132,7 @@ function processLine ( id ) {
 function makeCan () {
   let output = "";
   let frames = [];
+  let stream = [];
   parser.tables.forEach( function( table ) {
     table.forEach( function ( id ) {
       let node   = parser.getNode( id );
@@ -139,16 +140,74 @@ function makeCan () {
       if ( ( node.options[1].value.frame + 1 ) > frames.length ) {
         frames.push( [] );
       }
-      frames[node.options[1].value.frame].push( { 'id' : id, 'type' : node.options[0].value, 'byte' : node.options[1].value.byte, 'bit' : node.options[1].value.bit} );
+      frames[node.options[1].value.frame].push({ 
+        'id'   : id, 
+        'type' : node.options[0].value, 
+        'byte' : node.options[1].value.byte, 
+        'bit'  : node.options[1].value.bit
+      });
+      return;
+    });
+    return;
+  });
+
+
+  stream = [];
+  frames.forEach( function ( frame, n ) {
+    stream.push( [] );
+    frame.forEach( function ( chunk ) {
+      if ( chunk.type == 'bool' ) {
+        if ( stream[n].length < ( chunk.byte + 1 ) ) {
+          for ( var i=0; i<( chunk.byte + 1 ); i++ ) {
+            stream[n].push( [] ); 
+          }
+        }
+        stream[n][chunk.byte].push( chunk );
+      }
+      return;
+    });
+    return;
+  });
+  let counter = 1;
+  stream.forEach( function ( frame ) {
+    frame.forEach( function ( byte, n ) {
+      if ( byte.length > 0 ) {
+        let buffer = 'CAN_STREAM.' + counter + '=';
+        counter++;
+        for ( var i=0; i<8; i++ ) {
+          let exist = null;
+          byte.forEach( function ( chunk ) {
+            if ( chunk.bit == i ) {
+              exist = chunk.bit;
+            }
+            return;
+          });
+          if ( exist == null ) {
+            buffer += 'LO+';
+          } else {
+            buffer += makeIn( 'in0', byte[i].id ) + '+';
+          }
+        }
+        buffer   = buffer.substring( 0, ( buffer.length - 1 ) ) + ';\n';
+        output  += buffer;
+        frame[n] = buffer.substring( 0, buffer.indexOf( '=' ) );
+      }
       return;
     });
     return;
   });
   frames.forEach( function ( frame, n ) {
-    let sub = 'CAN_OUT.' + n + '=';
+    let sub = 'CAN_OUT.' + ( n + 1 ) + '=';
+    stream[n].forEach ( function ( stre, k ) {
+      if ( typeof( stre ) == 'string' ) {
+        sub += stre + '/' + k + '/0+'
+      }
+    });
     frame.forEach( function ( chunk ) {
-      if ( parser.getNode( chunk.id ).name.indexOf( 'output' ) > 0 ) {
-        sub += makeIn( 'in0', chunk.id ) + '/' + chunk.byte + '/' + chunk.bit + '+';
+      if ( chunk.type != 'bool' ) {
+        if ( parser.getNode( chunk.id ).name.indexOf( 'output' ) > 0 ) {
+          sub += makeIn( 'in0', chunk.id ) + '/' + chunk.byte + '/' + chunk.bit + '+';
+        }
       }
       return;
     });
@@ -252,7 +311,7 @@ function build ( data ) {
   });
   output += 'END;'
 
-  require("fs").writeFile("out.txt", output, function ( error ) {
+  require( "fs" ).writeFile( getMakeData( lib.getSetup(), lang ).outputName, output, function ( error ) {
     if ( error != null ) {
       console.log( error );
     } else {

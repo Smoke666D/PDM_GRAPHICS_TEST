@@ -1,7 +1,9 @@
 DEV_ID=0;
 CAN_SPEED=500;
-CAN_OUT.0=KEYPAD_TOGGLE.8/0/0+OutCur.1/1/0+And.1/0/1+And.1/0/2+OutCur.3/3/0+OutCur.2/5/0;
-CAN_OUT.1=OutCur.4/0/0+OutCur.5/2/0+OutCur.6/4/0+DIN.1/6/0;
+CAN_STREAM.1=KEYPAD_TOGGLE.8+And.1+And.1+LO+LO+LO+LO+LO;
+CAN_STREAM.2=DI.1+LO+LO+LO+LO+LO+LO+LO;
+CAN_OUT.1=CAN_STREAM.1/0/0+OutCur.1/1/0+OutCur.3/3/0+OutCur.2/5/0;
+CAN_OUT.2=CAN_STREAM.2/6/0+OutCur.4/0/0+OutCur.5/2/0+OutCur.6/4/0;
 //-------------------
 KEYPAD_TRESET.0=Lo;
 //-------------------

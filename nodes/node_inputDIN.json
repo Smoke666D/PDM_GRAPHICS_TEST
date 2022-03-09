@@ -9,7 +9,7 @@
     "denisScript" : {
       "setup"   : "",
       "outputs" : [
-        "DIN.$n$"
+        "DI.$adr$"
       ]
     }
   },

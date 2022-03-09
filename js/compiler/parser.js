@@ -7,9 +7,10 @@ function Parser () {
   this.endPoints = []; /* Оконечные ноды без выходов или без подключенных выходов */
   this.pointers  = []; /* Перечень источников указателей                          */
   this.index     = []; /* Индексы элементов, номера по типу нода                  */
-  this.tables    = [];
+  this.tables    = []; /* Номера элементов с табличными полями                    */
   /*------------------ Ok ------------------*/
   function calcEndPoints () {
+    self.endPoints = [];
     data.nodes.forEach( function ( node ) {
       let notEnd = false;
       if ( ( node.name != 'node_inputPointer' ) && ( node.name != 'node_header' ) ) {
@@ -29,7 +30,8 @@ function Parser () {
   }
   /*------------------ Ok ------------------*/
   function calcPointers () {
-    let net = 0;
+    let net  = 0;
+    self.pointers = [];
     data.nodes.forEach( function ( node ) {
       if  ( node.name == 'node_inputPointer' ) {
         net = parseInt( node.options[0].value );
@@ -51,6 +53,7 @@ function Parser () {
   function calcIndex () {
     let counter = 0;
     let name    = "";
+    self.index  = [];
     data.nodes.forEach( function ( node ) {
       counter = 0;
       name    = node.name;

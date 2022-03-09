@@ -14,8 +14,9 @@
   },
   "compiler" : {
     "denisScript" : {
-      "setup"   : "DEV_ID=$id$;\nCAN_SPEED=$speed$;\n",
-      "outputs" : []
+      "setup"      : "DEV_ID=$id$;\nCAN_SPEED=$speed$;\n",
+      "outputs"    : [],
+      "outputName" : "out.pdm"
     }
   },
   "options" : [
