@@ -62,10 +62,10 @@ function makeIn ( string, id ) {
     } else {
       switch ( parser.getNode( id ).name ) {
         case 'node_timersPWM':
-          output = 'Hi';
+          output = 'HI';
           break;
         case 'node_inputSW':
-          output = 'Lo';
+          output = 'LO';
           break;
         default:
           console.log( "[MAKE] No address on making 'in': " + parser.getNode( id ).name );
@@ -198,6 +198,7 @@ function makeCan () {
   });
   frames.forEach( function ( frame, n ) {
     let sub = 'CAN_OUT.' + ( n + 1 ) + '=';
+    sub += '0x' + parser.frames[n].adr.toString( 16 ) + '/' + parser.frames[n].length + '/' + parser.frames[n].timeout + '+';
     stream[n].forEach ( function ( stre, k ) {
       if ( typeof( stre ) == 'string' ) {
         sub += stre + '/' + k + '/0+'
@@ -211,7 +212,7 @@ function makeCan () {
       }
       return;
     });
-    if ( sub.length > 10 ) {
+    if ( sub.length > 23 ) {
       sub = sub.substring( 0, ( sub.length - 1 ) ) + ';\n';
       output += sub;
     }

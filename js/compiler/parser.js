@@ -8,6 +8,7 @@ function Parser () {
   this.pointers  = []; /* Перечень источников указателей                          */
   this.index     = []; /* Индексы элементов, номера по типу нода                  */
   this.tables    = []; /* Номера элементов с табличными полями                    */
+  this.frames    = []; /* Данные о фремах                                         */
   /*------------------ Ok ------------------*/
   function calcEndPoints () {
     self.endPoints = [];
@@ -73,7 +74,7 @@ function Parser () {
     });
     return;
   }
-  /*------------------ No ------------------*/
+  /*------------------ Ok ------------------*/
   function calcTable () {
     self.tables = [];
     data.nodes.forEach( function ( node ) {
@@ -84,6 +85,15 @@ function Parser () {
         }
         self.tables[record.table - 1].push( node.id );
       }
+      return;
+    });
+    return;
+  }
+  /*------------------ No ------------------*/
+  function calcFrames () {
+    self.frames = [];
+    data.tables.forEach( function ( data, i ) {
+      self.frames.push( data );
       return;
     });
     return;
@@ -123,6 +133,7 @@ function Parser () {
     calcPointers();
     calcIndex();
     calcTable();
+    calcFrames();
     return;
   }
   return;
