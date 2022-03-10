@@ -17,7 +17,7 @@
       "text"   : "канал",
       "type"   : "led",
       "select" : [],
-      "value"  : 0
+      "value"  : 1
     },{
       "name"   : "color",
       "text"   : "цвет",

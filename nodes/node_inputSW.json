@@ -20,7 +20,7 @@
       "text"   : "канал",
       "type"   : "sw",
       "select" : [],
-      "value"  : 0
+      "value"  : 1
     },{
       "name"   : "userString",
       "text"   : "Коммент",

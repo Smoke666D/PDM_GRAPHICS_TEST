@@ -19,7 +19,7 @@
       "text"   : "канал",
       "type"   : "din",
       "select" : [],
-      "value"  : 0
+      "value"  : 1
     },{
       "name"   : "userString",
       "text"   : "Коммент",

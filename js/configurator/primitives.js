@@ -73,23 +73,23 @@ function NodeAdr ( node = 0, pin = 0 ) {
   return;
 }
 function Device () {
-  var self    = this;
-  const keys  = [ "id", "speed", "keypad" ];
-  this.id     = 0;
-  this.speed  = 500;
-  this.keypad = "blink8"
+  var self      = this;
+  const keys    = [ "id", "speed", "external" ];
+  this.id       = 0;
+  this.speed    = 500;
+  this.external = ["blink8"]
   this.save  = function () {
     return {
-      'id'     : self.id,
-      'speed'  : self.speed,
-      'keypad' : self.keypad
+      'id'       : self.id,
+      'speed'    : self.speed,
+      'external' : self.keypad
     };
   }
   this.check = function ( data ) {
     let res = true;
-    keys.forEach( function ( key, i ) {
+    keys.forEach( function ( key ) {
       let cheker = false;
-      Object.keys( data ).forEach( function ( dkey, j ) {
+      Object.keys( data ).forEach( function ( dkey ) {
         if ( key == dkey ) {
           cheker = true;
         }
@@ -103,9 +103,10 @@ function Device () {
     return res;
   }
   this.load  = function ( data ) {
-    self.id     = data.id;
-    self.speed  = data.speed;
-    self.keypad = data.keypad;
+    self.id       = data.id;
+    self.speed    = data.speed;
+    self.external = data.external;
+    lib.setupExternal( self.external);
     return;
   }
   return;
@@ -299,6 +300,29 @@ function Option ( data, param = null, callback = null ) {
   this.type    = data.type;
   this.value   = data.value;
   this.select  = data.select;
+  if ( data.min != undefined ) {
+    this.min = data.min;
+  } else {
+    this.min = 0;
+  }
+  if ( data.max != undefined ) {
+    this.max = data.max;
+  } else {
+    switch ( self.type ) {
+      case 'bool':
+        this.max = 1;
+        break;
+      case 'byte':
+        this.max = 0xFF;
+        break;
+      case 'short':
+        this.max = 0xFFFF;
+        break;
+      default:
+        this.max = 0;
+        break;
+    }
+  }
   function numberInputCheck ( obj ) {
     if ( obj.value < obj.min ) {
       obj.value = obj.min;
@@ -317,7 +341,7 @@ function Option ( data, param = null, callback = null ) {
   function selectLine ( size ) {
     let out = [];
     for ( var i=0; i<size; i++ ) {
-      out.push( i );
+      out.push( i + 1 );
     }
     return out;
   }
@@ -346,8 +370,14 @@ function Option ( data, param = null, callback = null ) {
   function makeByteInput () {
     let out   = document.createElement( "INPUT" );
     out.type  = "number";
-    out.min   = "0";
-    out.max   = "255";
+    out.min   = self.min;
+    out.max   = self.max;
+    if ( self.value > self.max ) {
+      self.value = self.max;
+    }
+    if ( self.value < self.min ) {
+      self.value = self.min;
+    }
     out.value = self.value;
     out.addEventListener( 'change', function () {
       numberInputCheck( out );
@@ -360,8 +390,14 @@ function Option ( data, param = null, callback = null ) {
   function makeShortInput () {
     let out   = document.createElement( "INPUT" );
     out.type  = "number";
-    out.min   = "0";
-    out.max   = "65535";
+    out.min   = self.min;
+    out.max   = self.max;
+    if ( self.value > self.max ) {
+      self.value = self.max;
+    }
+    if ( self.value < self.min ) {
+      self.value = self.min;
+    }
     out.value = self.value;
     out.addEventListener( 'change', function () {
       numberInputCheck( out );
@@ -374,6 +410,14 @@ function Option ( data, param = null, callback = null ) {
   function makeFloatInput () {
     let out   = document.createElement( "INPUT" );
     out.type  = "number";
+    out.min   = self.min;
+    out.max   = self.max;
+    if ( self.value > self.max ) {
+      self.value = self.max;
+    }
+    if ( self.value < self.min ) {
+      self.value = self.min;
+    }
     out.value = self.value;
     out.addEventListener( 'change', function () {
       self.value = out.value;

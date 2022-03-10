@@ -12,14 +12,18 @@ function ChunkShadow () {
 function ExternalDialog () {
   var self     = this;
   this.title   = "";
-  this.content = document.createElement( "DIV" );
+  this.content = null;
   var names    = [];
   var sections = [];
 
-  this.make = function () {
-    self.title             = "Переферийные устройства";
-    self.content           = document.createElement( "DIV" );
-    lib.getExternal().forEach( function ( device, i ) {
+  this.make = function ( data=null ) {
+    if ( self.contemt == null ) {
+      self.content = document.createElement( "DIV" );
+    }
+    sections  = [];
+    names     = [];
+    self.title   = "Переферийные устройства";
+    lib.getExternal().forEach( function ( device ) {
       let index = names.indexOf( device.class );
       if ( index == -1 ) {
         names.push( device.class );
@@ -41,6 +45,14 @@ function ExternalDialog () {
       checker.type      = "checkbox";
       checker.id        = device.name;
       checker.className = "check-input";
+      checker.checked   = false;
+      if ( data != null ) {
+        data.forEach( function ( name ) {
+          if ( name == checker.id ) {
+            checker.checked = true;
+          }
+        });
+      }
       span.className    = "slider";
       label.htmlFor     = device.name;
       label.className   = "sliderLabel";
@@ -49,17 +61,16 @@ function ExternalDialog () {
       box.appendChild( span );
       line.appendChild( box );
       line.appendChild( label );
-      sections[index].appendChild( line );
+      sections.push( line );
       return;
     });
-    self.content.innerHTML = "";
-    sections.forEach( function ( section, i ) {
+    sections.forEach( function ( section ) {
       self.content.appendChild( section );
       return;
     });
     self.action = function () {
       let out      = [];
-      lib.getExternal().forEach( function ( device, i ) {
+      lib.getExternal().forEach( function ( device ) {
         let checker = document.getElementById( device.name );
         if ( checker.checked == true ) {
           out.push( device );
@@ -354,6 +365,7 @@ function Modal () {
   var self    = this;
   var dialogs = new Dialogs();
   var currant = "ext";
+  var getExternalList = function(){return null;};
   var title   = document.getElementById( "dialogModal-title" );
   var body    = document.getElementById( "dialogModal-body"  );
   var button  = document.getElementById( "modal-button"      );
@@ -410,6 +422,7 @@ function Modal () {
   }
   this.showExternal = function () {
     currant = "ext";
+    dialogs.external.make( getExternalList() );
     draw( dialogs.external );
     return;
   }
@@ -447,6 +460,10 @@ function Modal () {
   this.showMb       = function ( id=null, type=null ) {
     currant = "mb";
     draw( dialogs.mb );
+    return;
+  }
+  this.setExternalGetter = function ( callback ) {
+    getExternalList = callback;
     return;
   }
 

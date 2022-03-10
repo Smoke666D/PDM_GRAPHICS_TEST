@@ -7,7 +7,7 @@
   "help"    : "Дискретный выход. Необходимо выбрать номер канала",
   "compiler" : {
     "denisScript" : {
-      "setup"   : "OutSetup.$adr$=$current_startup$/$current_nominal$/$delay$;\nOut.$adr$=$in0$;\nOutName.$adr$=$name$;\n",
+      "setup"   : "OutSetup.$adr$=$current_nominal$/$current_startup$/$delay$;\nOut.$adr$=$in0$;\nOutName.$adr$=$name$;\n",
       "outputs" : [
         "OutCur.$adr$"
       ]
@@ -19,25 +19,31 @@
       "text"   : "канал",
       "type"   : "dout",
       "select" : [],
-      "value"  : 0
+      "value"  : 1
     },{
       "name"   : "current_nominal",
       "text"   : "ток номинальный",
       "type"   : "byte",
       "select" : [],
-      "value"  : 0
+      "value"  : 6,
+      "min"    : 1,
+      "max"    : 20
     },{
       "name"   : "current_startup",
       "text"   : "ток пусковой",
       "type"   : "byte",
       "select" : [],
-      "value"  : 0
+      "value"  : 70,
+      "min"    : 1,
+      "max"    : 150
     },{
       "name"   : "delay",
       "text"   : "задержка",
-      "type"   : "byte",
+      "type"   : "short",
       "select" : [],
-      "value"  : 0
+      "value"  : 2000,
+      "min"    : 100,
+      "max"    : 3000
     },{
       "name"   : "curve",
       "text"   : "кривая",

@@ -164,6 +164,9 @@ function Scheme ( id ) {
       });
       self.help   = new Help( lib.getSetup().help );
       self.device = new Device();
+      dialog.setExternalGetter( function () {
+        return self.options[2].value;
+      });
       showSchemeOptions();
       showSchemeHelp();
       return;
@@ -497,6 +500,9 @@ function Scheme ( id ) {
     }
     let data    = new SaveData();    
     data.device = self.device.save();
+    data.device.id       = self.options[0].value;
+    data.device.speed    = self.options[1].value;
+    data.device.external = self.options[2].value;
     self.nodes.forEach( function ( node ) {
       data.nodes.push( node.save() );
       return;
@@ -553,6 +559,9 @@ function Scheme ( id ) {
           if ( checker == true ) {
             self.clean();
             self.device.load( data.device );
+            self.options[0].value = data.device.id;
+            self.options[1].value = data.device.speed;
+            self.options[2].value = data.device.external;
             data.nodes.forEach( function ( node ) {
               self.addNode( lib.getTypeByName( node.name ), function() { console.log( 'her' )}, node.options );
               self.nodes[nodeID - 1].move( node.x, node.y );
