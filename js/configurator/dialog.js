@@ -77,7 +77,7 @@ function CanDialog () {
   var frames   = [];
   var chunks   = [];
   var avalible = [];
-  var settings = new can.Settings();
+  var settings = new can.Settings( updateFrameSettings );
   var shadow   = new can.Shadow();
   var offsetY  = 0;
   var offsetX  = 0;
@@ -88,6 +88,9 @@ function CanDialog () {
   this.action  = null;
   this.data    = null;
 
+  function updateFrameSettings () {
+    //console.log( frames );
+  }
   function isFree ( adr, type ) {
     let res    = true;
     let length = getLength( type );
@@ -208,7 +211,10 @@ function CanDialog () {
     frame.className = "row";
     let cur         = frames.length;    
     frames.push( new can.Frame( cur, resetSectionsFocus, settings.set ) );
-    frames.forEach( function ( frame ) { frame.adr = parseInt( frame.adr ) });
+    frames.forEach( function ( frame ) {
+      frame.adr = parseInt( frame.adr ) 
+      return;
+    });
     frame.appendChild( frames[cur].get.box() );
     self.content.appendChild( frame );
     return frames.length - 1;
@@ -297,14 +303,6 @@ function CanDialog () {
         chunks.push( new can.Chunk( id, type, onChunkDragStart, onChunkDraging, onChunkDrop, getType ) );
         chunks[chunks.length - 1].place( adr.frame, adr.byte, adr.bit );
         callback();
-        /*
-        if ( newChunk == true ) {
-          frames[adr.frame].get.coords( adr.byte, adr.bit, function( x, y ) {
-            chunks[chunks.length - 1].move( x, y );
-            self.content.appendChild( chunks[chunks.length - 1].getBox() );
-            callback();
-          });
-        }*/
       }
     }
     return adr;
@@ -314,6 +312,14 @@ function CanDialog () {
   }
   this.getFrames    = function () {
     return frames;
+  }
+  this.setSetting   = function ( id, data ) {
+    if ( id < frames.length ) {
+      frames[id].cheker.timeout = data.timeout;
+      frames[id].adr            = data.adr;
+      settings.set( frames[id] );
+    }
+    return;
   }
 }
 function MbDialog () {
@@ -421,6 +427,16 @@ function Modal () {
       });
     });
     return data;
+  }
+  this.setCanFrameData = function ( data ) {
+    let frames = dialogs.can.getFrames();
+    if ( data.length == frames.length ) {
+      data.forEach( function ( table, id ) {
+        dialogs.can.setSetting( id, table );
+        return;
+      });
+    }
+    return;
   }
   this.showCan      = function () {
     currant = "can";

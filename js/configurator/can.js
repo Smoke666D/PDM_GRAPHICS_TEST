@@ -42,13 +42,7 @@ function Checker () {
   this.enb     = false;
   this.timeout = 900;
 }
-function Pointer ( adr, length, id ) {
-  var self    = this;
-  this.id     = id;     /* ID of the node      */
-  this.adr    = adr;    /* Address in th frame */
-  this.length = length; /* Length of the data  */
-}
-function Settings () {
+function Settings ( updateCallback ) {
   var adr         = null;
   var chekerEnb   = null;
   var checkerTime = null;
@@ -76,6 +70,10 @@ function Settings () {
     }
     function drawAdress () {
       adr = document.createElement( "INPUT" );
+      adr.addEventListener( 'change', function () {
+        updateCallback();
+        return;
+      });
       adr.addEventListener( 'keyup', function () {
         if ( !adr.value.startsWith( '0x' ) ) {
           adr.value = '0x' + adr.value;
@@ -122,6 +120,10 @@ function Settings () {
       checkerTime.type = "number";
       checkerTime.min  = "0";
       checkerTime.max  = "65535";
+      checkerTime.addEventListener( 'change', function () {
+        updateCallback();
+        return;
+      });
       return addElement( "период", checkerTime, false );
     }
     function drawSubAddressEnb () {
@@ -161,8 +163,20 @@ function Settings () {
     box.appendChild( inputLine );
     return box;
   }
+  function setAdr ( data ) {
+    let string = '0x';
+    if ( data > 0xFFFF ) {
+      data = 0xFFFF;
+    }
+    string += data.toString( 16 );
+    return string;
+  }
+  function getAdr ( string ) {
+    return( parseInt( string, 16 ) );
+    
+  }
   this.set  = function ( frame ) {
-    adr.value         = frame.adr;
+    adr.value         = setAdr( frame.adr );
     chekerEnb.checked = frame.cheker.enb;
     checkerTime.value = frame.cheker.timeout;
     subadrEnb.checked = frame.subadr.enb;
@@ -170,7 +184,7 @@ function Settings () {
     return;
   }
   this.get  = function ( frame ) {
-    frame.adr            = adr.value;
+    frame.adr            = getAdr( adr.value );
     frame.cheker.enb     = chekerEnb.checked;
     frame.cheker.timeout = checkerTime.value;
     frame.subadr.enb     = subadrEnb.checked;
@@ -399,7 +413,7 @@ function Frame ( id=0, onClick, setSettings ) {
   var bytes      = [];
   var onClick    = onClick;
   this.id        = id;
-  this.adr       = id;
+  this.adr       = 1285;
   this.subadr    = new Subadr();
   this.cheker    = new Checker();
   this.pointers  = [];

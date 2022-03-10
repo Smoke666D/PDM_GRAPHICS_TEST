@@ -354,7 +354,14 @@ function Scheme ( id ) {
     return;
   }
   function getTables () {
-    console.log( dialog.getCanFrameData() );
+    self.tables = dialog.getCanFrameData(); 
+    return;
+  }
+  function setTables ( data ) {
+    if ( data != undefined ) {
+      self.tables = data;
+      dialog.setCanFrameData( self.tables );
+    }
     return;
   }
   /*----------------------------------------*/
@@ -556,13 +563,7 @@ function Scheme ( id ) {
               self.addLink( link.from, link.to );
               return;
             });
-            self.tables = [];
-            if ( data.tables != undefined ) {
-              data.tables.forEach( function ( table ) {
-                self.tables.push( table );
-                return;
-              });
-            }
+            setTables( data.tables );
           } else {
             console.log( "Wrong file structure. Link section error" );  
           }
