@@ -1,83 +1,104 @@
 DEV_ID=0;
-CAN_SPEED=1000;
-CAN_STREAM.1=KEYPAD_TOGGLE.8+And.1+And.1+LO+LO+LO+LO+LO;
-CAN_STREAM.2=DI.1+LO+LO+LO+LO+LO+LO+LO;
-CAN_OUT.1=0x503/8/900+CAN_STREAM.1/0/0+OutCur.1/1/0+OutCur.3/3/0+OutCur.2/5/0;
-CAN_OUT.2=0x504/8/900+CAN_STREAM.2/6/0+OutCur.4/0/0+OutCur.5/2/0+OutCur.6/4/0;
+CAN_SPEED=500;
+CAN_STREAM.1=null+LO+LO+LO+LO+LO+LO+LO;
+CAN_OUT.2=0x34/8/900+CAN_STREAM.1/0/0;
 //-------------------
-KEYPAD_TRESET.1=LO;
+OutSetup.8=6/70/2000;
+Out.8=Or.1;  //Ближний свет
+OutName.8=LOWBEAM;
+Or.1=COMPARE_CONST.1+COMPARE_CONST.2+COMPARE_CONST.3;
+COMPARE_CONST.1=COUNTER.1=1;
+COUNTER.1=KEYPAD_BUTTON.4/NULL/Inv.3/0/3/0/OVER;
+KEYPAD_TRESET.2=LO;  //
+Inv.3=DI.4;
+COMPARE_CONST.2=COUNTER.1=3;
+COMPARE_CONST.3=COUNTER.1=2;
 //-------------------
-OutSetup.1=1/1/100;
-Out.1=And.2;
-OutName.1=n/a;
-And.2=KEYPAD_TOGGLE.1+KEYPAD_TOGGLE.8;
-KEYPAD_TRESET.2=KEYPAD_BUTTON.8;
+OutSetup.1=6/70/2000;
+Out.1=KEYPAD_BUTTON.1;  //Звуковой сигнал
+OutName.1=HORN;
+KEYPAD_TRESET.1=LO;  //
 //-------------------
-And.1=KEYPAD_TOGGLE.8+Inv.1;
-Inv.1=KEYPAD_BUTTON.1;
+KEYPAD_LEDGREEN.1=KEYPAD_BUTTON.1;  //Звуковой сигнал
 //-------------------
+OutSetup.2=6/70/2000;
+Out.2=And.1;  //Омыватель
+OutName.2=WASHER;
+And.1=KEYPAD_BUTTON.6+KEYPAD_BUTTON.2;
+KEYPAD_TRESET.8=LO;  //
 //-------------------
-KEYPAD_LEDBLUE.1=Or.1;
-Or.1=And.2+KEYPAD_BUTTON.2;
-KEYPAD_TRESET.3=KEYPAD_BUTTON.8;
+KEYPAD_LEDGREEN.8=And.1;  //Омыватель
 //-------------------
-KEYPAD_LEDGREEN.2=Or.2;
-Or.2=KEYPAD_BUTTON.2+And.3;
-And.3=KEYPAD_TOGGLE.2+And.2;
+OutSetup.4=6/70/2000;
+Out.4=Or.2;  //Задний ход
+OutName.4=REAR GEAR LIGHT;
+Or.2=COMPARE_CONST.4+CAN_CH.2+KEYPAD_BUTTON.3;
+COMPARE_CONST.4=CAN_CH.1=1;
+KEYPAD_TRESET.3=LO;  //
 //-------------------
-OutSetup.2=1/1/100;
-Out.2=Or.1;
-OutName.2=n/a;
+KEYPAD_LEDBLUE.3=KEYPAD_TOGGLE.3;  //Задний ход
 //-------------------
-OutSetup.3=1/1/100;
-Out.3=Or.2;
-OutName.3=n/a;
+OutSetup.5=6/70/2000;
+Out.5=Or.3;  //Дворники
+OutName.5=WIPERS;
+Or.3=And.1+And.2+And.3;
+And.2=DI.1+Tim.1;
+Tim.1=4000/0+KEYPAD_BUTTON.2;  //
+And.3=Inv.1+DI.3+Inv.2;
+Inv.1=DI.2;
+Inv.2=KEYPAD_BUTTON.2;
 //-------------------
-KEYPAD_LEDGREEN.3=And.5;
-And.5=Or.6+Tim.1;
-Or.6=KEYPAD_TOGGLE.5+KEYPAD_TOGGLE.3;
-KEYPAD_TRESET.4=Or.3;
-Or.3=KEYPAD_BUTTON.8+KEYPAD_BUTTON.4+KEYPAD_TOGGLE.5;
-Tim.1=0/0+HI;
+OutSetup.6=6/70/2000;
+Out.6=COMPARE_CONST.3;  //Дальний свет
+OutName.6=HIGHBEAM;
 //-------------------
-KEYPAD_LEDGREEN.4=And.4;
-And.4=Tim.1+Or.5;
-Or.5=KEYPAD_TOGGLE.4+KEYPAD_TOGGLE.5;
-KEYPAD_TRESET.5=Or.4;
-Or.4=KEYPAD_BUTTON.8+KEYPAD_BUTTON.3+KEYPAD_TOGGLE.5;
+KEYPAD_LEDBLUE.2=COMPARE_CONST.3;  //Дальний свет
 //-------------------
-OutSetup.4=1/1/100;
-Out.4=And.5;
-OutName.4=n/a;
+KEYPAD_LEDGREEN.7=DI.4;  //
 //-------------------
-OutSetup.5=1/1/100;
-Out.5=And.4;
-OutName.5=n/a;
+KEYPAD_LEDGREEN.2=Or.4;  //Ближний свет
+Or.4=COMPARE_CONST.1+COMPARE_CONST.2;
 //-------------------
-OutSetup.6=1/1/100;
-Out.6=KEYPAD_BUTTON.6;
-OutName.6=n/a;
-KEYPAD_TRESET.8=LO;
+KEYPAD_LEDBLUE.4=KEYPAD_TOGGLE.5;  //Вентилятор
+KEYPAD_TRESET.4=LO;  //
 //-------------------
-KEYPAD_LEDGREEN.8=KEYPAD_TOGGLE.6;
+KEYPAD_LEDRED.1=COMPARE_CONST.1;  //Авария
+COMPARE_CONST.1=CAN_CH.3>0;
 //-------------------
+KEYPAD_LEDRED.2=COMPARE_CONST.1;  //Авария
 //-------------------
-KEYPAD_LEDGREEN.5=Inv.2;
-Inv.2=KEYPAD_TOGGLE.8;
+KEYPAD_LEDRED.3=COMPARE_CONST.1;  //Авария
 //-------------------
-KEYPAD_LEDGREEN.6=Or.7;
-Or.7=Tim.2+KEYPAD_TOGGLE.8;
-Tim.2=0/0+Inv.2;
+KEYPAD_LEDRED.4=COMPARE_CONST.1;  //Авария
 //-------------------
-KEYPAD_LEDGREEN.7=And.6;
-And.6=KEYPAD_TOGGLE.8+KEYPAD_BUTTON.7;
-KEYPAD_TRESET.6=LO;
+KEYPAD_LEDRED.5=COMPARE_CONST.1;  //Авария
 //-------------------
-KEYPAD_LEDRED.8=Or.8;
-Or.8=And.7+Inv.3;
-And.7=KEYPAD_TOGGLE.8+Tim.3;
-Tim.3=0/0+COMPARE_CONST.1;
-COMPARE_CONST.1=CAN_CH.1>0;
-Inv.3=COMPARE_CONST.1;
+KEYPAD_LEDRED.6=COMPARE_CONST.1;  //Авария
+//-------------------
+KEYPAD_LEDRED.8=COMPARE_CONST.1;  //Авария
+//-------------------
+KEYPAD_LEDRED.7=Or.5;  //Авария мигалка
+Or.5=And.6+COMPARE_CONST.1;
+//-------------------
+OutSetup.3=6/70/2000;
+Out.3=And.4;  //Левый поворот
+OutName.3=LEFT TURN;
+And.4=Or.8+Tim.2;
+Or.8=KEYPAD_TOGGLE.7+KEYPAD_TOGGLE.6;
+KEYPAD_TRESET.5=Or.6;  //Левый поворот
+Or.6=KEYPAD_BUTTON.6+KEYPAD_BUTTON.8;
+Tim.2=400/400+HI;  //ШИМ поворота
+//-------------------
+OutSetup.7=6/70/2000;
+Out.7=And.5;  //Правый поворот
+OutName.7=RIGHT TURN;
+And.5=Tim.2+Or.9;
+Or.9=KEYPAD_TOGGLE.6+KEYPAD_TOGGLE.8;
+KEYPAD_TRESET.6=Or.7;  //Правый поворот
+Or.7=KEYPAD_BUTTON.6+KEYPAD_BUTTON.7;
+//-------------------
+KEYPAD_LEDGREEN.5=And.4;  //Левый поворот
+//-------------------
+KEYPAD_LEDGREEN.6=And.5;  //Правый поворот
 //-------------------
 END;

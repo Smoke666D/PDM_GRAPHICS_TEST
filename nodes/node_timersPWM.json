@@ -7,7 +7,7 @@
   "help"    : "Генератор ШИМ сигнала",
   "compiler" : {
     "denisScript" : {
-      "setup"   : "Tim.$n$=$delayHight$/$delayLow$+$in0$;\n",
+      "setup"   : "Tim.$n$=$delayHight$/$delayLow$+$in0$;  //$userString$\n",
       "outputs" : [
         "Tim.$n$"
       ]

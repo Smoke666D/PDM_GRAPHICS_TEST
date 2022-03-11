@@ -1,0 +1,38 @@
+{
+  "name"     : "node_logicAnd4",
+  "type"     : "logic",
+  "table"    : 0,
+  "heading"  : "Булева И 4",
+  "short"    : "and",
+  "help"     : "Булева операция И 4",
+  "compiler" : {
+    "denisScript" : {
+      "setup"   : "And.$n$=$in0$+$in1$+$in2$+$in3$;\n",
+      "outputs" : [
+        "And.$n$"
+      ]
+    }
+  },
+  "options"  : [],
+  "inputs"   : [
+    {
+      "type"   : "bool",
+      "help"   : "Условие 1"
+    },{
+      "type"   : "bool",
+      "help"   : "Условие 2"
+    },{
+      "type"   : "bool",
+      "help"   : "Условие 3"
+    },{
+      "type"   : "bool",
+      "help"   : "Условие 4"
+    }
+  ],
+  "outputs"  : [
+    {
+      "type"   : "bool",
+      "help"   : "Результат операции"
+    }
+  ]
+}

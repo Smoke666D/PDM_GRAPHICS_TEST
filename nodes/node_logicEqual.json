@@ -6,7 +6,12 @@
   "short"    : "==",
   "help"     : "Операция сравнения на неравенство",
   "compiler" : {
-    "denisScript" : null
+    "denisScript" : {
+      "setup"   : "COMPARE_CONST.$n$=$in0$=$const(in1)$;\n",
+      "outputs" : [
+        "COMPARE_CONST.$n$"
+      ]
+    }
   },
   "options"  : [],
   "inputs"   : [

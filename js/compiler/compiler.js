@@ -48,7 +48,7 @@ function makeIn ( string, id ) {
   let str    = "";
   let from   = null;
   if ( string.startsWith( 'in' ) ) {
-    let adr  = parser.getConectedAdr( { "node": id, "pin": parseInt( string[2] ) } );
+    let adr  = parser.getConectedFromAdr( { "node": id, "pin": parseInt( string[2] ) } );
     if ( adr.length > 0 ) {
       from = lib.getNodeRecordByName( parser.getNode( adr[0].node ).name );
       if ( from.name == "node_outputPointer" ) {
@@ -57,8 +57,12 @@ function makeIn ( string, id ) {
         adr.push( newAdr );
         from = lib.getNodeRecordByName( parser.getNode( adr[0].node ).name );
       }
-      str    = getMakeData( from, lang ).outputs[adr[0].pin - from.inputs.length];
-      output = str.substring( 0, ( str.indexOf( '.' ) + 1 ) ) + parser.getIndexById( adr[0].node );
+      if ( parser.getNode( adr[0].node ).name.startsWith( 'node_var' ) ) {
+        output = parser.getNode( adr[0].node ).options[0].value
+      } else {
+        str    = getMakeData( from, lang ).outputs[adr[0].pin - from.inputs.length];
+        output = str.substring( 0, ( str.indexOf( '.' ) + 1 ) ) + parser.getIndexById( adr[0].node );
+      }
     } else {
       switch ( parser.getNode( id ).name ) {
         case 'node_timersPWM':
@@ -66,6 +70,9 @@ function makeIn ( string, id ) {
           break;
         case 'node_inputSW':
           output = 'LO';
+          break;
+        case 'node_logicCounter':
+          output = 'NULL';
           break;
         default:
           console.log( "[MAKE] No address on making 'in': " + parser.getNode( id ).name );
@@ -310,7 +317,7 @@ function build ( data ) {
     output += processLine( id );
     output += "//-------------------\n"
   });
-  output += 'END;'
+  output += 'END;\n'
 
   require( "fs" ).writeFile( getMakeData( lib.getSetup(), lang ).outputName, output, function ( error ) {
     if ( error != null ) {

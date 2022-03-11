@@ -413,10 +413,19 @@ function Scheme ( id ) {
     return;
   }
   this.removeLink    = function ( id ) {
-    let to   = self.links[id].to;
-    let from = self.links[id].from;
+    let to      = self.links[id].to;
+    let from    = self.links[id].from;
+    let counter = 0;
     self.nodes[to.node].inputs[to.pin].set.disconnected();
-    self.nodes[from.node].outputs[to.pin].set.disconnected();
+    self.links.forEach( function ( link ) {
+      if ( ( link.from.node == from.node ) && ( link.from.pin == from.pin ) ) {
+        counter++;
+      }
+      return;
+    })
+    if ( counter == 1 ) {
+      self.nodes[from.node].outputs[from.pin - self.nodes[from.node].inputs.length].set.disconnected();
+    }
     for ( var i=id+1; i<self.links.length; i++ ) {
       self.links[i].id--;
     }

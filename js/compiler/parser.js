@@ -108,6 +108,17 @@ function Parser () {
     });
     return result
   }
+
+  this.getConectedFromAdr = function ( adr ) {
+    let res = [];
+    data.links.forEach( function ( link ) {
+      if ( ( link.to.node == adr.node ) && ( link.to.pin == adr.pin ) ) {
+        res.push( link.from )
+      }
+      return;
+    });
+    return res;
+  }
   /*------------------ Ok ------------------*/
   this.getConectedAdr = function ( adr ) {
     let res = [];

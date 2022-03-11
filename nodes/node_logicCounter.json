@@ -1,0 +1,52 @@
+{
+  "name"     : "node_logicCounter",
+  "type"     : "logic",
+  "table"    : 0,
+  "heading"  : "Счетчик",
+  "short"    : "COUNTER",
+  "help"     : "Счетчик",
+  "compiler" : {
+    "denisScript" : {
+      "setup"   : "COUNTER.$n$=$in0$/$in1$/$in2$/$in3$/$in4$/$in5$/$reload$;\n",
+      "outputs" : [
+        "COUNTER.$n$"
+      ]
+    }
+  },
+  "options"  : [
+    {
+      "name"   : "reload",
+      "text"   : "Цикличность",
+      "type"   : "select",
+      "select" : [ "OVER", "LIMIT" ],
+      "value"  : "OVER"
+    }
+  ],
+  "inputs"   : [
+    {
+      "type"   : "bool",
+      "help"   : "Инкремент"
+    },{
+      "type"   : "bool",
+      "help"   : "Декримент"
+    },{
+      "type"   : "bool",
+      "help"   : "Сброс"
+    },{
+      "type"   : "short",
+      "help"   : "Минимальное значение"
+    },{
+      "type"   : "short",
+      "help"   : "Максимальное значение"
+    },{
+      "type"   : "short",
+      "help"   : "Начальное значение"
+    }
+  ],
+  "outputs"  : [
+    {
+      "type"   : "short",
+      "help"   : "Значение счетчика"
+    }
+  ]
+}

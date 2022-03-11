@@ -7,7 +7,7 @@
   "help"     : "Чтение состояния кнопки. Необходимо выбрать номер кнопки.",
   "compiler" : {
     "denisScript" : {
-      "setup"   : "KEYPAD_TRESET.$adr$=$in0$;\n",
+      "setup"   : "KEYPAD_TRESET.$adr$=$in0$;  //$userString$\n",
       "outputs" : [
         "KEYPAD_BUTTON.$adr$",
         "KEYPAD_TOGGLE.$adr$"

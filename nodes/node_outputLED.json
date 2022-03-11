@@ -7,7 +7,7 @@
   "help"    : "Внешний светодиод. Необходимо выбрать номер внешнего светодиода.",
   "compiler" : {
     "denisScript" : {
-      "setup"   : "KEYPAD_LED$color$.$adr$=$in0$;\n",
+      "setup"   : "KEYPAD_LED$color$.$adr$=$in0$;  //$userString$\n",
       "outputs" : []
     }
   },

@@ -14,7 +14,9 @@
       "text"   : "Цепь",
       "type"   : "short",
       "select" : [],
-      "value"  : 0
+      "value"  : 0,
+      "min"    : 0,
+      "max"    : 65535
     },{
       "name"   : "userString",
       "text"   : "Коммент",

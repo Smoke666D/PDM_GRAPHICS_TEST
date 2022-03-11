@@ -2,7 +2,7 @@
   "name"     : "node_logicMore",
   "type"     : "logic",
   "table"    : 0,
-  "heading"  : "Строгое неравенство",
+  "heading"  : "Больше",
   "short"    : ">",
   "help"     : "Операция строго сравнения (больше)",
   "compiler" : {

@@ -49,9 +49,11 @@
     "node_varString"      : false,
     "node_varDate"        : false,
 
+    "node_logicCounter"   : true,
     "node_logicNot"       : true,
     "node_logicAnd2"      : true,
     "node_logicAnd3"      : true,
+    "node_logicAnd4"      : true,
     "node_logicOr2"       : true,
     "node_logicOr3"       : true,
     "node_logicXor"       : false,
@@ -59,7 +61,7 @@
     "node_logicMore"      : true,
     "node_logicLess"      : true,
     "node_logicMoreEqual" : false,
-    "node_logicEqual"     : false,
+    "node_logicEqual"     : true,
 
     "node_timersDelay"    : false,
     "node_timersTrigger"  : false,
