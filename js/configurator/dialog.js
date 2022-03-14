@@ -141,7 +141,7 @@ function CanDialog () {
   }
   function onChunkDrop ( adr, type ) {
     if ( typeof( onChange ) == "function" ) {
-      onChange( adr, current.frame, current.byte );
+      onChange( adr, current.frame, current.byte, current.bit );
     }
     shadow.hide();
     frames[current.frame].set.full( current.byte, current.bit, type );

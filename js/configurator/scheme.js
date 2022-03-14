@@ -148,9 +148,11 @@ function Scheme ( id ) {
     }, 10 );
     return;
   }
-  function onChangeInDialog ( id, frame, chunck ) {
-    self.nodes[id].options[1].value.frame  = frame;
-    self.nodes[id].options[1].value.chunck = chunck;
+  function onChangeInDialog ( id, frame, byte, bit ) {
+    self.nodes[id].options[1].value.frame = frame;
+    self.nodes[id].options[1].value.byte  = byte;
+    self.nodes[id].options[1].value.bit   = bit;
+    console.log( self.nodes[id].options )
     return;
   }
   function init ( id ) {

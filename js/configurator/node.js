@@ -543,6 +543,7 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
       if ( res != null ) {
         switch ( res ) {
           case "can" :
+            console.log( adr );
             dialog.addCanChunk( self.id, getType, type, callback, adr );
             break;
         }
@@ -771,7 +772,9 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
   this.save               = function () {
     let opt = [];
     self.options.forEach( function ( option, i ) {
-      opt.push( {"value" : option.value} );
+      opt.push({ 
+        "value" : option.value 
+      });
       return;
     });
     return {
