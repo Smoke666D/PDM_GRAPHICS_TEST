@@ -324,12 +324,12 @@ function Option ( data, param = null, callback = null ) {
     }
   }
   function numberInputCheck ( obj ) {
-    if ( obj.value < obj.min ) {
+    if ( parseInt( obj.value ) < parseInt( obj.min ) ) {
       obj.value = obj.min;
-    } else if ( obj.value > obj.max ) {
+    } else if ( parseInt( obj.value ) > parseInt( obj.max ) ) {
       obj.value = obj.max;
     } else {
-      obj.value = Math.trunc( obj.value );
+      obj.value = Math.trunc( parseInt( obj.value ) );
     }
     return;
   }
