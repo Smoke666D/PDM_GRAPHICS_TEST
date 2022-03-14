@@ -47,6 +47,7 @@ function makeIn ( string, id ) {
   let output = null;
   let str    = "";
   let from   = null;
+  let shift  = 0;    /* Костыль для CAN input */ 
   if ( string.startsWith( 'in' ) ) {
     let adr  = parser.getConectedFromAdr( { "node": id, "pin": parseInt( string[2] ) } );
     if ( adr.length > 0 ) {
@@ -60,7 +61,12 @@ function makeIn ( string, id ) {
       if ( parser.getNode( adr[0].node ).name.startsWith( 'node_var' ) ) {
         output = parser.getNode( adr[0].node ).options[0].value
       } else {
-        str    = getMakeData( from, lang ).outputs[adr[0].pin - from.inputs.length];
+        if ( from.name == 'node_inputCAN' ){
+          if ( parser.getNode( adr[0].node ).options[0].value == 'bool' ) {
+            shift = 1;
+          }
+        }
+        str    = getMakeData( from, lang ).outputs[adr[0].pin - from.inputs.length + shift];
         output = str.substring( 0, ( str.indexOf( '.' ) + 1 ) ) + parser.getIndexById( adr[0].node );
       }
     } else {
@@ -136,14 +142,48 @@ function processLine ( id ) {
   return output;
 }
 /*------------------ Ok ------------------*/
-function makeCan () {
+function makeInputCan () {
+  let output = "";
+  parser.tables.input.forEach( function ( table ) {
+    table.forEach( function ( id ) {
+      let node = parser.getNode( id );
+      let adr  = node.options[1].value;
+      if ( node.options[0].value == 'bool' ) {
+        output += 'CAN_DI.';
+      } else {
+        output += 'CAN_CH.';
+      }
+      output += parser.getIndexById( id ) + '=';
+      output += '0x' + parser.frames[adr.frame].adr.toString( 16 ) + '/';
+      output += adr.byte  + '/'
+      switch ( node.options[0].value ) {
+        case 'bool':
+          output += adr.bit;
+          break;
+        case 'byte':
+          output += '1'
+          break;
+        case 'short':
+          output += '2'
+          break;
+      }
+      output += ';\n';
+      return;
+    });
+    return;
+  });
+  console.log( output )
+  return output;
+}
+/*------------------ Ok ------------------*/
+function makeOutputCan () {
   let output = "";
   let frames = [];
   let stream = [];
-  parser.tables.forEach( function( table ) {
+  //------- Make list of output CAN frames -------
+  parser.tables.output.forEach( function ( table ) {
     table.forEach( function ( id ) {
       let node   = parser.getNode( id );
-      let record = lib.getNodeRecordByName( node.name );
       for ( var i=frames.length; i<( node.options[1].value.frame + 1 ); i++ ) {
         frames.push( [] );
       }
@@ -157,6 +197,7 @@ function makeCan () {
     });
     return;
   });
+  //-- Make streams buffer for output CAN frames --
   stream = [];
   frames.forEach( function ( frame, n ) {
     stream.push( [] );
@@ -173,6 +214,7 @@ function makeCan () {
     });
     return;
   });
+  //--------- Make stream strings --------
   let counter = 1;
   stream.forEach( function ( frame ) {
     frame.forEach( function ( byte, n ) {
@@ -344,7 +386,9 @@ function build ( data ) {
   output += "//-------------------\n"
   output += makeExtern( data.device.external );
   output += "//-------------------\n"
-  output += makeCan();
+  output += makeInputCan();
+  output += "//-------------------\n"
+  output += makeOutputCan();
   parser.endPoints.forEach( function ( id ) {
     output += processLine( id );
     output += "//-------------------\n"

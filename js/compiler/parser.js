@@ -7,7 +7,7 @@ function Parser () {
   this.endPoints = []; /* Оконечные ноды без выходов или без подключенных выходов */
   this.pointers  = []; /* Перечень источников указателей                          */
   this.index     = []; /* Индексы элементов, номера по типу нода                  */
-  this.tables    = []; /* Номера элементов с табличными полями                    */
+  this.tables    = {}; /* Номера элементов с табличными полями                    */
   this.frames    = []; /* Данные о фремах                                         */
   /*------------------ Ok ------------------*/
   function calcEndPoints () {
@@ -61,6 +61,9 @@ function Parser () {
       if ( parseInt( name[name.length - 1] ) > 0 ) {
         name = name.substring( 0, ( name.length - 1 ) );
       }
+      if ( ( name == 'node_inputCAN' ) && ( node.options[0].value == 'bool' ) ) {
+        name += 'bool';
+      }
       self.index.forEach( function ( index ) {
         if ( index.name == name ) {
           counter++;
@@ -76,14 +79,23 @@ function Parser () {
   }
   /*------------------ Ok ------------------*/
   function calcTable () {
-    self.tables = [];
+    self.tables = {};
+    self.tables.output = [];
+    self.tables.input  = [];
     data.nodes.forEach( function ( node ) {
       record = lib.getNodeRecordByName( node.name );
       if ( record.table > 0 ) {
-        if ( self.tables.length < record.table ) {
-          self.tables.push( [] );
+        if ( node.name.indexOf( 'input' ) > 0 ) {
+          if ( self.tables.input.length < record.table ) {
+            self.tables.input.push( [] );
+          }
+          self.tables.input[record.table - 1].push( node.id );
+        } else {
+          if ( self.tables.output.length < record.table ) {
+            self.tables.output.push( [] );
+          }
+          self.tables.output[record.table - 1].push( node.id );
         }
-        self.tables[record.table - 1].push( node.id );
       }
       return;
     });
@@ -108,7 +120,7 @@ function Parser () {
     });
     return result
   }
-
+  /*------------------ Ok ------------------*/
   this.getConectedFromAdr = function ( adr ) {
     let res = [];
     data.links.forEach( function ( link ) {

@@ -543,7 +543,6 @@ function Node ( type, id, box, pinCallback, dragCallback, removeCallback, unlink
       if ( res != null ) {
         switch ( res ) {
           case "can" :
-            console.log( adr );
             dialog.addCanChunk( self.id, getType, type, callback, adr );
             break;
         }

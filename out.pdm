@@ -6,8 +6,10 @@ KEYPAD_ID=21;
 ENDIAN=LITTLE;
 TDG_PROTOCOL=ENABLE;
 //-------------------
-CAN_STREAM.1=null+LO+LO+LO+LO+LO+LO+LO;
-CAN_OUT.3=0x505/8/900+CAN_STREAM.1/0/0;
+CAN_CH.1=0x509/0/1;
+CAN_DI.1=0x505/0/0;
+CAN_CH.2=0x20/0/1;
+//-------------------
 //-------------------
 OutSetup.8=6/70/2000;
 Out.8=Or.1;  //Ближний свет
@@ -38,7 +40,7 @@ KEYPAD_LEDGREEN.8=And.1;  //Омыватель
 OutSetup.4=6/70/2000;
 Out.4=Or.2;  //Задний ход
 OutName.4=REAR GEAR LIGHT;
-Or.2=COMPARE_CONST.4+CAN_CH.2+KEYPAD_BUTTON.3;
+Or.2=COMPARE_CONST.4+CAN_DI.1+KEYPAD_BUTTON.3;
 COMPARE_CONST.4=CAN_CH.1=1;
 KEYPAD_TRESET.3=LO;  //
 //-------------------
@@ -69,7 +71,7 @@ KEYPAD_LEDBLUE.4=KEYPAD_TOGGLE.5;  //Вентилятор
 KEYPAD_TRESET.4=LO;  //
 //-------------------
 KEYPAD_LEDRED.1=COMPARE_CONST.1;  //Авария
-COMPARE_CONST.1=CAN_CH.3>0;
+COMPARE_CONST.1=CAN_CH.2>0;
 //-------------------
 KEYPAD_LEDRED.2=COMPARE_CONST.1;  //Авария
 //-------------------

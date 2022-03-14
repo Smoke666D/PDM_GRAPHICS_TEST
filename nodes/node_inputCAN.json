@@ -9,7 +9,8 @@
     "denisScript" : {
       "setup"   : "null",
       "outputs" : [
-        "CAN_CH.$n$"
+        "CAN_CH.$n$",
+        "CAN_DI.$n$"
       ]
     }
   },
