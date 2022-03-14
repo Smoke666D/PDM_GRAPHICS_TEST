@@ -3,11 +3,17 @@
   "class"  : "Клавиатуры",
   "name"   : "blink8",
   "endian" : "LITTLE",
-  "tdg"    : true,
+  "tdg"    : "ENABLE",
   "din"    : 0,
   "dout"   : 0,
   "ain"    : 0,
   "aout"   : 0,
   "led"    : 8,
-  "sw"     : 8
+  "sw"     : 8,
+  "compiler" : {
+    "denisScript" : {
+      "setup"   : "KEYPAD_TYPE=BLINK8;\nKEYPAD_ID=21;\nENDIAN=$endian$;\nTDG_PROTOCOL=$tdg$;\n",
+      "outputs" : []
+    }
+  }
 }

@@ -254,6 +254,38 @@ function makeDevice ( device ) {
   }
   return string;
 }
+/*------------------ No ------------------*/
+function makeExtern ( extern ) {
+  let out = "";
+  extern.forEach( function ( name ) {
+    let record = lib.getExternalByName( name );
+    let string =  getMakeData( record, lang ).setup;
+    if ( ( string != null  ) && ( string.length > 0 ) ) {
+      let start = 0;
+      let end   = 0;  
+      let value = 0;
+      let done  = false;
+      while ( start >= 0 ) {
+        start = string.indexOf( '$', 0 );
+        end   = string.indexOf( '$', ( start + 1 ) );
+        if ( ( start > 0 ) && ( end > 0 ) ) {
+          start++;
+          end++;
+          done = false;
+          data = string.substring( start, ( end - 1 ) );
+          Object.keys( record ).forEach( function ( key, i ) {
+            if ( key == data ) {
+              value = record[key];
+            }
+          });
+          string = string.substring( 0, ( start - 1 ) ) + value + string.substring( end, string.length ); 
+        }
+      }
+    }
+    out += string;
+  });
+  return out;
+}
 /*------------------ Ok ------------------*/
 function makeSetup ( string, id ) {
   let data    = "";
@@ -310,8 +342,10 @@ function build ( data ) {
   doneList   = [];
   parser.init( data );
   console.log( '-------------------' );
-
   output += makeDevice( data.device );
+  output += "//-------------------\n"
+  output += makeExtern( data.device.external );
+  output += "//-------------------\n"
   output += makeCan();
   parser.endPoints.forEach( function ( id ) {
     output += processLine( id );
