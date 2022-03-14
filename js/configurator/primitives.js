@@ -382,7 +382,9 @@ function Option ( data, param = null, callback = null ) {
     out.addEventListener( 'change', function () {
       numberInputCheck( out );
       self.value = out.value;
-      callback();
+      if ( callback != null ) {
+        callback();
+      }
       return;
     });
     return out;
