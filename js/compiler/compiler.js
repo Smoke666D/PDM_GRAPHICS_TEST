@@ -144,7 +144,7 @@ function makeCan () {
     table.forEach( function ( id ) {
       let node   = parser.getNode( id );
       let record = lib.getNodeRecordByName( node.name );
-      if ( ( node.options[1].value.frame + 1 ) > frames.length ) {
+      for ( var i=frames.length; i<( node.options[1].value.frame + 1 ); i++ ) {
         frames.push( [] );
       }
       frames[node.options[1].value.frame].push({ 
@@ -157,8 +157,6 @@ function makeCan () {
     });
     return;
   });
-
-
   stream = [];
   frames.forEach( function ( frame, n ) {
     stream.push( [] );
@@ -254,7 +252,7 @@ function makeDevice ( device ) {
   }
   return string;
 }
-/*------------------ No ------------------*/
+/*------------------ Ok ------------------*/
 function makeExtern ( extern ) {
   let out = "";
   extern.forEach( function ( name ) {

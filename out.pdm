@@ -7,7 +7,7 @@ ENDIAN=LITTLE;
 TDG_PROTOCOL=ENABLE;
 //-------------------
 CAN_STREAM.1=null+LO+LO+LO+LO+LO+LO+LO;
-CAN_OUT.2=0x34/8/900+CAN_STREAM.1/0/0;
+CAN_OUT.3=0x505/8/900+CAN_STREAM.1/0/0;
 //-------------------
 OutSetup.8=6/70/2000;
 Out.8=Or.1;  //Ближний свет
