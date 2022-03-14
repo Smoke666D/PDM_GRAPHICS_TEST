@@ -571,6 +571,7 @@ function Scheme ( id ) {
             self.options[0].value = data.device.id;
             self.options[1].value = data.device.speed;
             self.options[2].value = data.device.external;
+            lib.setupExternalByName( data.device.external );
             data.nodes.forEach( function ( node ) {
               self.addNode( lib.getTypeByName( node.name ), function() { console.log( 'her' )}, node.options );
               self.nodes[nodeID - 1].move( node.x, node.y );

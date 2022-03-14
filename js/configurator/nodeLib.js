@@ -187,9 +187,31 @@ function NodeLib () {
   this.getExternal      = function () {
     return external;
   }
+  this.getExternalByName = function ( name ) {
+    let out = null;
+    external.forEach( function ( device ) {
+      if ( device.name == name ) {
+        out = device;
+      }
+      return;
+    });
+    return out;
+  }
+  this.setupExternalByName = function ( names ) {
+    usedExt = [];
+    names.forEach( function ( name ) {
+      let device = self.getExternalByName( name );
+      if ( device != null ) {
+        usedExt.push( device );
+      }
+      return;
+    });
+    self.reinitHardware();
+    return;
+  }
   this.setupExternal    = function ( ext ) {
     usedExt = [];
-    ext.forEach( function ( device, i ) {
+    ext.forEach( function ( device ) {
       let index = external.indexOf( device );
       if ( index != -1 ) {
         usedExt.push( device );
@@ -205,7 +227,7 @@ function NodeLib () {
     hardware.aout = setup.hardware.aout;
     hardware.sw   = setup.hardware.sw;
     hardware.led  = setup.hardware.led;
-    usedExt.forEach( function ( device, i ) {
+    usedExt.forEach( function ( device ) {
       hardware.din  += device.din;
       hardware.dout += device.dout;
       hardware.ain  += device.ain;
