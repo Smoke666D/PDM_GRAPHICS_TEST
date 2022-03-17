@@ -6,66 +6,35 @@ KEYPAD_ID=21;
 ENDIAN=LITTLE;
 TDG_PROTOCOL=ENABLE;
 //-------------------
-CAN_CH.1=0x509/0/1;
-CAN_DI.1=0x505/0/0;
-CAN_CH.2=0x20/0/1;
+CAN_CH.1=0x505/0/1;
+CAN_DI.1=0x505/1/7;
+CAN_CH.2=0x505/0/2;
 //-------------------
-//-------------------
-OutSetup.8=6/70/2000;
-Out.8=Or.1;  //Ближний свет
-OutName.8=LOWBEAM;
-Or.1=COMPARE_CONST.1+COMPARE_CONST.2+COMPARE_CONST.3;
-COMPARE_CONST.1=COUNTER.1=1;
-COUNTER.1=KEYPAD_BUTTON.4/NULL/Inv.3/0/3/0/OVER;
-KEYPAD_TRESET.2=LO;  //Свет
-Inv.3=DI.4;
-COMPARE_CONST.2=COUNTER.1=3;
-COMPARE_CONST.3=COUNTER.1=2;
-//-------------------
-OutSetup.1=6/70/2000;
-Out.1=KEYPAD_BUTTON.1;  //Звуковой сигнал
-OutName.1=HORN;
-KEYPAD_TRESET.1=LO;  //
+CAN_OUT.1=0x505/8/900+OutCur.2/2/2+OutCur.3/4/2+OutCur.4/6/2+OutCur.1/0/2;
+CAN_OUT.2=0x505/8/900+OutCur.7/0/2+OutCur.5/4/2+OutCur.6/2/2+OutCur.8/6/2;
 //-------------------
 KEYPAD_LEDGREEN.1=KEYPAD_BUTTON.1;  //Звуковой сигнал
+KEYPAD_TRESET.1=LO;  //
 //-------------------
-OutSetup.2=6/70/2000;
-Out.2=And.1;  //Омыватель
-OutName.2=WASHER;
+KEYPAD_LEDGREEN.8=And.1;  //Омыватель
 And.1=KEYPAD_BUTTON.6+KEYPAD_BUTTON.2;
 KEYPAD_TRESET.8=LO;  //
 //-------------------
-KEYPAD_LEDGREEN.8=And.1;  //Омыватель
-//-------------------
-OutSetup.4=6/70/2000;
-Out.4=Or.2;  //Задний ход
-OutName.4=REAR GEAR LIGHT;
-Or.2=COMPARE_CONST.4+CAN_DI.1+KEYPAD_BUTTON.3;
-COMPARE_CONST.4=CAN_CH.1=1;
+KEYPAD_LEDBLUE.3=KEYPAD_TOGGLE.3;  //Задний ход
 KEYPAD_TRESET.3=LO;  //
 //-------------------
-KEYPAD_LEDBLUE.3=KEYPAD_TOGGLE.3;  //Задний ход
-//-------------------
-OutSetup.5=6/70/2000;
-Out.5=Or.3;  //Дворники
-OutName.5=WIPERS;
-Or.3=And.1+And.2+And.3;
-And.2=DI.1+Tim.1;
-Tim.1=4000/0+KEYPAD_BUTTON.2;  //Дворники
-And.3=Inv.1+DI.3+Inv.2;
-Inv.1=DI.2;
-Inv.2=KEYPAD_BUTTON.2;
-//-------------------
-OutSetup.6=6/70/2000;
-Out.6=COMPARE_CONST.3;  //Дальний свет
-OutName.6=HIGHBEAM;
-//-------------------
 KEYPAD_LEDBLUE.2=COMPARE_CONST.3;  //Дальний свет
+COMPARE_CONST.3=COUNTER.1=2;
+COUNTER.1=KEYPAD_BUTTON.4/NULL/Inv.3/0/3/0/OVER;
+KEYPAD_TRESET.2=LO;  //Свет
+Inv.3=DI.4;
 //-------------------
 KEYPAD_LEDGREEN.7=DI.4;  //
 //-------------------
 KEYPAD_LEDGREEN.2=Or.4;  //Ближний свет
 Or.4=COMPARE_CONST.1+COMPARE_CONST.2;
+COMPARE_CONST.1=COUNTER.1=1;
+COMPARE_CONST.2=COUNTER.1=3;
 //-------------------
 KEYPAD_LEDBLUE.4=KEYPAD_TOGGLE.5;  //Вентилятор
 KEYPAD_TRESET.4=LO;  //
@@ -88,25 +57,58 @@ KEYPAD_LEDRED.8=COMPARE_CONST.1;  //Авария
 KEYPAD_LEDRED.7=Or.5;  //Авария мигалка
 Or.5=And.6+COMPARE_CONST.1;
 //-------------------
-OutSetup.3=6/70/2000;
-Out.3=And.4;  //Левый поворот
-OutName.3=LEFT TURN;
+KEYPAD_LEDGREEN.5=And.4;  //Левый поворот
 And.4=Or.8+Tim.2;
 Or.8=KEYPAD_TOGGLE.7+KEYPAD_TOGGLE.6;
 KEYPAD_TRESET.5=Or.6;  //Левый поворот
 Or.6=KEYPAD_BUTTON.6+KEYPAD_BUTTON.8;
 Tim.2=400/400+HI;  //ШИМ поворота
 //-------------------
-OutSetup.7=6/70/2000;
-Out.7=And.5;  //Правый поворот
-OutName.7=RIGHT TURN;
+KEYPAD_LEDGREEN.6=And.5;  //Правый поворот
 And.5=Tim.2+Or.9;
 Or.9=KEYPAD_TOGGLE.6+KEYPAD_TOGGLE.8;
 KEYPAD_TRESET.6=Or.7;  //Правый поворот
 Or.7=KEYPAD_BUTTON.6+KEYPAD_BUTTON.7;
 //-------------------
-KEYPAD_LEDGREEN.5=And.4;  //Левый поворот
+OutSetup.1=6/70/2000;
+Out.1=KEYPAD_BUTTON.1;  //Звуковой сигнал
+OutName.1=HORN;
 //-------------------
-KEYPAD_LEDGREEN.6=And.5;  //Правый поворот
+OutSetup.2=6/70/2000;
+Out.2=And.1;  //Омыватель
+OutName.2=WASHER;
+//-------------------
+OutSetup.3=6/70/2000;
+Out.3=And.4;  //Левый поворот
+OutName.3=LEFT TURN;
+//-------------------
+OutSetup.4=6/70/2000;
+Out.4=Or.2;  //Задний ход
+OutName.4=REAR GEAR LIGHT;
+Or.2=COMPARE_CONST.4+CAN_DI.1+KEYPAD_BUTTON.3;
+COMPARE_CONST.4=CAN_CH.1=1;
+//-------------------
+OutSetup.5=6/70/2000;
+Out.5=Or.3;  //Дворники
+OutName.5=WIPERS;
+Or.3=And.1+And.2+And.3;
+And.2=DI.1+Tim.1;
+Tim.1=4000/0+KEYPAD_BUTTON.2;  //Дворники
+And.3=Inv.1+DI.3+Inv.2;
+Inv.1=DI.2;
+Inv.2=KEYPAD_BUTTON.2;
+//-------------------
+OutSetup.6=6/70/2000;
+Out.6=COMPARE_CONST.3;  //Дальний свет
+OutName.6=HIGHBEAM;
+//-------------------
+OutSetup.7=6/70/2000;
+Out.7=And.5;  //Правый поворот
+OutName.7=RIGHT TURN;
+//-------------------
+OutSetup.8=6/70/2000;
+Out.8=Or.1;  //Ближний свет
+OutName.8=LOWBEAM;
+Or.1=COMPARE_CONST.1+COMPARE_CONST.2+COMPARE_CONST.3;
 //-------------------
 END;

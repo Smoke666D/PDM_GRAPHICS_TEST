@@ -530,6 +530,10 @@ function Option ( data, param = null, callback = null ) {
         self.select = selectLine( lib.getHardware().led );
         out = makeSelectInput();
         break;
+      case "temperature":
+        self.select = selectLine( lib.getHardware().temperature );
+        out = makeSelectInput();
+        break;
       case "dialog":
         out = makeDialogButton( self.select );
         break;

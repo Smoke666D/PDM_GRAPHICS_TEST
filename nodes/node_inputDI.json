@@ -1,0 +1,32 @@
+{
+  "name"     : "node_inputDI",
+  "type"     : "inputs",
+  "table"    : 0,
+  "heading"  : "Дискретные входа",
+  "short"    : "DI",
+  "help"     : "Состояние дискретных входов - 8 бит",
+  "compiler" : {
+    "denisScript" : {
+      "setup"   : "",
+      "outputs" : [
+        "DI"
+      ]
+    }
+  },
+  "options" : [
+    {
+      "name"   : "userString",
+      "text"   : "Коммент",
+      "type"   : "string",
+      "select" : [],
+      "value"  : ""
+    }
+  ],
+  "inputs"  : [],
+  "outputs" : [
+    {
+      "type"   : "byte",
+      "help"   : "Данные"
+    }
+  ]
+}

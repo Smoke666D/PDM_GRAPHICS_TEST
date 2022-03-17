@@ -172,7 +172,6 @@ function makeInputCan () {
     });
     return;
   });
-  console.log( output )
   return output;
 }
 /*------------------ Ok ------------------*/
@@ -243,8 +242,10 @@ function makeOutputCan () {
     });
     return;
   });
+  let frCounter = 1;
   frames.forEach( function ( frame, n ) {
-    let sub = 'CAN_OUT.' + ( n + 1 ) + '=';
+    console.log( frCounter );
+    let sub = 'CAN_OUT.' + frCounter + '=';
     sub += '0x' + parser.frames[n].adr.toString( 16 ) + '/' + parser.frames[n].length + '/' + parser.frames[n].timeout + '+';
     stream[n].forEach ( function ( stre, k ) {
       if ( typeof( stre ) == 'string' ) {
@@ -254,12 +255,20 @@ function makeOutputCan () {
     frame.forEach( function ( chunk ) {
       if ( chunk.type != 'bool' ) {
         if ( parser.getNode( chunk.id ).name.indexOf( 'output' ) > 0 ) {
-          sub += makeIn( 'in0', chunk.id ) + '/' + chunk.byte + '/' + chunk.bit + '+';
+          sub += makeIn( 'in0', chunk.id ) + '/';
+          sub += chunk.byte + '/'
+          if ( chunk.type == 'byte' ) {
+            sub += '1'; 
+          } else {
+            sub += '2'; 
+          }
+          sub += '+';
         }
       }
       return;
     });
     if ( sub.length > 23 ) {
+      frCounter++;
       sub = sub.substring( 0, ( sub.length - 1 ) ) + ';\n';
       output += sub;
     }

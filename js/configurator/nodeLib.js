@@ -221,19 +221,21 @@ function NodeLib () {
     return;
   }
   this.reinitHardware   = function () {
-    hardware.din  = setup.hardware.din;
-    hardware.dout = setup.hardware.dout;
-    hardware.ain  = setup.hardware.ain;
-    hardware.aout = setup.hardware.aout;
-    hardware.sw   = setup.hardware.sw;
-    hardware.led  = setup.hardware.led;
+    hardware.din         = setup.hardware.din;
+    hardware.dout        = setup.hardware.dout;
+    hardware.ain         = setup.hardware.ain;
+    hardware.aout        = setup.hardware.aout;
+    hardware.sw          = setup.hardware.sw;
+    hardware.led         = setup.hardware.led;
+    hardware.temperature = setup.hardware.temperature;
     usedExt.forEach( function ( device ) {
-      hardware.din  += device.din;
-      hardware.dout += device.dout;
-      hardware.ain  += device.ain;
-      hardware.aout += device.aout;
-      hardware.sw   += device.sw;
-      hardware.led  += device.led;
+      hardware.din         += device.din;
+      hardware.dout        += device.dout;
+      hardware.ain         += device.ain;
+      hardware.aout        += device.aout;
+      hardware.sw          += device.sw;
+      hardware.led         += device.led;
+      hardware.temperature += device.temperature;
       return;
     });
     return;

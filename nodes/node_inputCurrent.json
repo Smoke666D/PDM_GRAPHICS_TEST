@@ -1,0 +1,32 @@
+{
+  "name"     : "node_inputCurrent",
+  "type"     : "inputs",
+  "table"    : 0,
+  "heading"  : "Суммарный ток",
+  "short"    : "CUR",
+  "help"     : "Суммарный  ток всех выходов",
+  "compiler" : {
+    "denisScript" : {
+      "setup"   : "",
+      "outputs" : [
+        "AllCur"
+      ]
+    }
+  },
+  "options" : [
+    {
+      "name"   : "userString",
+      "text"   : "Коммент",
+      "type"   : "string",
+      "select" : [],
+      "value"  : ""
+    }
+  ],
+  "inputs"  : [],
+  "outputs" : [
+    {
+      "type"   : "short",
+      "help"   : "Данные"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name"     : "node_inputOutSt",
+  "type"     : "inputs",
+  "table"    : 0,
+  "heading"  : "Дискретные выхода",
+  "short"    : "OUT",
+  "help"     : "Состояние дискретных выходов - 16 бит",
+  "compiler" : {
+    "denisScript" : {
+      "setup"   : "",
+      "outputs" : [
+        "OutSt"
+      ]
+    }
+  },
+  "options" : [
+    {
+      "name"   : "userString",
+      "text"   : "Коммент",
+      "type"   : "string",
+      "select" : [],
+      "value"  : ""
+    }
+  ],
+  "inputs"  : [],
+  "outputs" : [
+    {
+      "type"   : "short",
+      "help"   : "Данные"
+    }
+  ]
+}

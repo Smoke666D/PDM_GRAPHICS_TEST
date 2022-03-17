@@ -1,0 +1,32 @@
+{
+  "name"     : "node_inputBat",
+  "type"     : "inputs",
+  "table"    : 0,
+  "heading"  : "Батарея",
+  "short"    : "CUR",
+  "help"     : "Напряжение батареи",
+  "compiler" : {
+    "denisScript" : {
+      "setup"   : "",
+      "outputs" : [
+        "Vbat"
+      ]
+    }
+  },
+  "options" : [
+    {
+      "name"   : "userString",
+      "text"   : "Коммент",
+      "type"   : "string",
+      "select" : [],
+      "value"  : ""
+    }
+  ],
+  "inputs"  : [],
+  "outputs" : [
+    {
+      "type"   : "short",
+      "help"   : "Данные"
+    }
+  ]
+}

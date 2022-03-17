@@ -1,16 +1,17 @@
 {
   "nodNumber"     : 100,
   "hardware"      : {
-    "din"      : 10,
-    "dout"     : 10,
-    "ain"      : 5,
-    "aout"     : 5,
-    "sw"       : 0,
-    "led"      : 0,
-    "rtc"      : false,
-    "can"      : true,
-    "modbus"   : false,
-    "compiler" : "DenisScript"
+    "din"         : 10,
+    "dout"        : 10,
+    "ain"         : 5,
+    "aout"        : 5,
+    "sw"          : 0,
+    "led"         : 0,
+    "temperature" : 2,
+    "rtc"         : false,
+    "can"         : true,
+    "modbus"      : false,
+    "compiler"    : "DenisScript"
   },
   "compiler" : {
     "denisScript" : {
@@ -86,6 +87,11 @@
 
     "node_header"         : true,
     "node_inputDIN"       : true,
+    "node_inputDI"        : true,
+    "node_inputOutSt"     : true,
+    "node_inputCurrent"   : true,
+    "node_inputBat"       : true,
+    "node_inputTerm"      : true,
     "node_inputSW"        : true,
     "node_inputAIN"       : false,
     "node_inputRTC"       : false,

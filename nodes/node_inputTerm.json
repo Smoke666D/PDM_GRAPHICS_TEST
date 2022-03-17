@@ -1,0 +1,38 @@
+{
+  "name"     : "node_inputTerm",
+  "type"     : "inputs",
+  "table"    : 0,
+  "heading"  : "Температура",
+  "short"    : "T",
+  "help"     : "Данные с термодатчика",
+  "compiler" : {
+    "denisScript" : {
+      "setup"   : "",
+      "outputs" : [
+        "Term.$adr$"
+      ]
+    }
+  },
+  "options" : [
+    {
+      "name"   : "adr",
+      "text"   : "канал",
+      "type"   : "temperature",
+      "select" : [],
+      "value"  : 1
+    },{
+      "name"   : "userString",
+      "text"   : "Коммент",
+      "type"   : "string",
+      "select" : [],
+      "value"  : ""
+    }
+  ],
+  "inputs"  : [],
+  "outputs" : [
+    {
+      "type"   : "short",
+      "help"   : "Данные"
+    }
+  ]
+}
