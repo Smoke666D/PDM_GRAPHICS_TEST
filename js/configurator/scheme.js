@@ -8,13 +8,14 @@ var Device  = require('./primitives.js').Device;
 var Option  = require('./primitives.js').Option;
 var NodeAdr = require('./primitives.js').NodeAdr;
 /*----------------------------------------------------------------------------*/
-function Scheme ( id ) {
+function Scheme ( id, onEvent ) {
   var self     = this;
   var nodeID   = 0;             /* Counter for nodes                 */
   var linkID   = 0;             /* Counter for links                 */
   var state    = "idle";        /* State of scheme ( idle, connect ) */
   var prevAdr  = new NodeAdr(); /* Previus pin for connecting        */
   var prevLink = null;          /* Link number for changing          */
+  var onEvent  = onEvent;       /* Every event callback              */
   /*----------------------------------------*/
   var helpFild    = document.getElementById( "content-help" );
   var optionsFild = document.getElementById( "content-options" );
@@ -394,6 +395,7 @@ function Scheme ( id ) {
     self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrag, beforNodeRemove, onNodeUnlink, beforContextMenu, onNodeFocus, onFinish, options ) );
     self.nodes[nodeID - 1].move( coords.x, coords.y );
     self.nodes[nodeID - 1].focus.set();
+    onEvent( 'node', self.nodes[nodeID - 1], 'add' );
     return;
   }
   this.addLink       = function ( from, to ) {
@@ -410,6 +412,7 @@ function Scheme ( id ) {
       }
       self.nodes[from.node].set.pinConnected( from.pin, id );
       self.nodes[to.node].set.pinConnected( to.pin, id );
+      onEvent( 'link', self.links[currentID], 'add' );
     } else {
       console.log( "error on link: " + from.node + " to " + to.node );
     }
@@ -432,6 +435,7 @@ function Scheme ( id ) {
     for ( var i=id+1; i<self.links.length; i++ ) {
       self.links[i].id--;
     }
+    onEvent( 'link', self.links[id], 'remove' );
     self.links[id].remove();
     self.links.splice( id, 1 );
     linkID--;
@@ -439,6 +443,7 @@ function Scheme ( id ) {
   }
   this.removeNode    = function ( id ) {
     if ( id <= self.nodes.length ) {
+      onEvent( 'node', self.nodes[id], 'remove' );
       removeLinksOfNode( id );
       removeNode( id );
       if ( self.focus.elements.length == 0 ) {

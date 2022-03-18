@@ -3,8 +3,8 @@ var Scheme    = require( './scheme.js' ).Scheme;
 var nodeLib   = require( './nodeLib.js' ).nodeLib;
 var workspace = require( './workspace.js' ).workspace;
 var config    = require( './workspace.js' ).config;
-var remote    = require('electron').remote;
-var shiftKey  = require('./node.js').shiftKey;
+var remote    = require( 'electron' ).remote;
+var shiftKey  = require( './node.js' ).shiftKey;
 var compiler  = require( '../compiler/compiler.js' );
 /*----------------------------------------------------------------------------*/
 const fileOptions = {
@@ -140,7 +140,10 @@ function Configurator ( size ) {
   var shortcuts       = new Shortcut();
   var clipboard       = [];
   /*----------------------------------------*/
-  this.scheme = new Scheme( 0 );
+  this.scheme = new Scheme( 0, function ( type, object, event ) {
+    workspace.addAction( type, object, event );
+    return;
+  });
   /*----------------------------------------*/
   function redraw () {
     self.scheme.redraw();

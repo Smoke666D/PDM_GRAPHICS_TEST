@@ -63,13 +63,70 @@ function Config () {
   }
 }
 /*----------------------------------------------------------------------------*/
+/*
+ * id     - ID of action
+ * type   - type of object (node or link)
+ * target - ID of object
+ * event  - action type (add, remove, move)
+ */
+function Action ( id=0, type='node', target=null, event='add' ) {
+  var self = this;
+  this.id     = id;
+  this.type   = type;
+  this.event  = event;
+  this.target = target;
+  return;
+}
+/*----------------------------------------------------------------------------*/
 function Workspace () {
-  var self   = this;
-  var ready  = 0;
-  var file   = null;
-  var buffer = new Buffer.alloc(1024);
-  var size   = 0;
-  var config = new Config();
+  var self          = this;
+  var ready         = 0;
+  var file          = null;
+  var buffer        = new Buffer.alloc(1024);
+  var size          = 0;
+  var config        = new Config();
+  var actions       = [];
+  var actionPointer = 0;
+
+  function makeAction ( action ) {
+    switch ( action.event ) {
+      case 'add':
+        switch ( action.type ) {
+          case 'node':
+            break;
+          case 'link':
+            break;
+          default:
+            console.log( '[WORKSPACE] Wrong action type on add!' );
+            break;
+        }
+        break;
+      case 'remove':
+        switch ( action.type ) {
+          case 'node':
+            break;
+          case 'link':
+            break;
+          default:
+            console.log( '[WORKSPACE] Wrong action type on remove!' );
+            break;
+        }
+        break;
+      case 'move':
+        switch ( action.type ) {
+          case 'node':
+            break;
+          default:
+            console.log( '[WORKSPACE] Wrong action type on move!' );
+            break;
+        }
+        break;
+      default:
+        console.log( '[WORKSPACE] Wrong action event!' );
+        break;
+    }
+    return;
+  }
 
   this.init = function ( callback = null ) {
     fs.open( fileName, "w+", function( error, fd ) {
@@ -92,6 +149,31 @@ function Workspace () {
         });
       }
     });
+  }
+  this.addAction     = function ( type, object, event ) {
+    if ( ( actionPointer > 0 ) && ( actions.length > 0 ) ) {
+      actions.length = actionPointer - 1;
+    }
+    actions.push( new Action( actions.length, type, object, event ) );
+    actionPointer++;
+    console.log( actions[actions.length-1] )
+    return;
+  }
+  this.redo = function () {
+    if ( actions.length > 0 ) {
+      if ( actionPointer < ( actions.length - 1 ) ) {
+        actionPointer++;
+        makeAction( actions[actionPointer] );
+      }
+    }
+    return;
+  }
+  this.undo = function () {
+    if ( ( actions.length > 0 ) && ( actionPointer > 0 ) ) {
+      actionPointer--;
+      makeAction( actions[actionPointer] );
+    }
+    return;
   }
   this.get  = function ( scheme ) {
     let out = null;
