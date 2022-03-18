@@ -128,13 +128,17 @@ function Configurator ( size ) {
   let cancelButton    = document.getElementById( 'cancel-button'    );
   let undoButton      = document.getElementById( 'undo-button'      );
   let redoButton      = document.getElementById( 'redo-button'      );
-  let buildButton     = document.getElementById( 'build-button'      );
+  let buildButton     = document.getElementById( 'build-button'     );
+  let cutButton       = document.getElementById( 'cut-button'       );
+  let copyButton      = document.getElementById( 'copy-button'      );
+  let pasteButton     = document.getElementById( 'paste-button'     );
   var schemeBox       = document.getElementById( 'scheme'           );
   var schemeFrame     = document.getElementById( 'scheme-frame'     );
   var nodeLibrary     = document.getElementById( 'nodeLib-list'     );
   var content         = document.getElementById( 'content'          );
   var activeSch       = 0;
   var shortcuts       = new Shortcut();
+  var clipboard       = [];
   /*----------------------------------------*/
   this.scheme = new Scheme( 0 );
   /*----------------------------------------*/
@@ -246,6 +250,26 @@ function Configurator ( size ) {
   function redo () {
     return;
   }
+  function copy () {
+    clipboard = [];
+    self.scheme.getFocus().forEach( function ( id ) {
+      clipboard.push( nodeLib.getTypeByName( self.scheme.nodes[id].name ) );
+    });
+    return;
+  }
+  function cut () {
+    copy();
+    self.scheme.removeInFocus();
+    return;
+  }
+  function paste () {
+    clipboard.forEach( function ( type ) {
+      self.scheme.addNode( type, function () { 
+        return;
+      });
+    });
+    return;
+  }
   function moveLeft () {
     self.scheme.focus.do( function ( id ) {
       if ( self.scheme.nodes[id].x > 0 ) {
@@ -331,6 +355,9 @@ function Configurator ( size ) {
     shortcuts.add( "ctrlKey", "y",          "Повторить действие",                   function() { redo()       });
     shortcuts.add( "ctrlKey", "u",          "Удалить связи выделенного объекта",    function() { unlink()     });
     shortcuts.add( "ctrlKey", "b",          "Компиляция схемы",                     function() { build()      });
+    shortcuts.add( "ctrlKey", "x",          "Вырезать",                             function() { cut()        });
+    shortcuts.add( "ctrlKey", "c",          "Копировать",                           function() { copy()       });
+    shortcuts.add( "ctrlKey", "v",          "Вставить",                             function() { paste()      });
     shortcuts.add( null,      "F1",         "Показать помощ",                       function() { showHelp();  });
     shortcuts.add( null,      "Delete",     "Удалить выделенный объект",            function() { del();       });
     shortcuts.add( null,      "Escape",     "Отменить действие",                    function() { cancel();    });
@@ -390,6 +417,18 @@ function Configurator ( size ) {
       redo();
       return;
     });
+    cutButton.addEventListener( 'click', function () {
+      cut();
+      return;
+    });
+    copyButton.addEventListener( 'click', function () {
+      copy();
+      return;
+    });
+    pasteButton.addEventListener( 'click', function () {
+      paste();
+      return;
+    })
     /*-------------------------------------------------*/
     saveButton.addEventListener( 'click', function () {
       save();

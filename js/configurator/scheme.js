@@ -473,6 +473,9 @@ function Scheme ( id ) {
     }
     return;
   }
+  this.getFocus      = function () {
+    return self.focus.elements;
+  }
   this.getData       = function () {
     self.links.forEach( function( link, i ) {
       link.getData();
