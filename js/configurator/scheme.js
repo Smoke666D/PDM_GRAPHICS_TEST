@@ -390,7 +390,9 @@ function Scheme ( id ) {
     return;
   }
   this.addNode       = function ( type, onFinish, options=null ) {
+    let coords = mesh.getViewConner();
     self.nodes.push( new Node( type, nodeID++, self.box, linkStart, afterDrag, beforNodeRemove, onNodeUnlink, beforContextMenu, onNodeFocus, onFinish, options ) );
+    self.nodes[nodeID - 1].move( coords.x, coords.y );
     self.nodes[nodeID - 1].focus.set();
     return;
   }

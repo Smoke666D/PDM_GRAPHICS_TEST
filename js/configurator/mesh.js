@@ -100,9 +100,9 @@ function Mesh ( xS, yS ) {
     return;
   }
   function draw () {
-    let h      = freeSpaceSize;
-    let w      = 0;
-    let c      = 0;
+    let h = freeSpaceSize;
+    let w = 0;
+    let c = 0;
     clean();
     for ( i=0; i<size.y; i++ ) {
       cells.push( new Array() );
@@ -171,6 +171,9 @@ function Mesh ( xS, yS ) {
     borders.top    += rect.y - freeSpaceSize;
     borders.bottom += rect.y + freeSpaceSize;
     return borders;
+  }
+  this.getViewConner = function () {
+    return new Coords( 0, 0 );
   }
   /*--------------------------------------------------*/
   init();
