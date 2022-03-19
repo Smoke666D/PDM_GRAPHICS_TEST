@@ -87,8 +87,10 @@ function Workspace () {
   var config        = new Config();
   var actions       = [];
   var actionPointer = 0;
+  var newAction     = true;
 
   function makeAction ( action ) {
+    newAction = false;
     switch ( action.event ) {
       case 'add':
         switch ( action.type ) {
@@ -151,12 +153,16 @@ function Workspace () {
     });
   }
   this.addAction     = function ( type, object, event ) {
-    if ( ( actionPointer > 0 ) && ( actions.length > 0 ) ) {
-      actions.length = actionPointer - 1;
+    if ( newAction == true ) {
+      if ( ( actionPointer > 0 ) && ( actions.length > 0 ) ) {
+        actions.length = actionPointer - 1;
+      }
+      actions.push( new Action( actions.length, type, object, event ) );
+      actionPointer++;
+      console.log( actions[actions.length-1] )
+    } else {
+      newAction = true;
     }
-    actions.push( new Action( actions.length, type, object, event ) );
-    actionPointer++;
-    console.log( actions[actions.length-1] )
     return;
   }
   this.redo = function () {

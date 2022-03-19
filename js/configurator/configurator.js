@@ -248,9 +248,11 @@ function Configurator ( size ) {
     return;
   }
   function undo () {
+    workspace.undo();
     return;
   }
   function redo () {
+    workspace.redo();
     return;
   }
   function copy () {
